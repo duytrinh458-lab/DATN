@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController; // nhớ import đúng namespace
 
 // Trang mặc định
 Route::get('/', function () {
@@ -36,3 +37,6 @@ Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpFor
 
 // Đường dẫn sửa lỗi database (truy cập: http://localhost/uav-shop/public/fix-db)
 Route::get('/fix-db', [AuthController::class, 'fixDatabase']);
+
+// Trang chủ
+Route::get('/home', [HomeController::class, 'index'])->name('home');

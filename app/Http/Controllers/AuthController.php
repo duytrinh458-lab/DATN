@@ -87,10 +87,10 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['error' => 'Sai email hoặc mật khẩu'], 401);
+            return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
         }
 
-        return response()->json(['message' => 'Đăng nhập thành công', 'user' => $user]);
+         return redirect()->route('home')->with('success', 'Đăng nhập thành công');
     }
 
     // 4. Gửi OTP khi quên mật khẩu
