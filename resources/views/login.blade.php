@@ -33,7 +33,6 @@
             font-weight: bold;
             margin: 8px 0 4px;
             display: block;
-            color: #e0f7fa;
         }
         input {
             width: 100%;
@@ -58,7 +57,6 @@
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
         button:hover {
             background: #0097a7;
@@ -66,20 +64,29 @@
         }
         .link {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 12px;
         }
         .link a {
             color: #4dd0e1;
             text-decoration: none;
             font-weight: bold;
+            transition: 0.3s;
+        }
+        .link a:hover {
+            color: #00e5ff;
+            text-shadow: 0 0 5px #00e5ff;
         }
     </style>
 </head>
 <body>
+
 <div class="container">
+
     <h2>Đăng nhập</h2>
+
     <form method="POST" action="{{ url('/login') }}">
         @csrf
+
         <label>Email:</label>
         <input type="email" name="email" placeholder="example@email.com" required>
 
@@ -88,9 +95,17 @@
 
         <button type="submit">Đăng nhập</button>
     </form>
+
+    <!-- Quên mật khẩu -->
+    <div class="link">
+        <a href="{{ url('/forgot') }}">Quên mật khẩu?</a>
+    </div>
+
+    <!-- Đăng ký -->
     <div class="link">
         Chưa có tài khoản? <a href="{{ url('/register') }}">Đăng ký ngay</a>
     </div>
 </div>
+
 </body>
 </html>
