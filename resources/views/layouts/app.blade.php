@@ -8,9 +8,9 @@
 <body>
     <header>
         <nav class="navbar">
-            <div class="logo">AERIAL VANGUARD</div>
+            <div class="logo">Cửa Hàng Máy Bay Không Người Lái</div>
             <ul>
-                <li><a href="{{ url('/') }}">Trang chủ</a></li>
+                <li><a href="{{ url('/') }}">Trang chủ</a>http://localhost:8000/home</li>
                 <li><a href="{{ url('/products') }}">Sản phẩm</a></li>
                 <li><a href="{{ url('/services') }}">Dịch vụ</a></li>
                 <li><a href="{{ url('/news') }}">Tin tức</a></li>
