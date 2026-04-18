@@ -88,18 +88,26 @@ class AuthController extends Controller
     // ================= LOGIN =================
 
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|min:6',
+    ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect()->route('home')->with('success', 'Đăng nhập thành công');
+    if (Auth::attempt($request->only('email', 'password'))) {
+
+        $user = Auth::user(); // lấy user sau khi login
+
+        // 🔥 PHÂN QUYỀN
+        if ($user->role === 'admin') {
+            return redirect('/admin')->with('success', 'Đăng nhập admin thành công');
+        } else {
+            return redirect('/home')->with('success', 'Đăng nhập thành công');
         }
-
-        return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
     }
+
+    return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
+}
 
     // ================= FORGOT PASSWORD =================
 
