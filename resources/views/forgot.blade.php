@@ -27,96 +27,91 @@
             color: #00bcd4;
             margin-bottom: 20px;
             text-transform: uppercase;
-            letter-spacing: 2px;
         }
         h3 {
             color: #4dd0e1;
             margin-top: 20px;
-            border-left: 4px solid #00bcd4;
-            padding-left: 6px;
-        }
-        label {
-            font-weight: bold;
-            margin: 8px 0 4px;
-            display: block;
-            color: #e0f7fa;
         }
         input {
             width: 100%;
             padding: 12px;
-            border: 1px solid #00bcd4;
+            margin-bottom: 12px;
             border-radius: 8px;
-            margin-bottom: 14px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        input::placeholder {
-            color: #b2ebf2;
         }
         button {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: #00bcd4;
-            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            color: white;
             cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
-        button:hover {
-            background: #0097a7;
-            box-shadow: 0 0 15px #00bcd4;
+        .alert-success {
+            background: #2e7d32;
+            padding: 10px;
+            margin-bottom: 10px;
         }
-        .link {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .link a {
-            color: #4dd0e1;
-            text-decoration: none;
-            font-weight: bold;
+        .alert-error {
+            background: #c62828;
+            padding: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+
 <div class="container">
     <h2>Quên mật khẩu</h2>
 
-    {{-- Bước 1: Gửi OTP --}}
-    <h3>1. Xác thực số điện thoại</h3>
+    {{-- SUCCESS --}}
+    @if(session('success'))
+        <div class="alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- ERROR --}}
+    @if(session('error'))
+        <div class="alert-error">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- VALIDATE ERROR --}}
+    @if ($errors->any())
+        <div class="alert-error">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
+    {{-- ================= STEP 1 ================= --}}
+    <h3>1. Nhập số điện thoại</h3>
     <form method="POST" action="{{ url('/forgot-password/send-otp') }}">
         @csrf
-        <label>Số điện thoại:</label>
-        <input type="text" name="phone" placeholder="090..." required>
+        <input type="text" name="phone" placeholder="Số điện thoại" required>
         <button type="submit">Gửi OTP</button>
     </form>
 
-    {{-- Bước 2: Xác thực OTP và đổi mật khẩu --}}
-    <h3>2. Xác thực & Đổi mật khẩu</h3>
+    {{-- ================= STEP 2 ================= --}}
+    <h3>2. Nhập OTP & mật khẩu mới</h3>
     <form method="POST" action="{{ url('/forgot-password/verify-otp') }}">
         @csrf
-        <label>Số điện thoại:</label>
-        <input type="text" name="phone" required>
 
-        <label>Mã OTP:</label>
-        <input type="text" name="otp_code" placeholder="xxxxxx" required>
+        <input type="text" name="phone" placeholder="Số điện thoại" required>
 
-        <label>Email:</label>
-        <input type="email" name="email" placeholder="example@email.com" required>
+        <input type="text" name="otp_code" placeholder="Nhập OTP" required>
 
-        <label>Mật khẩu mới:</label>
-        <input type="password" name="new_password" placeholder="••••••••" required>
+        <input type="password" name="new_password" placeholder="Mật khẩu mới" required>
 
-        <button type="submit">Xác thực & Đổi mật khẩu</button>
+        <button type="submit">Đổi mật khẩu</button>
     </form>
 
-    <div class="link">
-        Nhớ mật khẩu rồi? <a href="{{ url('/login') }}">Đăng nhập</a>
-    </div>
+    <p style="text-align:center; margin-top:10px;">
+        <a href="{{ url('/login') }}">Quay lại đăng nhập</a>
+    </p>
 </div>
+
 </body>
 </html>
-// sửa lại và cập nhập mới 

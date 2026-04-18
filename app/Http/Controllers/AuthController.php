@@ -6,27 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // 1. Gửi OTP khi đăng ký
+    // ================= REGISTER =================
+
     public function sendOtpRegister(Request $request)
     {
         $request->validate([
             'phone' => 'required|numeric|digits_between:10,11',
-        ], [
-            'phone.required' => 'Vui lòng nhập số điện thoại.',
-            'phone.numeric' => 'Số điện thoại phải là chữ số.',
         ]);
 
-        $phone = $request->phone;
         $otp = rand(100000, 999999);
 
         DB::table('otp_verifications')->insert([
-            'phone' => $phone,
+            'phone' => $request->phone,
             'otp_code' => $otp,
             'type' => 'register',
             'is_used' => 0,
@@ -34,28 +29,30 @@ class AuthController extends Controller
             'created_at' => now()
         ]);
 
-        // Lưu số điện thoại vào session để tự điền ở bước sau
-        return redirect()->back()
-            ->with('success', 'Mã OTP (giả lập) là: ' . $otp)
-            ->with('phone_step1', $phone);
+        session([
+            'phone_step1' => $request->phone
+        ]);
+
+        return redirect('/register')->with('success', 'OTP của bạn là: ' . $otp);
     }
 
-    // 2. Xác thực OTP và tạo user
     public function verifyOtpRegister(Request $request)
     {
+        $phone = session('phone_step1');
+
+        if (!$phone) {
+            return redirect('/register')->with('error', 'Thiếu số điện thoại, vui lòng gửi OTP lại');
+        }
+
         $request->validate([
-            'phone' => 'required',
             'otp_code' => 'required|digits:6',
-            'full_name' => 'required|string|max:255',
+            'full_name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-        ], [
-            'email.unique' => 'Email này đã được sử dụng.',
-            'otp_code.digits' => 'Mã OTP phải có 6 chữ số.',
         ]);
 
         $otp = DB::table('otp_verifications')
-            ->where('phone', $request->phone)
+            ->where('phone', $phone)
             ->where('otp_code', $request->otp_code)
             ->where('type', 'register')
             ->where('is_used', 0)
@@ -63,44 +60,59 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return redirect()->back()->withErrors(['otp_code' => 'Mã OTP không đúng hoặc đã hết hạn.'])->withInput()->with('phone_step1', $request->phone);
+            return redirect('/register')->with('error', 'OTP sai hoặc hết hạn');
         }
 
-        // tạo user mới
-        $user = User::create([
+        DB::table('users')->insert([
+            'username' => $request->email,
             'full_name' => $request->full_name,
             'email' => $request->email,
+            'phone' => $phone,
             'password' => Hash::make($request->password),
+            'role' => 'customer',
             'is_verified' => 1,
-            'status' => 'active'
+            'status' => 'active',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        // đánh dấu OTP đã dùng
-        DB::table('otp_verifications')->where('id', $otp->id)->update(['is_used' => 1]);
+        DB::table('otp_verifications')
+            ->where('id', $otp->id)
+            ->update(['is_used' => 1]);
 
-        return redirect('/')->with('success', 'Đăng ký thành công! Vui lòng đăng nhập.');
+        session()->forget('phone_step1');
+
+        return redirect('/login')->with('success', 'Đăng ký thành công!');
     }
 
-    // 3. Đăng nhập bằng email + mật khẩu
+    // ================= LOGIN =================
+
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
+        if (Auth::attempt($request->only('email', 'password'))) {
+            return redirect()->route('home')->with('success', 'Đăng nhập thành công');
         }
 
-         return redirect()->route('home')->with('success', 'Đăng nhập thành công');
+        return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
     }
 
-    // 4. Gửi OTP khi quên mật khẩu
+    // ================= FORGOT PASSWORD =================
+
     public function sendOtpForgotPassword(Request $request)
     {
-        $phone = $request->phone;
+        $request->validate([
+            'phone' => 'required|numeric',
+        ]);
+
         $otp = rand(100000, 999999);
 
         DB::table('otp_verifications')->insert([
-            'phone' => $phone,
+            'phone' => $request->phone,
             'otp_code' => $otp,
             'type' => 'forgot_password',
             'is_used' => 0,
@@ -108,12 +120,17 @@ class AuthController extends Controller
             'created_at' => now()
         ]);
 
-        return response()->json(['message' => 'OTP quên mật khẩu đã được tạo (test: '.$otp.')']);
+        return redirect('/forgot')->with('success', 'OTP của bạn là: ' . $otp);
     }
 
-    // 5. Xác thực OTP và đổi mật khẩu
     public function verifyOtpForgotPassword(Request $request)
     {
+        $request->validate([
+            'phone' => 'required',
+            'otp_code' => 'required|digits:6',
+            'new_password' => 'required|min:6',
+        ]);
+
         $otp = DB::table('otp_verifications')
             ->where('phone', $request->phone)
             ->where('otp_code', $request->otp_code)
@@ -123,49 +140,22 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return response()->json(['error' => 'OTP không hợp lệ hoặc đã hết hạn'], 400);
+            return redirect('/forgot')->with('error', 'OTP không hợp lệ hoặc hết hạn');
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('phone', $request->phone)->first();
+
         if (!$user) {
-            return response()->json(['error' => 'Không tìm thấy user'], 404);
+            return redirect('/forgot')->with('error', 'Không tìm thấy tài khoản');
         }
 
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        DB::table('otp_verifications')->where('id', $otp->id)->update(['is_used' => 1]);
+        DB::table('otp_verifications')
+            ->where('id', $otp->id)
+            ->update(['is_used' => 1]);
 
-        return response()->json(['message' => 'Đổi mật khẩu thành công']);
-    }
-
-    // Hàm này để bạn cứu vãn nếu Terminal bị hỏng, gõ đường dẫn /api/fix-db trên trình duyệt
-    public function fixDatabase()
-    {
-        try {
-            // Dọn dẹp cache để Laravel nhận diện các thay đổi mới nhất
-            Artisan::call('optimize:clear');
-
-            // Nếu bảng sessions đã tồn tại thì không cần chạy lại
-            if (Schema::hasTable('sessions')) {
-                return response()->json(['status' => 'info', 'message' => 'Bảng sessions đã tồn tại rồi!']);
-            }
-
-            // Chạy migration cưỡng ép để tạo bảng
-            Artisan::call('migrate', [
-                '--force' => true,
-            ]);
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Đã tạo bảng sessions thành công! Bạn có thể quay lại trang đăng ký.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Lỗi: ' . $e->getMessage(),
-                'hint' => 'Hãy chắc chắn bạn đã xóa file database/migrations/sessions_table.php'
-            ], 500);
-        }
+        return redirect('/login')->with('success', 'Đổi mật khẩu thành công');
     }
 }

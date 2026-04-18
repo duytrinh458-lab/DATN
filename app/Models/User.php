@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,20 +11,24 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * Các cột cho phép insert (PHẢI KHỚP DB)
      */
     protected $fillable = [
-        'name',
+        'username',
+        'full_name',
         'email',
+        'phone',
         'password',
+        'avatar',
+        'is_verified',
+        'is_online',
+        'last_seen',
+        'role',
+        'status'
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
+     * Ẩn khi trả JSON
      */
     protected $hidden = [
         'password',
@@ -33,15 +36,12 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Cast dữ liệu
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_seen' => 'datetime',
+        'is_verified' => 'boolean',
+        'is_online' => 'boolean',
+    ];
 }
