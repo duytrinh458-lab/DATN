@@ -8,9 +8,9 @@
 <body>
     <header>
         <nav class="navbar">
-            <div class="logo">Cửa Hàng Máy Bay Không Người Lái</div>
+            <div class="logo">Cửa Hàng Máy Bay UAV</div>
             <ul>
-                <li><a href="{{ url('/') }}">Trang chủ</a>http://localhost:8000/home</li>
+                <li><a href="{{ url('/home') }}">Trang chủ</a></li>
                 <li><a href="{{ url('/products') }}">Sản phẩm</a></li>
                 <li><a href="{{ url('/services') }}">Dịch vụ</a></li>
                 <li><a href="{{ url('/news') }}">Tin tức</a></li>
@@ -27,7 +27,7 @@
     </main>
 
     <footer>
-        <p>© 2026 AERIAL VANGUARD - Công nghệ UAV tiên phong</p>
+        <p>© 2026 Cửa Hàng Máy Bay UAV - Công nghệ UAV tiên phong</p>
     </footer>
 </body>
 </html>

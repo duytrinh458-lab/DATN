@@ -5,7 +5,7 @@
 @section('content')
 <div class="banner">
     <h1>Tương lai của những chuyến bay</h1>
-    <p>Tại Aerial Vanguard, chúng tôi cung cấp các thiết bị bay chuyên dụng, từ drone camera đến drone công nghiệp, đáp ứng mọi nhu cầu bay của bạn.</p>
+    <p>Tại Cửa Hàng Máy Bay UAV, chúng tôi cung cấp các thiết bị bay chuyên dụng, từ drone camera đến drone công nghiệp, đáp ứng mọi nhu cầu bay của bạn.</p>
     <div class="btn-group">
         <button>Mua ngay</button>
         <button>Chi tiết sản phẩm</button>
