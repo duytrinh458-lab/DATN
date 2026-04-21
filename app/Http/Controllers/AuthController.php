@@ -10,6 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    // ================= VIEW =================
+
+    public function showLogin()
+    {
+        return view('User.Login.login');
+    }
+
+    public function showRegister()
+    {
+        return view('User.Login.register');
+    }
+
+    public function showForgot()
+    {
+        return view('User.Login.forgot');
+    }
+
     // ================= REGISTER =================
 
     public function sendOtpRegister(Request $request)
@@ -41,7 +58,7 @@ class AuthController extends Controller
         $phone = session('phone_step1');
 
         if (!$phone) {
-            return redirect('/register')->with('error', 'Thiếu số điện thoại, vui lòng gửi OTP lại');
+            return redirect('/register')->with('error', 'Thiếu số điện thoại');
         }
 
         $request->validate([
@@ -88,26 +105,25 @@ class AuthController extends Controller
     // ================= LOGIN =================
 
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|min:6',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
 
-    if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($request->only('email', 'password'))) {
 
-        $user = Auth::user(); // lấy user sau khi login
+            $user = Auth::user();
 
-        // 🔥 PHÂN QUYỀN
-        if ($user->role === 'admin') {
-            return redirect('/admin')->with('success', 'Đăng nhập admin thành công');
-        } else {
-            return redirect('/home')->with('success', 'Đăng nhập thành công');
+            if ($user->role === 'admin') {
+                return redirect('/admin')->with('success', 'Đăng nhập admin thành công');
+            } else {
+                return redirect('/home')->with('success', 'Đăng nhập thành công');
+            }
         }
-    }
 
-    return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
-}
+        return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
+    }
 
     // ================= FORGOT PASSWORD =================
 
@@ -148,7 +164,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return redirect('/forgot')->with('error', 'OTP không hợp lệ hoặc hết hạn');
+            return redirect('/forgot')->with('error', 'OTP không hợp lệ');
         }
 
         $user = User::where('phone', $request->phone)->first();

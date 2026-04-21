@@ -66,4 +66,10 @@ class ProductController extends Controller
             return back()->with('error', 'Có lỗi xảy ra: ' . $e->getMessage());
         }
     }
+
+    public function products()
+{
+    return view('User.products.products');
+}
+
 }

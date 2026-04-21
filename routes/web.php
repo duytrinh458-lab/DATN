@@ -6,27 +6,17 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\AdminMiddleware;
-use Illuminate\Auth\Middleware\Authenticate; // 🔥 thêm dòng này
+use Illuminate\Auth\Middleware\Authenticate;
 
 // Trang mặc định
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Trang register
-Route::get('/register', function () {
-    return view('register');
-});
-
-// Trang login
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-
-// Trang quên mật khẩu
-Route::get('/forgot', function () {
-    return view('forgot');
-});
+// ================= AUTH VIEW =================
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/register', [AuthController::class, 'showRegister']);
+Route::get('/forgot', [AuthController::class, 'showForgot']);
 
 
 // ================= REGISTER OTP =================
@@ -43,14 +33,14 @@ Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtpForgotP
 Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpForgotPassword']);
 
 
-// Fix database
-Route::get('/fix-db', [AuthController::class, 'fixDatabase']);
-
-
-// ================= HOME (bắt buộc login) =================
+// ================= HOME =================
 Route::get('/home', [HomeController::class, 'index'])
     ->middleware(Authenticate::class)
     ->name('home');
+
+
+// ================= PRODUCTS (🔥 FIX 404 Ở ĐÂY) =================
+Route::get('/products', [ProductController::class, 'products']);
 
 
 // ================= ADMIN =================

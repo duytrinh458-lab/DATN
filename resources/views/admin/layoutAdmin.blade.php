@@ -54,10 +54,11 @@
 <!-- Sidebar -->
 <div class="sidebar">
     <h4>🚁 ADMIN UAV</h4>
-    <a href="/admin">Dashboard</a>
+    <a href="../public/admin">Dashboard</a>
     <a href="/admin/products">Quản lý UAV</a>
     <a href="#">Đơn hàng</a>
     <a href="#">Người dùng</a>
+    <a href="../public/login">Đăng xuất</a>
 </div>
 
 <!-- Main -->

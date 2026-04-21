@@ -9,14 +9,14 @@ class HomeController extends Controller
     // Trang chủ
     public function index()
     {
-        return view('home');
+        return view('User.home');
     }
 
     // Trang sản phẩm
     public function products()
-    {
-        return view('products');
-    }
+{
+    return view('User.products.products');
+}
 
     // Trang dịch vụ
     public function services()
