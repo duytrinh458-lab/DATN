@@ -12,6 +12,17 @@
             padding: 40px;
             color: #e0f7fa;
         }
+
+        a {
+    color: #33ff81; /* xanh nhạt */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #b2ebf2; /* sáng hơn khi hover */
+    text-decoration: underline;
+}
+
         .container {
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);

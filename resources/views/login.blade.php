@@ -92,19 +92,27 @@
 
         <label>Mật khẩu:</label>
         <input type="password" name="password" placeholder="••••••••" required>
+        
+    <!-- thông báo đăng nhập sai -->
+    @if (session('error'))
+    <div style="color: #ff8a80; text-align: center; margin-bottom: 10px;">
+        {{ session('error') }}
+    </div>
+@endif
 
         <button type="submit">Đăng nhập</button>
     </form>
+
+    <!-- Đăng ký -->
+    <div class="link">
+        Chưa có tài khoản? <a href="{{ url('/register') }}">Đăng ký ngay</a>
+    </div>
 
     <!-- Quên mật khẩu -->
     <div class="link">
         <a href="{{ url('/forgot') }}">Quên mật khẩu?</a>
     </div>
 
-    <!-- Đăng ký -->
-    <div class="link">
-        Chưa có tài khoản? <a href="{{ url('/register') }}">Đăng ký ngay</a>
-    </div>
 </div>
 
 </body>
