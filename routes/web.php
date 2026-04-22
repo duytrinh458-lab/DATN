@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Auth\Middleware\Authenticate;
 
@@ -29,21 +29,30 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtpForgotPassword']);
 Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpForgotPassword']);
 
-// ================= HOME =================
-Route::get('/home', [HomeController::class, 'index'])
-    ->middleware(Authenticate::class)
-    ->name('home');
 
-// ================= PRODUCTS USER =================
-Route::get('/products', [ProductController::class, 'products']);
 
 // ================= ADMIN =================
 Route::prefix('admin')
-    ->middleware([Authenticate::class, AdminMiddleware::class])
-    ->group(function () {
+->name('admin.') // 🔥 THÊM DÒNG NÀY VÀO
+->middleware([Authenticate::class, AdminMiddleware::class])
+->group(function () {
 
-        Route::get('/', [AdminController::class, 'dashboard']);
-
-        // 🔥 FIX LỖI Ở ĐÂY (bỏ show)
-        Route::resource('products', ProductController::class)->except(['show']);
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // 🔥 FIX LỖI Ở ĐÂY (bỏ show)
+    Route::resource('products', ProductController::class)->except(['show']);
     });
+
+    // ================= User =================
+    // ================= HOME =================
+    Route::get('/home', [HomeController::class, 'index'])
+    ->middleware(Authenticate::class)
+    ->name('home');
+    
+    
+    // ================= PRODUCTS =================
+    Route::get('/products', [ProductController::class, 'products']);
+
+
+
+

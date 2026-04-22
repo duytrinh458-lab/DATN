@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -14,9 +15,9 @@ class HomeController extends Controller
 
     // Trang sản phẩm
     public function products()
-{
-    return view('User.products.products');
-}
+    {
+        return view('User.products');
+    }
 
     // Trang dịch vụ
     public function services()

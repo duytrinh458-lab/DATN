@@ -1,107 +1,60 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Quản lý sản phẩm</title>
+@extends('Admin.layouts.admin')
 
-    <style>
-        body {
-            font-family: Arial;
-            background: #f5f6fa;
-            padding: 30px;
-        }
+@section('title', 'Danh sách sản phẩm')
 
-        h1 {
-            margin-bottom: 20px;
-        }
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/admin/products.css') }}">
+@endpush
 
-        a {
-            text-decoration: none;
-        }
+@section('content')
+<div class="product-list">
+    <h1>Danh sách sản phẩm</h1>
+    <div class="actions">
+        <a href="{{ route('admin.products.create') }}" class="btn-add">+ Thêm sản phẩm</a>
+    </div>
 
-        .btn-add {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #2ecc71;
-            color: white;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .btn-edit {
-            color: #2980b9;
-            margin-right: 10px;
-        }
-
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        th {
-            background: #2c3e50;
-            color: white;
-            padding: 10px;
-        }
-
-        td {
-            padding: 10px;
-            text-align: center;
-        }
-
-        tr:nth-child(even) {
-            background: #f2f2f2;
-        }
-
-        tr:hover {
-            background: #ecf0f1;
-        }
-    </style>
-</head>
-<body>
-
-<h1>Quản lý sản phẩm</h1>
-
-<a href="{{ route('products.create') }}" class="btn-add">+ Thêm sản phẩm</a>
-
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Tên</th>
-        <th>Giá</th>
-        <th>Hành động</th>
-    </tr>
-
-    @foreach($products as $p)
-    <tr>
-        <td>{{ $p->id }}</td>
-        <td>{{ $p->name }}</td>
-        <td>{{ number_format($p->sale_price) }} đ</td>
-        <td>
-            <a href="{{ route('products.edit', $p->id) }}" class="btn-edit">Sửa</a>
-
-            <form action="{{ route('products.destroy', $p->id) }}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button class="btn-delete" onclick="return confirm('Xoá sản phẩm?')">
-                    Xoá
-                </button>
-            </form>
-        </td>
-    </tr>
-    @endforeach
-</table>
-
-</body>
-</html>
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên máy bay</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thời gian bay</th>
+                <th>Camera MP</th>
+                <th>Ảnh</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($products as $product)
+            <tr>
+                <td>{{ $product->id }}</td>
+                <td>{{ $product->name }}</td>
+                <td>{{ number_format($product->price, 0, ',', '.') }}₫</td>
+                <td>{{ $product->quantity }}</td>
+                <td>{{ $product->flight_time }}</td>
+                <td>{{ $product->camera_mp }}</td>
+                <td>
+                    @if($product->image1)
+                        <img src="{{ asset('uploads/products/' . $product->image1) }}" class="thumb" alt="">
+                    @endif
+                </td>
+                <td>
+                    <a href="{{ route('admin.products.edit', $product->id) }}" class="btn-edit">Sửa</a>
+                    <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-delete" onclick="return confirm('Xóa sản phẩm này?')">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8">Chưa có sản phẩm nào.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+@endsection
