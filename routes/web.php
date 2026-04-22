@@ -8,51 +8,49 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Auth\Middleware\Authenticate;
 
-// Trang mặc định
+// 1. Trang mặc định - Duy có thể sửa thành redirect sang login nếu muốn
 Route::get('/', function () {
     return view('welcome');
 });
 
-// ================= AUTH VIEW =================
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/register', [AuthController::class, 'showRegister']);
-Route::get('/forgot', [AuthController::class, 'showForgot']);
+// 2. ================= AUTH VIEW & LOGIC =================
+// Đã khớp với folder Login (viết hoa chữ L) trong Controller của Duy
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/login', 'showLogin')->name('login');
+    Route::get('/register', 'showRegister')->name('register');
+    Route::get('/forgot', 'showForgot')->name('forgot');
 
-// ================= REGISTER OTP =================
-Route::post('/send-otp-register', [AuthController::class, 'sendOtpRegister']);
-Route::post('/verify-otp-register', [AuthController::class, 'verifyOtpRegister']);
-
-// ================= LOGIN =================
-Route::post('/login', [AuthController::class, 'login']);
-
-// ================= FORGOT PASSWORD =================
-Route::post('/forgot-password/send-otp', [AuthController::class, 'sendOtpForgotPassword']);
-Route::post('/forgot-password/verify-otp', [AuthController::class, 'verifyOtpForgotPassword']);
-
-
-
-// ================= ADMIN =================
-Route::prefix('admin')
-->name('admin.') // 🔥 THÊM DÒNG NÀY VÀO
-->middleware([Authenticate::class, AdminMiddleware::class])
-->group(function () {
-
-        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::post('/login', 'login');
+    Route::post('/send-otp-register', 'sendOtpRegister');
+    Route::post('/verify-otp-register', 'verifyOtpRegister');
+    Route::post('/forgot-password/send-otp', 'sendOtpForgotPassword');
+    Route::post('/forgot-password/verify-otp', 'verifyOtpForgotPassword');
     
-    // 🔥 FIX LỖI Ở ĐÂY (bỏ show)
-    Route::resource('products', ProductController::class)->except(['show']);
+    Route::get('/change-password', 'showChangePasswordForm')->name('password.change.form');
+    Route::post('/change-password', 'updatePassword')->name('password.change.update');
+});
+
+// 3. ================= ADMIN AREA =================
+// Đã thêm ->name('admin.') để fix lỗi "Route not defined" tận gốc
+Route::prefix('admin')
+    ->name('admin.') 
+    ->middleware([Authenticate::class, AdminMiddleware::class])
+    ->group(function () {
+        
+        // Trang chủ Admin: route('admin.dashboard')
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        
+        // Quản lý sản phẩm: route('admin.products.index'), route('admin.products.create')...
+        Route::resource('products', ProductController::class)->except(['show']);
     });
 
-    // ================= User =================
-    // ================= HOME =================
-    Route::get('/home', [HomeController::class, 'index'])
-    ->middleware(Authenticate::class)
-    ->name('home');
+// 4. ================= USER AREA =================
+Route::middleware([Authenticate::class])->group(function () {
     
+    // Trang chủ User: route('home')
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     
-    // ================= PRODUCTS =================
-    Route::get('/products', [ProductController::class, 'products']);
-
-
-
-
+    // Trang danh sách sản phẩm cho User xem
+    // Duy lưu ý: Đường dẫn này trỏ vào ProductController trong folder Admin theo file của Duy
+    Route::get('/products', [ProductController::class, 'products'])->name('user.products');
+});

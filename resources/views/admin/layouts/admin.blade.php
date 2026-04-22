@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>@yield('title', 'Admin - Vanguard UAV')</title>
-    <link rel="stylesheet" href="{{ asset('css/admin/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/admin/admin.css') }}">
     @stack('styles')
 </head>
 <body>

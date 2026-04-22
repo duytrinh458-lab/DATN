@@ -9,25 +9,40 @@ use App\Models\ProductImage;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\File; // Thêm thư viện để xóa file ảnh
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
+    // ================= USER (Phần Duy ưu tiên) =================
+
+    // Hiển thị danh sách sản phẩm cho khách hàng
+    public function products()
+    {
+        // Lấy sản phẩm kèm theo ảnh và phân loại
+        $products = Product::with(['images', 'category'])
+            ->where('status', 'active')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        // Trỏ vào đúng folder User (viết hoa chữ U)
+        return view('User.products', compact('products'));
+    }
+
     // ================= ADMIN =================
 
-    // 1. Danh sách sản phẩm
+    // 1. Danh sách sản phẩm cho Admin
     public function index()
     {
-        // Sắp xếp ID mới nhất lên đầu cho Duy dễ quản lý
         $products = Product::with(['category', 'images'])->orderBy('id', 'desc')->get();
-        return view('admin.products.index', compact('products'));
+        // Sửa thành Admin (viết hoa chữ A)
+        return view('Admin.products.index', compact('products'));
     }
 
     // 2. Form thêm mới
     public function create()
     {
         $categories = Category::all();
-        return view('admin.products.create', compact('categories'));
+        return view('Admin.products.create', compact('categories'));
     }
 
     // 3. Lưu sản phẩm mới
@@ -37,13 +52,12 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'category_id' => 'required',
             'sale_price' => 'required|numeric',
-            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Bắt buộc ảnh chính
+            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Tạo sản phẩm (Thêm đầy đủ thông số UAV của Duy)
             $product = Product::create([
                 'name' => $request->name,
                 'category_id' => $request->category_id,
@@ -53,11 +67,10 @@ class ProductController extends Controller
                 'sku' => $request->sku ?? 'UAV-' . strtoupper(Str::random(8)),
                 'stock' => $request->stock ?? 0,
                 'status' => $request->status ?? 'active',
-                'flight_time' => $request->flight_time, // Thông số bay
-                'camera_mp' => $request->camera_mp,     // Thông số camera
+                'flight_time' => $request->flight_time,
+                'camera_mp' => $request->camera_mp,
             ]);
 
-            // Upload tối đa 4 ảnh
             $imageData = ['product_id' => $product->id];
             for ($i = 1; $i <= 4; $i++) {
                 if ($request->hasFile("image$i")) {
@@ -72,7 +85,8 @@ class ProductController extends Controller
             ProductImage::create($imageData);
 
             DB::commit();
-            return redirect()->route('products.index')->with('success', 'Thêm UAV mới thành công!');
+            // Redirect về route có tiền tố admin.
+            return redirect()->route('admin.products.index')->with('success', 'Thêm UAV mới thành công!');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
@@ -83,9 +97,8 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $categories = Category::all();
-        // Lấy thêm thông tin ảnh để Duy hiển thị ra form sửa
         $product->load('images');
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('Admin.products.edit', compact('product', 'categories'));
     }
 
     // 5. Cập nhật sản phẩm
@@ -97,7 +110,6 @@ class ProductController extends Controller
             'sale_price' => 'required|numeric',
         ]);
 
-        // Cập nhật thông tin cơ bản và thông số kỹ thuật
         $product->update([
             'name' => $request->name,
             'category_id' => $request->category_id,
@@ -110,17 +122,15 @@ class ProductController extends Controller
             'camera_mp' => $request->camera_mp,
         ]);
 
-        // Phần xử lý cập nhật ảnh mới Duy có thể bổ sung sau nếu cần
-        return redirect()->route('products.index')->with('success', 'Cập nhật UAV thành công!');
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật UAV thành công!');
     }
 
-    // 6. Xoá sản phẩm (Xoá cả ảnh vật lý)
+    // 6. Xoá sản phẩm
     public function destroy(Product $product)
     {
         try {
             DB::beginTransaction();
             
-            // Xóa file ảnh trong thư mục uploads trước
             $images = ProductImage::where('product_id', $product->id)->first();
             if ($images) {
                 for ($i = 1; $i <= 4; $i++) {
@@ -135,7 +145,7 @@ class ProductController extends Controller
             $product->delete();
             
             DB::commit();
-            return redirect()->route('products.index')->with('success', 'Đã xóa UAV và các tệp liên quan!');
+            return redirect()->route('admin.products.index')->with('success', 'Đã xóa UAV!');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Không thể xóa: ' . $e->getMessage());

@@ -1,8 +1,9 @@
-@extends('layouts.app')
+@extends('User.layouts.app')
 
 @section('title', 'Trang chủ')
 
 @push('styles')
+{{-- Đã đảm bảo đường dẫn Css viết hoa chữ C khớp với thư mục public/Css --}}
 <link rel="stylesheet" href="{{ asset('Css/User/home.css') }}">
 @endpush
 
@@ -11,7 +12,8 @@
     <div class="banner-text">
         <h1>Tương lai của những chuyến bay</h1>
         <p>Khám phá công nghệ UAV tiên tiến, mang lại trải nghiệm bay hiện đại và an toàn.</p>
-        <a href="{{ url('/products') }}" class="btn-primary">Xem sản phẩm</a>
+        {{-- Link này sẽ trỏ đến route user.products mà mình đã đặt tên trong web.php --}}
+        <a href="{{ route('user.products') }}" class="btn-primary">Xem sản phẩm</a>
     </div>
 </div>
 
@@ -21,7 +23,7 @@
         <p>Chuyến bay đã thực hiện</p>
     </div>
     <div class="stat-box">
-        <h2>15.4+</h2>
+        <h2>15.4k+</h2> {{-- Mình thêm chữ k cho hợp lý về con số khách hàng --}}
         <p>Khách hàng tin tưởng</p>
     </div>
 </div>

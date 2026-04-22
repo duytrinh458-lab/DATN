@@ -1,14 +1,14 @@
-@extends('layouts.app')
+@extends('User.layouts.app')
 
 @section('title', 'Sản phẩm')
 
 @push('styles')
+{{-- Đã sửa đường dẫn Css viết hoa chữ C cho đúng thực tế folder của Duy --}}
 <link rel="stylesheet" href="{{ asset('Css/User/products.css') }}">
 @endpush
 
 @section('content')
 <div class="product-container">
-    <!-- Sidebar bộ lọc -->
     <aside class="filter-sidebar">
         <h3>Bộ lọc</h3>
         <ul>
@@ -26,50 +26,23 @@
         </div>
     </aside>
 
-    <!-- Grid sản phẩm -->
     <section class="product-grid">
-        <div class="product-card">
-            <img src="{{ asset('images/uav1.jpg') }}" alt="Vanguard X9 Phantom">
-            <h3>Vanguard X9 Phantom</h3>
-            <p>Surveillance Unit</p>
-            <span class="price">24,500,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
-        <div class="product-card">
-            <img src="{{ asset('images/uav2.jpg') }}" alt="Keiula Mini S8">
-            <h3>Keiula Mini S8</h3>
-            <p>Lightweight Scout</p>
-            <span class="price">42,900,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
-        <div class="product-card">
-            <img src="{{ asset('images/uav3.jpg') }}" alt="Titan Cargo MK-II">
-            <h3>Titan Cargo MK-II</h3>
-            <p>Industrial Logistics</p>
-            <span class="price">89,000,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
-        <div class="product-card">
-            <img src="{{ asset('images/uav4.jpg') }}" alt="Apex Racer FPV">
-            <h3>Apex Racer FPV</h3>
-            <p>Extreme Performance</p>
-            <span class="price">18,200,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
-        <div class="product-card">
-            <img src="{{ asset('images/uav5.jpg') }}" alt="Oracle Cinema Pro">
-            <h3>Oracle Cinema Pro</h3>
-            <p>Mobile Production</p>
-            <span class="price">56,000,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
-        <div class="product-card">
-            <img src="{{ asset('images/uav6.jpg') }}" alt="Cadet Trainer V2">
-            <h3>Cadet Trainer V2</h3>
-            <p>Education Mastery</p>
-            <span class="price">7,500,000₫</span>
-            <button class="btn-buy">Mua ngay</button>
-        </div>
+        @isset($products)
+            @foreach($products as $product)
+                <div class="product-card">
+                    {{-- Lấy ảnh từ folder public/images, nếu không có ảnh thì lấy ảnh mặc định --}}
+                    <img src="{{ $product->image ? asset('images/' . $product->image) : asset('images/uav1.jpg') }}" alt="{{ $product->name }}">
+                    
+                    <h3>{{ $product->name }}</h3>
+                    <p>{{ $product->description }}</p>
+                    <span class="price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                    
+                    <button class="btn-buy">Mua ngay</button>
+                </div>
+            @endforeach
+        @else
+            <p>Hiện chưa có sản phẩm nào.</p>
+        @endisset
     </section>
 </div>
 @endsection
