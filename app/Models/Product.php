@@ -15,10 +15,10 @@ class Product extends Model
         'flight_time', 'max_altitude', 'camera_mp', 'frequency', 'weight'
     ];
 
-    // Quan hệ với bảng ProductImage (1 sản phẩm - 1 dòng chứa 4 ảnh)
+    // 🔥 SỬA Ở ĐÂY: 1 sản phẩm có NHIỀU ảnh
     public function images()
     {
-        return $this->hasOne(ProductImage::class, 'product_id');
+        return $this->hasMany(ProductImage::class, 'product_id')->orderBy('position');
     }
 
     // Quan hệ với Category
