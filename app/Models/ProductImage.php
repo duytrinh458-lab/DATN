@@ -9,21 +9,27 @@ class ProductImage extends Model
 {
     use HasFactory;
 
-    // Tên bảng trong Database của Duy là product_images
     protected $table = 'product_images';
 
-    // Bảng này Duy không thiết kế cột created_at và updated_at nên cần tắt nó đi
-    public $timestamps = false;
+    // 1. Tắt timestamps mặc định của Laravel (vì nó đòi cả 2 cột)
+    public $timestamps = false; 
 
     protected $fillable = [
         'product_id', 
-        'image_url1', 
-        'image_url2', 
-        'image_url3', 
-        'image_url4'
+        'image_url', 
+        'position',
+        'created_at' // Cho phép lưu cột này thủ công
     ];
 
-    // Quan hệ ngược lại với Product (nếu cần)
+    // 2. Tự động thêm ngày tạo khi lưu ảnh mới
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            $model->created_at = now();
+        });
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');

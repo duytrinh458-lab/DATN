@@ -1,0 +1,246 @@
+/* ========================================
+   PRODUCTS INDEX - UPGRADED PREMIUM
+========================================= */
+
+/* Header */
+.product-list h1 {
+    margin-bottom: 24px;
+    color: #1f2d3d;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1f2d3d, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Actions */
+.actions {
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, #00ccff, #0099cc);
+    color: #fff;
+    padding: 16px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 25px rgba(0, 204, 255, 0.4);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: none;
+}
+
+.btn-add:hover {
+    background: linear-gradient(135deg, #0099cc, #0077aa);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 204, 255, 0.5);
+}
+
+/* Table - Nâng cấp */
+.product-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.product-table th {
+    background: linear-gradient(135deg, #1f2d3d, #2d4a7a);
+    color: #fff;
+    padding: 20px 24px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border: none;
+    position: relative;
+}
+
+.product-table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ccff, transparent);
+}
+
+.product-table td {
+    padding: 24px 24px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    vertical-align: middle;
+    transition: background 0.2s ease;
+}
+
+.product-table tr:hover td {
+    background: rgba(0, 204, 255, 0.05);
+}
+
+/* Product Name */
+.product-table .product-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1f2d3d;
+    max-width: 280px;
+}
+
+.product-table .product-name:hover {
+    color: #00ccff;
+}
+
+/* Price */
+.product-table .price {
+    font-weight: 800;
+    font-size: 20px;
+    color: #00ccff;
+    font-family: 'SF Pro Display', -apple-system, sans-serif;
+}
+
+/* Quantity Status */
+.quantity-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-in-stock {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.status-low-stock {
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    color: #856404;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.status-out-stock {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+}
+
+/* Thumbnail */
+.thumb {
+    width: 68px;
+    height: 68px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.8);
+}
+
+.thumb:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+}
+
+/* Action Buttons - Nâng cấp */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-edit, .btn-delete {
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-edit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+    background: linear-gradient(135deg, #218838, #1ea085);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.btn-delete:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    background: linear-gradient(135deg, #c82333, #bd2130);
+}
+
+/* Empty State */
+.product-table .empty-state {
+    text-align: center;
+    padding: 80px 0;
+}
+
+.empty-state-icon {
+    font-size: 80px;
+    color: var(--blue-pale);
+    margin-bottom: 24px;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .product-table th,
+    .product-table td { padding: 18px 20px; }
+    .thumb { width: 56px; height: 56px; }
+}
+
+@media (max-width: 768px) {
+    .actions { flex-direction: column; align-items: stretch; }
+    .btn-add { justify-content: center; }
+    .product-table { font-size: 14px; }
+    .product-table th,
+    .product-table td { padding: 16px 12px; }
+    .action-buttons { flex-direction: column; gap: 8px; }
+}
+
+@media (max-width: 480px) {
+    .admin-main { padding: 20px; }
+    .product-table th:nth-child(1),
+    .product-table td:nth-child(1) { display: none; }
+}

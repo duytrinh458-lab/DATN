@@ -8,88 +8,82 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
-    // ================= USER (Phần Duy ưu tiên) =================
-
-    // Hiển thị danh sách sản phẩm cho khách hàng
-    public function products()
-    {
-        // Lấy sản phẩm kèm theo ảnh và phân loại
-        $products = Product::with(['images', 'category'])
-            ->where('status', 'active')
-            ->orderBy('id', 'desc')
-            ->get();
-
-        // Trỏ vào đúng folder User (viết hoa chữ U)
-        return view('User.products', compact('products'));
-    }
-
     // ================= ADMIN =================
 
-    // 1. Danh sách sản phẩm cho Admin
+    // 1. Danh sách sản phẩm (Dành cho trang quản lý)
     public function index()
     {
+        // Lấy sản phẩm kèm theo category và ảnh đầu tiên (theo quan hệ hasOne images trong Model)
         $products = Product::with(['category', 'images'])->orderBy('id', 'desc')->get();
-        // Sửa thành Admin (viết hoa chữ A)
         return view('Admin.products.index', compact('products'));
     }
 
-    // 2. Form thêm mới
+    // 2. Hiển thị Form thêm mới
     public function create()
     {
         $categories = Category::all();
         return view('Admin.products.create', compact('categories'));
     }
 
-    // 3. Lưu sản phẩm mới
+    // 3. Xử lý lưu sản phẩm vào Database
     public function store(Request $request)
     {
+        // Kiểm tra dữ liệu từ Form gửi lên
         $request->validate([
             'name' => 'required|max:255',
             'category_id' => 'required',
             'sale_price' => 'required|numeric',
-            'image1' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'sku' => 'required|unique:products,sku',
+            'image1' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'sku.unique' => 'Mã SKU này đã tồn tại, vui lòng nhập mã khác.',
+            'image1.required' => 'Vui lòng chọn ảnh đại diện cho máy bay.',
         ]);
 
         try {
             DB::beginTransaction();
 
+            // A. Lưu vào bảng products (Khớp chính xác các cột trong SQL của Duy)
             $product = Product::create([
-                'name' => $request->name,
-                'category_id' => $request->category_id,
-                'description' => $request->description,
-                'original_price' => $request->original_price ?? 0,
-                'sale_price' => $request->sale_price,
-                'sku' => $request->sku ?? 'UAV-' . strtoupper(Str::random(8)),
-                'stock' => $request->stock ?? 0,
-                'status' => $request->status ?? 'active',
-                'flight_time' => $request->flight_time,
-                'camera_mp' => $request->camera_mp,
+                'category_id'    => $request->category_id,
+                'name'           => $request->name,
+                'sku'            => $request->sku,
+                'description'    => $request->description,
+                'original_price' => $request->original_price ?? $request->sale_price,
+                'sale_price'     => $request->sale_price,
+                'stock'          => $request->stock ?? 0,
+                'status'         => 'active', // Mặc định trạng thái hoạt động
+                'flight_time'    => $request->flight_time,
+                'camera_mp'      => $request->camera_mp,
             ]);
 
-            $imageData = ['product_id' => $product->id];
-            for ($i = 1; $i <= 4; $i++) {
-                if ($request->hasFile("image$i")) {
-                    $file = $request->file("image$i");
-                    $fileName = 'uav_' . time() . "_$i." . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads/products'), $fileName);
-                    $imageData["image_url$i"] = 'uploads/products/' . $fileName;
-                } else {
-                    $imageData["image_url$i"] = null;
-                }
+            // B. Xử lý lưu ảnh vào bảng product_images (Lưu 1 dòng duy nhất cho ảnh chính)
+            if ($request->hasFile('image1')) {
+                $file = $request->file('image1');
+                $fileName = 'uav_' . time() . '.' . $file->getClientOriginalExtension();
+                
+                // Đảm bảo Duy đã tạo thư mục: public/uploads/products
+                $file->move(public_path('uploads/products'), $fileName);
+                $filePath = 'uploads/products/' . $fileName;
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url'  => $filePath, // Cột image_url theo đúng file SQL Duy gửi
+                    'position'   => 1
+                ]);
             }
-            ProductImage::create($imageData);
 
             DB::commit();
-            // Redirect về route có tiền tố admin.
             return redirect()->route('admin.products.index')->with('success', 'Thêm UAV mới thành công!');
+
         } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Lỗi: ' . $e->getMessage())->withInput();
+            // Nếu lỗi, trả về trang cũ kèm thông báo lỗi và giữ lại dữ liệu đã nhập
+            return back()->with('error', 'Lỗi hệ thống: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -108,18 +102,19 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'category_id' => 'required',
             'sale_price' => 'required|numeric',
+            'sku' => 'required|unique:products,sku,' . $product->id,
         ]);
 
         $product->update([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'description' => $request->description,
+            'category_id'    => $request->category_id,
+            'name'           => $request->name,
+            'sku'            => $request->sku,
+            'description'    => $request->description,
             'original_price' => $request->original_price,
-            'sale_price' => $request->sale_price,
-            'stock' => $request->stock,
-            'status' => $request->status,
-            'flight_time' => $request->flight_time,
-            'camera_mp' => $request->camera_mp,
+            'sale_price'     => $request->sale_price,
+            'stock'          => $request->stock,
+            'flight_time'    => $request->flight_time,
+            'camera_mp'      => $request->camera_mp,
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật UAV thành công!');
@@ -131,24 +126,35 @@ class ProductController extends Controller
         try {
             DB::beginTransaction();
             
-            $images = ProductImage::where('product_id', $product->id)->first();
-            if ($images) {
-                for ($i = 1; $i <= 4; $i++) {
-                    $column = "image_url$i";
-                    if ($images->$column && File::exists(public_path($images->$column))) {
-                        File::delete(public_path($images->$column));
-                    }
+            // Xóa file ảnh trong thư mục public trước
+            $images = ProductImage::where('product_id', $product->id)->get();
+            foreach ($images as $img) {
+                if (File::exists(public_path($img->image_url))) {
+                    File::delete(public_path($img->image_url));
                 }
-                $images->delete();
+                $img->delete();
             }
 
             $product->delete();
             
             DB::commit();
-            return redirect()->route('admin.products.index')->with('success', 'Đã xóa UAV!');
+            return redirect()->route('admin.products.index')->with('success', 'Đã xóa UAV thành công!');
         } catch (\Exception $e) {
             DB::rollback();
             return back()->with('error', 'Không thể xóa: ' . $e->getMessage());
         }
+    }
+
+    // ================= USER =================
+
+    // Hiển thị danh sách sản phẩm cho khách hàng
+    public function products()
+    {
+        $products = Product::with(['images', 'category'])
+            ->where('status', 'active')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('User.products', compact('products'));
     }
 }
