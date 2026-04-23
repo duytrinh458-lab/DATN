@@ -142,7 +142,14 @@ public function updatePassword(Request $request)
     $user->is_first_login = 0;
     $user->save();
 
-    return redirect()->route('home')->with('success', 'Đổi mật khẩu thành công!');
+    // 🔥 PHÂN QUYỀN SAU KHI ĐỔI MẬT KHẨU
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Đổi mật khẩu thành công!');
+    }
+
+    return redirect()->route('home')
+        ->with('success', 'Đổi mật khẩu thành công!');
 }
 
     // ================= FORGOT PASSWORD =================
