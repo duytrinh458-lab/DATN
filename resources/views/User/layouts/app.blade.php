@@ -19,6 +19,7 @@
                 <li><a href="{{ url('/services') }}">Dịch vụ</a></li>
                 <li><a href="{{ url('/news') }}">Tin tức</a></li>
                 <li><a href="{{ url('/contact') }}">Liên hệ</a></li>
+                <li><a href="{{ url('/profile') }}">Thông tin tài khoản</a></li>
             </ul>
             <div class="login-btn">
                 <a href="{{ url('/login') }}">Đăng Xuất</a>
