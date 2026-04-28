@@ -2,51 +2,67 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Cửa Hàng UAV')</title>
-    <!-- CSS chung -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'UAV Store')</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
     <link rel="stylesheet" href="{{ asset('Css/User/style.css') }}">
-    <!-- CSS riêng từng trang -->
     @stack('styles')
 </head>
 <body class="dark-theme">
-    <!-- Header -->
-    <header>
+    <header class="mission-header">
         <nav class="navbar">
-            <div class="logo">Cửa Hàng UAV</div>
+            <div class="logo-group">
+                <div class="logo">UAV STORE</div>
+                <div class="mission-status">
+                    <span class="dot"></span> 
+                </div>
+            </div>
+
             <ul class="nav-links">
-                <li><a href="{{ url('/home') }}">Trang chủ</a></li>
-                <li><a href="{{ url('/products') }}">Sản phẩm</a></li>
-                <li><a href="{{ url('/services') }}">Dịch vụ</a></li>
-                <li><a href="{{ url('/news') }}">Tin tức</a></li>
-                <li><a href="{{ url('/contact') }}">Liên hệ</a></li>
-                <li><a href="{{ url('/profile') }}">Thông tin tài khoản</a></li>
+                <li><a href="{{ url('/home') }}">TRANG CHỦ</a></li>
+                <li><a href="{{ url('/products') }}">SẢN PHẨM</a></li>
+                <li><a href="{{ url('/services') }}">DỊCH VỤ</a></li>
+                <li><a href="{{ url('/news') }}">TIN TỨC</a></li>
             </ul>
-            <div class="login-btn">
-                <a href="{{ url('/login') }}">Đăng Xuất</a>
+
+            <div class="auth-group">
+                <div class="utility-icons">
+                    <a href="{{ url('/cart') }}" class="icon-btn">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                    </a>
+                    <a href="{{ url('/profile') }}" class="icon-btn">
+                        <span class="material-symbols-outlined">monitoring</span>
+                    </a>
+                </div>
+                <div class="divider-v"></div>
+                <a href="{{ url('/login') }}" class="btn-terminal">ĐĂNG XUẤT</a>
             </div>
         </nav>
+        <div class="light-leak"></div>
     </header>
 
-    <!-- Nội dung riêng -->
-    <main>
+    <main class="content-viewport">
         @yield('content')
     </main>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="footer-section">
-            <h4>Khám phá</h4>
-            <p>Drone Camera, Mini Series, Pro Developer</p>
+    <footer class="hud-footer">
+        <div class="footer-top-strip">
+            <div class="footer-item">
+                <span class="label">EXPLORE_SYSTEM:</span>
+                <span class="value">Drone Camera // Mini Series // Pro Dev</span>
+            </div>
+            <div class="footer-item">
+                <span class="label">COMMS_CHANNEL:</span>
+                <span class="value">UAV.com</span>
+            </div>
         </div>
-        <div class="footer-section">
-            <h4>Hỗ trợ</h4>
-            <p>Email: support@aerialvanguard.com</p>
+        <div class="footer-bottom-bar">
+            <div class="copyright">© 2026 UAV STORE // Rất Vui Được Phục Vụ Bạn</div>
+            <div class="coordinates">Mọi Thắc Mắc Liên Hệ Qua SĐT | 19001508</div>
         </div>
-        <div class="footer-section">
-            <h4>Tin tức</h4>
-            <p>Cập nhật công nghệ hàng không mới nhất</p>
-        </div>
-        <p class="copy">© 2026 Cửa Hàng UAV - Công nghệ UAV tiên phong</p>
     </footer>
 
     @stack('scripts')

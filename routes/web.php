@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\User\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\HomeController;
@@ -38,11 +38,19 @@ Route::prefix('admin')
         Route::resource('products', ProductController::class)->except(['show']);
     });
 
-// ================= USER (Cần Đăng nhập mới mua được hàng) =================
+// ================= USER (Tất cả chức năng cần đăng nhập) =================
 Route::middleware([Authenticate::class])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/products', [ProductController::class, 'products'])->name('user.products');
+
+    // ================= GIỎ HÀNG (Đã sửa và thêm đầy đủ) =================
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index'); 
+        Route::post('/add', [CartController::class, 'add'])->name('add'); 
+        Route::delete('/{id}', [CartController::class, 'destroy'])->name('destroy'); 
+        Route::put('/{id}', [CartController::class, 'update'])->name('update'); 
+    });
 
     // ================= ORDERS =================
     Route::prefix('orders')->name('user.orders.')->group(function () {
@@ -54,10 +62,8 @@ Route::middleware([Authenticate::class])->group(function () {
 
     // ================= PROFILE =================
     Route::prefix('profile')->name('user.profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('index'); // Đường dẫn: /profile
-        Route::post('/update', [ProfileController::class, 'update'])->name('update'); // Đường dẫn: /profile/update
-        
-        // Đã sửa lại dòng này: Bỏ /profile dư thừa ở đầu
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::post('/update', [ProfileController::class, 'update'])->name('update'); 
         Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store'); 
     });
 });
