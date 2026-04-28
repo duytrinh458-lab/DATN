@@ -65,6 +65,20 @@
             color: #00e5ff;
             margin-bottom: 10px;
         }
+
+        .forgot-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #28a745;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.forgot-link:hover {
+    color: #006eff;
+    text-decoration: underline;
+}
     </style>
 </head>
 <body>
@@ -95,6 +109,7 @@
         <input type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu" required>
 
         <button type="submit">Đổi mật khẩu</button>
+       <a href="{{ url('/forgot') }}" class="forgot-link">Quên mật khẩu?</a>
     </form>
 
 </div>

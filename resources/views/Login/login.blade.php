@@ -35,7 +35,7 @@
             display: block;
         }
         input {
-            width: 100%;
+            width: 93%;
             padding: 12px;
             border: 1px solid #00bcd4;
             border-radius: 8px;

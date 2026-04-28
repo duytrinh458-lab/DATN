@@ -27,7 +27,9 @@ class AuthController extends Controller
     public function sendOtpRegister(Request $request)
     {
         $request->validate([
-            'phone' => 'required|numeric|digits_between:10,11'
+            'phone' => 'required|numeric|digits_between:10,11|unique:users,phone'
+        ], [
+            'phone.unique' => 'Số điện thoại đã tồn tại'
         ]);
 
         $otp = rand(100000, 999999);
@@ -56,10 +58,17 @@ class AuthController extends Controller
 
         $request->validate([
             'otp_code' => 'required|digits:6',
-            'full_name' => 'required',
+            'full_name' => 'nullable|string|max:255', // ✅ cho phép trống
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
+
+        // check trùng phone
+        if (User::where('phone', $phone)->exists()) {
+            return redirect('/register')->withErrors([
+                'phone' => 'Số điện thoại đã tồn tại'
+            ]);
+        }
 
         $otp = DB::table('otp_verifications')
             ->where('phone', $phone)
@@ -73,19 +82,23 @@ class AuthController extends Controller
             return redirect('/register')->with('error', 'OTP sai hoặc hết hạn');
         }
 
-        DB::table('users')->insert([
-            'username' => $request->email,
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'phone' => $phone,
-            'password' => Hash::make($request->password),
-            'role' => 'customer',
-            'is_verified' => 1,
-            'is_first_login' => 1, // 🔥 SỬA Ở ĐÂY
-            'status' => 'active',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        try {
+            User::create([
+                'username' => explode('@', $request->email)[0], // ✅ tự tạo username
+                'full_name' => $request->full_name ?? null,     // ✅ cho phép null
+                'email' => $request->email,
+                'phone' => $phone,
+                'password' => Hash::make($request->password),
+                'role' => 'customer',
+                'is_verified' => 1,
+                'is_first_login' => 1,
+                'status' => 'active',
+            ]);
+        } catch (\Exception $e) {
+            return redirect('/register')->withErrors([
+                'error' => 'Lỗi tạo tài khoản'
+            ]);
+        }
 
         DB::table('otp_verifications')
             ->where('id', $otp->id)
@@ -108,12 +121,10 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            // 🔥 BẮT ĐỔI MẬT KHẨU LẦN ĐẦU
             if ($user->is_first_login) {
                 return redirect()->route('password.change.form');
             }
 
-            // 🔥 PHÂN QUYỀN
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
@@ -125,32 +136,27 @@ class AuthController extends Controller
     }
 
     // ================= CHANGE PASSWORD =================
-public function showChangePasswordForm()
-{
-    return view('Login.change-password');
-}
-
-public function updatePassword(Request $request)
-{
-    $request->validate([
-        'password' => 'required|min:6|confirmed'
-    ]);
-
-    $user = Auth::user();
-
-    $user->password = Hash::make($request->password);
-    $user->is_first_login = 0;
-    $user->save();
-
-    // 🔥 PHÂN QUYỀN SAU KHI ĐỔI MẬT KHẨU
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard')
-            ->with('success', 'Đổi mật khẩu thành công!');
+    public function showChangePasswordForm()
+    {
+        return view('Login.change-password');
     }
 
-    return redirect()->route('home')
-        ->with('success', 'Đổi mật khẩu thành công!');
-}
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        $user = Auth::user();
+
+        $user->password = Hash::make($request->password);
+        $user->is_first_login = 0;
+        $user->save();
+
+        return $user->role === 'admin'
+            ? redirect()->route('admin.dashboard')->with('success', 'Đổi mật khẩu thành công!')
+            : redirect()->route('home')->with('success', 'Đổi mật khẩu thành công!');
+    }
 
     // ================= FORGOT PASSWORD =================
     public function sendOtpForgotPassword(Request $request)

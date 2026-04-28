@@ -33,9 +33,10 @@ a:hover {
         h2 { text-align: center; color: #00bcd4; }
         h3 { color: #4dd0e1; margin-top: 20px; }
         input {
-            width: 100%;
+            width: 95%;
             padding: 10px;
             margin-bottom: 10px;
+            border-radius: 8px;
         }
         button {
             width: 100%;
@@ -44,6 +45,7 @@ a:hover {
             border: none;
             color: white;
             cursor: pointer;
+            border-radius: 8px;
         }
         .alert-success { color: #00e5ff; }
         .alert-error { color: #ff8a80; }

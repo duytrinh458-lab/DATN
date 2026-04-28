@@ -45,7 +45,7 @@ a:hover {
             margin-top: 20px;
         }
         input {
-            width: 100%;
+            width: 94%;
             padding: 12px;
             margin-bottom: 12px;
             border-radius: 8px;
@@ -57,6 +57,7 @@ a:hover {
             border: none;
             color: white;
             cursor: pointer;
+            border-radius: 8px;
         }
         .alert-success {
             background: #2e7d32;
