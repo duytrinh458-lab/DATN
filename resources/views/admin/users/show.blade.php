@@ -1,148 +1,94 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Chi tiết user</title>
+@extends('Admin.layouts.admin')
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            margin: 0;
-            padding: 0;
-        }
+@section('title', 'Chi tiết người dùng #' . $user->id)
 
-        .user-card {
-            max-width: 500px;
-            margin: 60px auto;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            color: #e0f7fa;
-        }
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+@endpush
 
-        h2 {
-            text-align: center;
-            color: #00e5ff;
-            margin-bottom: 15px;
-        }
+@section('content')
+<div class="user-detail-page">
+    <header class="admin-header">
+        <div class="header-info">
+            <h1>Hồ sơ người dùng</h1>
+            <p>Mã hệ thống: <span class="user-id">#{{ $user->id }}</span></p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ route('admin.users.index') }}" class="btn-back-text">
+                <i class="fas fa-chevron-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </header>
 
-        p {
-            margin: 8px 0;
-        }
+    <div class="detail-grid">
+        <div class="card shadow-premium info-card">
+            <div class="user-avatar-section">
+                <div class="avatar-placeholder">
+                    {{ strtoupper(substr($user->full_name, 0, 1)) }}
+                </div>
+                <h2 class="user-display-name">{{ $user->full_name }}</h2>
+                <span class="badge {{ $user->role == 'admin' ? 'badge-admin' : 'badge-user' }}">
+                    {{ strtoupper($user->role) }}
+                </span>
+            </div>
 
-        hr {
-            border: 1px solid rgba(255,255,255,0.1);
-            margin: 15px 0;
-        }
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ $user->email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Điện thoại:</span>
+                    <span class="info-value">{{ $user->phone }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Ngày tham gia:</span>
+                    <span class="info-value">{{ $user->created_at ? $user->created_at->format('d/m/Y') : 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
 
-        label {
-            display: block;
-            margin-top: 10px;
-        }
+        <div class="card shadow-premium action-card">
+            <div class="card-header">
+                <h3 class="card-title">Cấu hình tài khoản</h3>
+            </div>
+            
+            <form method="POST" action="{{ route('admin.users.update', $user->id) }}" class="uav-form">
+                @csrf
+                <div class="form-group">
+                    <label>Phân quyền truy cập</label>
+                    <select name="role">
+                        <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>Người dùng (User)</option>
+                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Quản trị viên (Admin)</option>
+                    </select>
+                </div>
 
-        select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
+                <div class="form-group">
+                    <label>Trạng thái hoạt động</label>
+                    <select name="status">
+                        <option value="active" {{ $user->status == 'active' ? 'selected' : '' }}>Đang hoạt động (Active)</option>
+                        <option value="inactive" {{ $user->status == 'inactive' ? 'selected' : '' }}>Tạm khóa (Inactive)</option>
+                    </select>
+                </div>
 
-        .btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-update">
+                        <i class="fas fa-sync-alt"></i> Lưu thay đổi
+                    </button>
+                </div>
+            </form>
 
-        .btn-update {
-            background: #00bcd4;
-        }
-
-        .btn-update:hover {
-            background: #00e5ff;
-        }
-
-        .btn-delete {
-            background: #ff5252;
-            margin-top: 10px;
-        }
-
-        .btn-delete:hover {
-            background: #ff1744;
-        }
-
-        /* NÚT QUAY LẠI */
-        .btn-back {
-            display: block;
-            text-align: center;
-            padding: 10px;
-            margin-bottom: 15px;
-            background: rgba(255,255,255,0.1);
-            color: #1bff60;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        .btn-back:hover {
-            background: rgba(255, 0, 0, 0.2);
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="user-card">
-
-    <h2>Chi tiết user #{{ $user->id }}</h2>
-
-    <!-- NÚT QUAY LẠI -->
-    <a href="{{ route('admin.users.index') }}" class="btn-back">
-        ← Quay lại danh sách
-    </a>
-
-    <p><b>Tên:</b> {{ $user->full_name }}</p>
-    <p><b>Email:</b> {{ $user->email }}</p>
-    <p><b>SĐT:</b> {{ $user->phone }}</p>
-
-    <hr>
-
-    <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
-        @csrf
-
-        <label>Role:</label>
-        <select name="role">
-            <option value="customer" {{ $user->role=='customer'?'selected':'' }}>User</option>
-            <option value="admin" {{ $user->role=='admin'?'selected':'' }}>Admin</option>
-        </select>
-
-        <label>Trạng thái:</label>
-        <select name="status">
-            <option value="active" {{ $user->status=='active'?'selected':'' }}>Active</option>
-            <option value="inactive" {{ $user->status=='inactive'?'selected':'' }}>Khoá</option>
-        </select>
-
-        <button type="submit" class="btn btn-update">Cập nhật</button>
-    </form>
-
-    <form method="POST" action="{{ route('admin.users.delete', $user->id) }}">
-        @csrf
-        <button onclick="return confirm('Xoá user?')" class="btn btn-delete">
-            Xoá user
-        </button>
-    </form>
-
+            <div class="danger-zone">
+                <h4>Vùng nguy hiểm</h4>
+                <p>Hành động này không thể hoàn tác. Vui lòng cẩn thận.</p>
+                <form method="POST" action="{{ route('admin.users.delete', $user->id) }}">
+                    @csrf
+                    <button onclick="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản này?')" class="btn-delete-link">
+                        Xóa tài khoản này
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
-
-</body>
-</html>
+@endsection

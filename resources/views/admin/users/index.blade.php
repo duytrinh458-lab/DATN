@@ -1,177 +1,86 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Quản lý người dùng</title>
+@extends('Admin.layouts.admin')
 
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, sans-serif;
-        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-        margin: 0;
-        padding: 20px;
-        color: white;
-    }
+@section('title', 'Hệ thống Quản trị - Vanguard UAV')
 
-    h2 {
-        color: #00e5ff;
-        margin-bottom: 20px;
-    }
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@endpush
 
-    .success {
-        color: #00e676;
-        margin-bottom: 15px;
-        font-weight: bold;
-    }
+@section('content')
+    <div class="user-management-page">
+        <header class="admin-header">
+            <div class="header-info">
+                <h1>Quản lý người dùng</h1>
+                <p>Quản lý quyền hạn và trạng thái tài khoản hệ thống</p>
+            </div>
+            <div class="header-actions">
+                <a href="{{ route('admin.users.create') }}" class="btn btn-add-new">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Thêm người dùng</span>
+                </a>
+            </div>
+        </header>
 
-    .table-container {
-        background: rgba(0,0,0,0.4);
-        border-radius: 12px;
-        padding: 15px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    }
+        @if(session('success'))
+            <div class="alert success-alert">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
+        @endif
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    thead {
-        background: #00bcd4;
-    }
-
-    th {
-        padding: 12px;
-        text-align: left;
-        color: white;
-    }
-
-    td {
-        padding: 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        color: #ffffff;
-    }
-
-    tr:hover {
-        background: rgba(255,255,255,0.08);
-    }
-
-    .center {
-        text-align: center;
-    }
-
-    .badge {
-        padding: 4px 8px;
-        border-radius: 6px;
-        color: white;
-        font-size: 13px;
-    }
-
-    .role-admin {
-        background: #ff5252;
-    }
-
-    .role-user {
-        background: #00c853;
-    }
-
-    .status-active {
-        background: #00c853;
-    }
-
-    .status-inactive {
-        background: #9e9e9e;
-    }
-
-    .btn {
-        display: inline-block;
-        background: #00bcd4;
-        padding: 6px 12px;
-        color: white;
-        text-decoration: none;
-        border-radius: 6px;
-        transition: 0.3s;
-    }
-
-    .btn:hover {
-        background: #00e5ff;
-    }
-
-    /* 🔥 Nút thêm user góc phải */
-    .btn-add {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: #00c853;
-        padding: 12px 18px;
-        border-radius: 50px;
-        font-weight: bold;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .btn-add:hover {
-        background: #00e676;
-    }
-</style>
-</head>
-
-<body>
-
-<h2>Quản lý người dùng</h2>
-
-@if(session('success'))
-    <p class="success">{{ session('success') }}</p>
-@endif
-
-<div class="table-container">
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Tên</th>
-                <th>Email</th>
-                <th>SĐT</th>
-                <th class="center">Role</th>
-                <th class="center">Trạng thái</th>
-                <th class="center">Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-        @foreach($users as $user)
-            <tr>
-                <td>#{{ $user->id }}</td>
-                <td>{{ $user->full_name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>{{ $user->phone }}</td>
-
-                <td class="center">
-                    <span class="badge {{ $user->role == 'admin' ? 'role-admin' : 'role-user' }}">
-                        {{ $user->role }}
-                    </span>
-                </td>
-
-                <td class="center">
-                    <span class="badge {{ $user->status == 'active' ? 'status-active' : 'status-inactive' }}">
-                        {{ $user->status }}
-                    </span>
-                </td>
-
-                <td class="center">
-                    <a href="{{ route('admin.users.show', $user->id) }}" class="btn">
-                        Xem
-                    </a>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-</div>
-
-<!--  Nút thêm user -->
-<a href="{{ route('admin.users.create') }}" class="btn btn-add">
-    + Thêm user
-</a>
-
-</body>
-</html>
+        <div class="table-container shadow-premium">
+            <div class="table-header-box">
+                <h2 class="card-title">Danh sách tài khoản</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="uav-table">
+                    <thead>
+                        <tr>
+                            <th width="80">ID</th>
+                            <th>Thông tin người dùng</th>
+                            <th>Email</th>
+                            <th>Liên hệ</th>
+                            <th class="center">Vai trò</th>
+                            <th class="center">Trạng thái</th>
+                            <th class="center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($users as $user)
+                        <tr>
+                            <td><span class="user-id">#{{ $user->id }}</span></td>
+                            <td>
+                                <div class="user-info-cell">
+                                    <span class="user-name">{{ $user->full_name }}</span>
+                                </div>
+                            </td>
+                            <td><span class="user-email">{{ $user->email }}</span></td>
+                            <td><span class="user-phone">{{ $user->phone }}</span></td>
+                            <td class="center">
+                                <span class="badge {{ $user->role == 'admin' ? 'badge-admin' : 'badge-user' }}">
+                                    {{ strtoupper($user->role) }}
+                                </span>
+                            </td>
+                            <td class="center">
+                                <div class="status-wrapper {{ $user->status }}">
+                                    <span class="status-dot"></span>
+                                    <span class="status-text">{{ ucfirst($user->status) }}</span>
+                                </div>
+                            </td>
+                            <td class="center">
+                                <div class="action-buttons">
+                                    <a href="{{ route('admin.users.show', $user->id) }}" class="btn-view-detail">
+                                        Chi tiết
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@endsection

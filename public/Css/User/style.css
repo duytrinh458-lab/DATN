@@ -160,3 +160,26 @@ body.dark-theme {
 .content-viewport {
     padding-top: 90px;
 }
+
+
+/* Hiệu ứng riêng cho Icon Ví */
+.wallet-glow:hover {
+    color: var(--primary);
+    filter: drop-shadow(0 0 10px var(--primary));
+}
+
+.wallet-glow .material-symbols-outlined {
+    transition: font-variation-settings 0.3s ease;
+}
+
+.wallet-glow:hover .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Tooltip đơn giản khi hover */
+.icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

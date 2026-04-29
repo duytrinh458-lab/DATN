@@ -1,0 +1,95 @@
+/* public/Css/User/wallet.css */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&display=swap');
+
+.wallet-viewport {
+    padding: 120px 20px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 40px;
+}
+
+/* Khối module Tonal Stepping */
+.wallet-module {
+    background: rgba(24, 28, 34, 0.6);
+    border-radius: 32px;
+    padding: 35px;
+    margin-bottom: 25px;
+    backdrop-filter: blur(15px);
+}
+
+.module-title {
+    font-family: 'Space Grotesk';
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #99f7ff; /* Biến --primary của Duy */
+    margin-bottom: 25px;
+    display: block;
+}
+
+/* Input phong cách Terminal */
+.wallet-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(153, 247, 255, 0.1);
+    width: 100%;
+    padding: 15px 0;
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.wallet-input:focus {
+    border-bottom-color: #99f7ff;
+}
+
+/* Thẻ thanh toán/Ví */
+.payment-card {
+    background: rgba(11, 14, 20, 0.8);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.payment-card.active {
+    background: #99f7ff;
+    color: #0b0e14;
+}
+
+/* Hóa đơn bên phải */
+.wallet-sidebar {
+    background: #99f7ff;
+    color: #00363d;
+    border-radius: 40px;
+    padding: 40px;
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+}
+
+.btn-confirm {
+    width: 100%;
+    background: #0b0e14;
+    color: #99f7ff;
+    border: none;
+    padding: 22px;
+    border-radius: 18px;
+    font-family: 'Space Grotesk';
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-top: 30px;
+    cursor: pointer;
+}
+
+@media (max-width: 992px) {
+    .wallet-viewport { grid-template-columns: 1fr; }
+}

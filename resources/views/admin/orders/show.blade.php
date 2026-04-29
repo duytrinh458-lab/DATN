@@ -1,148 +1,82 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Chi tiết đơn hàng</title>
+@extends('Admin.layouts.admin')
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            margin: 0;
-            padding: 30px;
-            color: #e0f7fa;
-        }
+@section('title', 'Chi tiết đơn hàng #' . $order->id)
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-        }
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('Css/admin/orders.css') }}">
+@endpush
 
-        h2 {
-            color: #00e5ff;
-            margin-bottom: 15px;
-        }
+@section('content')
+<div class="order-detail-page">
+    <header class="admin-header">
+        <div class="header-info">
+            <h1>Chi tiết vận đơn</h1>
+            <p>Mã đơn hàng: <span class="user-id">#{{ $order->id }}</span></p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ route('admin.orders.index') }}" class="btn-back-text">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </header>
 
-        .status {
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
+    <div class="detail-grid">
+        <div class="card shadow-premium status-card">
+            <div class="card-header">
+                <h3 class="card-title">Xử lý đơn hàng</h3>
+            </div>
+            
+            <div class="current-status-box">
+                <span>Trạng thái hiện tại:</span>
+                <span class="order-status status-{{ $order->status }}">
+                    {{ strtoupper($order->status) }}
+                </span>
+            </div>
 
-        .status b {
-            color: #00e5ff;
-        }
+            <form method="POST" action="{{ route('admin.orders.update', $order->id) }}" class="uav-form-inline">
+                @csrf
+                <div class="form-group">
+                    <select name="status">
+                        <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
+                        <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
+                        <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đang giao hàng</option>
+                        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
+                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã hủy đơn</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-update">
+                    <i class="fas fa-save"></i> Cập nhật
+                </button>
+            </form>
+        </div>
 
-        select {
-            padding: 8px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-        }
-
-        button {
-            padding: 8px 15px;
-            background: #00bcd4;
-            border: none;
-            border-radius: 6px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 10px;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #00e5ff;
-        }
-
-        hr {
-            border: 1px solid rgba(255,255,255,0.1);
-            margin: 20px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        th {
-            background: rgba(0, 188, 212, 0.3);
-            padding: 10px;
-            text-align: left;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        tr:hover {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .back {
-            display: inline-block;
-            margin-bottom: 15px;
-            color: #4caf50;
-            text-decoration: none;
-        }
-
-        .back:hover {
-            text-decoration: underline;
-            color: #66bb6a;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-
-    <a href="{{ route('admin.orders') }}" class="back">← Quay lại</a>
-
-    <h2>Chi tiết đơn #{{ $order->id }}</h2>
-
-    <p class="status">Trạng thái: <b>{{ $order->status }}</b></p>
-
-    <form method="POST" action="{{ route('admin.orders.update', $order->id) }}">
-        @csrf
-
-        <select name="status">
-            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Chờ xử lý</option>
-            <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Đã xác nhận</option>
-            <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Đang giao</option>
-            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Hoàn thành</option>
-            <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Đã huỷ</option>
-        </select>
-
-        <button type="submit">Cập nhật</button>
-    </form>
-
-    <hr>
-
-    <table>
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Giá</th>
-        </tr>
-
-        @foreach($items as $item)
-        <tr>
-            <td>{{ $item->name }}</td>
-            <td>{{ $item->quantity }}</td>
-            <td>{{ number_format($item->price) }}đ</td>
-        </tr>
-        @endforeach
-    </table>
-
+        <div class="card shadow-premium items-card">
+            <div class="card-header">
+                <h3 class="card-title">Danh mục sản phẩm</h3>
+            </div>
+            <div class="table-responsive">
+                <table class="uav-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="center">Số lượng</th>
+                            <th class="right">Đơn giá</th>
+                            <th class="right">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($items as $item)
+                        <tr>
+                            <td><span class="user-name">{{ $item->name }}</span></td>
+                            <td class="center">x{{ $item->quantity }}</td>
+                            <td class="right">{{ number_format($item->price) }}đ</td>
+                            <td class="right order-price">{{ number_format($item->price * $item->quantity) }}đ</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-
-</body>
-</html>
+@endsection

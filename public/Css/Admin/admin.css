@@ -157,11 +157,17 @@ body {
 }
 
 .admin-header h1 {
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 28px;
     background: linear-gradient(135deg, var(--blue-main), var(--blue-soft));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    
+    /* Thuộc tính cho trình duyệt nhân Webkit (Chrome, Safari, Edge) */
+    -webkit-background-clip: text; 
+    
+    /* Thuộc tính chuẩn (Nên có dòng này) */
+    background-clip: text; 
+    
+    /* Bắt buộc phải có dòng này để chữ trở nên trong suốt, lộ nền phía sau */
+    -webkit-text-fill-color: transparent; 
 }
 
 /* Cards - Ultra Clean */

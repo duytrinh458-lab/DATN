@@ -1,149 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm người dùng</title>
+@extends('Admin.layouts.admin')
 
-    <style>
-    body {
-        background: #0f172a;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-    }
+@section('title', 'Thêm người dùng mới - Vanguard UAV')
 
-    .wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        padding: 20px;
-    }
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+@endpush
 
-    .title {
-        color: #00e5ff;
-        margin-bottom: 20px;
-        font-size: 22px;
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .error-box {
-        background: rgba(255, 82, 82, 0.15);
-        color: #ff5252;
-        padding: 10px;
-        border-radius: 6px;
-        margin-bottom: 15px;
-        width: 100%;
-        max-width: 380px;
-    }
-
-    .form-box {
-        width: 100%;
-        max-width: 380px;
-        background: #1e293b;
-        padding: 20px;
-        border-radius: 12px;
-        color: #ffffff;
-        box-shadow: 0 0 15px rgba(0,0,0,0.4);
-    }
-
-    .form-box label {
-        display: block;
-        margin-top: 10px;
-        margin-bottom: 5px;
-        color: #e2e8f0;
-    }
-
-    .form-box input {
-        width: 95%;
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #334155;
-        background: #0f172a;
-        color: #ffffff;
-        font-size: 13px;
-    }
-
-    .form-box select {
-        width: 100%;
-        padding: 8px;
-        border-radius: 6px;
-        border: 1px solid #334155;
-        background: #0f172a;
-        color: #ffffff;
-        font-size: 13px;
-    }
-
-    .form-box select option {
-        background: #1e293b;
-        color: #ffffff;
-    }
-
-    .form-box button {
-        width: 100%;
-        margin-top: 20px;
-        background: #00bcd4;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .form-box button:hover {
-        background: #00e5ff;
-    }
-    </style>
-
-</head>
-
-<body>
-
-<div class="wrapper">
-
-    <h2 class="title">Thêm người dùng</h2>
+@section('content')
+<div class="user-form-page">
+    <header class="admin-header">
+        <div class="header-info">
+            <h1>Thêm thành viên mới</h1>
+            <p>Khởi tạo tài khoản cho nhân viên hoặc khách hàng</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ route('admin.users.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+    </header>
 
     @if ($errors->any())
-        <div class="error-box">
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
+        <div class="alert error-alert">
+            <div class="alert-title"><i class="fas fa-exclamation-triangle"></i> Đã có lỗi xảy ra:</div>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.users.store') }}" class="form-box">
-        @csrf
+    <div class="card shadow-premium">
+        <div class="card-header">
+            <h2 class="card-title">Thông tin tài khoản</h2>
+        </div>
+        
+        <form method="POST" action="{{ route('admin.users.store') }}" class="uav-form">
+            @csrf
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" placeholder="Ví dụ: uav_admin" required>
+                </div>
 
-        <label>Username</label>
-        <input type="text" name="username" required>
+                <div class="form-group">
+                    <label for="full_name">Họ và Tên</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Nhập tên đầy đủ">
+                </div>
 
-        <label>Tên đầy đủ</label>
-        <input type="text" name="full_name">
+                <div class="form-group">
+                    <label for="email">Email liên hệ</label>
+                    <input type="email" id="email" name="email" placeholder="email@example.com" required>
+                </div>
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input type="text" id="phone" name="phone" placeholder="Nhập số điện thoại" required>
+                </div>
 
-        <label>SĐT</label>
-        <input type="text" name="phone" required>
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" placeholder="Tối thiểu 8 ký tự" required>
+                </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+                <div class="form-group">
+                    <label for="role">Vai trò hệ thống</label>
+                    <select name="role" id="role" required>
+                        <option value="customer">Người dùng (User)</option>
+                        <option value="admin">Quản trị viên (Admin)</option>
+                    </select>
+                </div>
+            </div>
 
-        <label>Role</label>
-        <select name="role" required>
-            <option value="customer">User</option>
-            <option value="admin">Admin</option>
-        </select>
-
-        <button type="submit">Thêm user</button>
-    </form>
-
+            <div class="form-footer">
+                <button type="submit" class="btn btn-submit">
+                    <i class="fas fa-save"></i> Xác nhận thêm người dùng
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-
-</body>
-</html>
+@endsection
