@@ -8,6 +8,7 @@
 
 @section('content')
 <div class="product-container">
+
     {{-- SIDEBAR --}}
     <aside class="filter-sidebar">
         <h3>Tìm kiếm</h3>
@@ -48,17 +49,33 @@
                         {{ number_format($product->sale_price, 0, ',', '.') }}₫
                     </div>
 
-                    <form action="{{ route('user.orders.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn-buy">Mua ngay</button>
-                    </form>
+                    {{-- ACTION BUTTONS --}}
+                    <div class="product-actions">
+
+                        {{-- MUA NGAY --}}
+                        <form action="{{ route('user.orders.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-buy">Mua ngay</button>
+                        </form>
+
+                        {{-- THÊM VÀO GIỎ HÀNG --}}
+                        <form action="{{ route('user.cart.add') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-cart">Thêm giỏ</button>
+                        </form>
+
+                    </div>
+
                 </div>
             @endforeach
         @else
             <p style="color: #fff;">Hiện chưa có sản phẩm nào.</p>
         @endisset
     </section>
+
 </div>
 @endsection

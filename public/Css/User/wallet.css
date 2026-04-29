@@ -19,13 +19,16 @@
     backdrop-filter: blur(15px);
 }
 
-.module-title {
+/* FIX CHÍNH: MODULE TITLE (đã ép override toàn bộ) */
+.wallet-module .module-title,
+.wallet-sidebar .module-title,
+span.module-title {
     font-family: 'Space Grotesk';
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #99f7ff; /* Biến --primary của Duy */
+    color: #ff0000 !important;
     margin-bottom: 25px;
     display: block;
 }
@@ -73,6 +76,11 @@
     height: fit-content;
     position: sticky;
     top: 100px;
+}
+
+/* FIX CHO TEXT BÊN SIDEBAR KHÔNG BỊ TRÙNG MÀU */
+.wallet-sidebar * {
+    color: #00363d;
 }
 
 .btn-confirm {

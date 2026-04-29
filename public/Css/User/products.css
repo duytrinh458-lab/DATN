@@ -1,134 +1,42 @@
-:root {
-    --bg-dark: #0b1120;
-    --card-bg: #0f172a;
-    --sidebar-bg: #1e293b;
-    --primary-neon: #00eaff;
-    --text-main: #ecedf6;
-    --text-dim: #94a3b8;
-}
-
-/* ===== LAYOUT TỔNG ===== */
-.product-container {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    max-width: 1400px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
-
-/* ===== SIDEBAR ===== */
-.filter-sidebar {
-    width: 250px;
-    background: var(--sidebar-bg);
-    padding: 20px;
-    border-radius: 10px;
-    height: fit-content;
-}
-
-.filter-sidebar h3 { 
-    color: var(--primary-neon); 
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-/* Ô TÌM KIẾM TRONG SIDEBAR */
-.search-box {
-    position: relative;
-    margin-bottom: 25px;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 10px 12px;
-    background: #0f172a;
-    border: 1px solid rgba(0, 234, 255, 0.3);
-    border-radius: 6px;
-    color: #fff;
-    font-size: 0.9rem;
-    outline: none;
-}
-
-.search-box input:focus {
-    border-color: var(--primary-neon);
-    box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
-}
-
-.filter-sidebar ul { list-style: none; padding: 0; }
-.filter-sidebar ul li a { 
-    color: #ccc; 
-    text-decoration: none; 
-    line-height: 2.5;
-    font-size: 0.95rem;
-    display: block;
-}
-
-.filter-sidebar ul li a:hover { color: var(--primary-neon); }
-
-/* ===== GRID SẢN PHẨM (ÉP 4 CỘT) ===== */
-.product-grid {
+.btn-cart {
     flex: 1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Đúng mẫu bạn yêu cầu */
-    gap: 20px;
-}
-
-/* ===== CARD SẢN PHẨM ===== */
-.product-card {
-    background: var(--card-bg); 
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    color: #fff;
-    transition: transform 0.3s;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 20px rgba(0, 234, 255, 0.2);
-}
-
-.product-card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.product-card h3 {
+    background: transparent;
+    border: 1px solid rgba(0, 234, 255, 0.4);
     color: var(--primary-neon);
-    font-size: 1rem;
-    margin: 10px 0;
-    min-height: 40px;
-}
-
-.product-card p {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    height: 40px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.price {
-    color: #00ff88;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-/* ===== BUTTON ===== */
-.btn-buy {
-    background: linear-gradient(45deg, var(--primary-neon), #007bff);
-    color: white;
-    border: none;
     padding: 10px;
-    border-radius: 6px;
-    width: 100%;
     cursor: pointer;
-    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* hover glow + fill */
+.btn-cart:hover {
+    background: rgba(0, 234, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
+    transform: translateY(-2px);
+    border-color: var(--primary-neon);
+}
+
+/* hiệu ứng ánh sáng chạy ngang */
+.btn-cart::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(0, 234, 255, 0.3),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.btn-cart:hover::before {
+    left: 100%;
 }

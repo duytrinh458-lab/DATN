@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Wallet; // 🔥 thêm dòng này
 
 class User extends Authenticatable
 {
@@ -44,4 +45,10 @@ class User extends Authenticatable
         'is_verified' => 'boolean',
         'is_online' => 'boolean',
     ];
+
+    // ================= WALLET RELATION =================
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'user_id');
+    }
 }

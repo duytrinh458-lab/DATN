@@ -183,3 +183,20 @@ body.dark-theme {
     align-items: center;
     justify-content: center;
 }
+
+.wallet-balance {
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #00eaff;
+    background: rgba(0, 234, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+
+.icon-btn.wallet-glow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

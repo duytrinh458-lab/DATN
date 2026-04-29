@@ -58,12 +58,11 @@ class AuthController extends Controller
 
         $request->validate([
             'otp_code' => 'required|digits:6',
-            'full_name' => 'nullable|string|max:255', // ✅ cho phép trống
+            'full_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
         ]);
 
-        // check trùng phone
         if (User::where('phone', $phone)->exists()) {
             return redirect('/register')->withErrors([
                 'phone' => 'Số điện thoại đã tồn tại'
@@ -84,8 +83,8 @@ class AuthController extends Controller
 
         try {
             User::create([
-                'username' => explode('@', $request->email)[0], // ✅ tự tạo username
-                'full_name' => $request->full_name ?? null,     // ✅ cho phép null
+                'username' => explode('@', $request->email)[0],
+                'full_name' => $request->full_name ?? null,
                 'email' => $request->email,
                 'phone' => $phone,
                 'password' => Hash::make($request->password),
@@ -93,6 +92,7 @@ class AuthController extends Controller
                 'is_verified' => 1,
                 'is_first_login' => 1,
                 'status' => 'active',
+                'balance' => 0 // 🔥 FIX: đảm bảo luôn có ví
             ]);
         } catch (\Exception $e) {
             return redirect('/register')->withErrors([
@@ -119,6 +119,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($request->only('email', 'password'))) {
 
+            $request->session()->regenerate(); // 🔥 chống session hijack
+
             $user = Auth::user();
 
             if ($user->is_first_login) {
@@ -132,7 +134,18 @@ class AuthController extends Controller
             return redirect()->route('home');
         }
 
-        return redirect('/login')->with('error', 'Sai email hoặc mật khẩu');
+        return back()->with('error', 'Sai email hoặc mật khẩu');
+    }
+
+    // ================= LOGOUT (THÊM MỚI - NÊN CÓ) =================
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 
     // ================= CHANGE PASSWORD =================

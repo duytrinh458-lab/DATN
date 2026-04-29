@@ -10,14 +10,18 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    
-
     // 1. Xem giỏ hàng
     public function index() {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return redirect()->route('login');
+        }
+
         $cartItems = Cart::with(['product.images'])
-            ->where('user_id', Auth::id())
+            ->where('user_id', $userId)
             ->get();
-    
+
         $total = $cartItems->sum(function($item) {
             return $item->product->sale_price * $item->quantity;
         });
@@ -26,34 +30,53 @@ class CartController extends Controller
     }
 
     // 2. Thêm vào giỏ
-    public function add(Request $request) {
-        $product = Product::findOrFail($request->product_id);
-        
-        if ($product->stock < $request->quantity) {
-            return back()->with('error', 'Số lượng UAV trong kho không đủ!');
-        }
+    public function add(Request $request) 
+{
+    // dd('ADD CART RUN');
+    $request->validate([
+        'product_id' => 'required|exists:products,id',
+        'quantity' => 'nullable|integer|min:1'
+    ]);
 
-        $cart = Cart::where('user_id', Auth::id())
-                    ->where('product_id', $request->product_id)
-                    ->first();
+    $userId = Auth::id();
 
-        if ($cart) {
-            $cart->increment('quantity', $request->quantity);
-        } else {
-            Cart::create([
-                'user_id' => Auth::id(),
-                'product_id' => $request->product_id,
-                'quantity' => $request->quantity
-            ]);
-        }
-        return redirect()->route('cart.index')->with('success', 'Đã thêm vào giỏ hàng!');
+    if (!$userId) {
+        return redirect()->route('login');
     }
 
-    // 3. Xóa sản phẩm - Hàm mà Laravel đang báo thiếu đây
+    $product = Product::findOrFail($request->product_id);
+
+    $quantity = $request->quantity ?? 1;
+
+    if (($product->stock ?? 0) < $quantity) {
+        return back()->with('error', 'Số lượng UAV trong kho không đủ!');
+    }
+
+    $cart = Cart::where('user_id', $userId)
+                ->where('product_id', $request->product_id)
+                ->first();
+
+    if ($cart) {
+        $cart->increment('quantity', $quantity);
+    } else {
+        Cart::create([
+            'user_id' => $userId,
+            'product_id' => $request->product_id,
+            'quantity' => $quantity
+        ]);
+    }
+
+    return redirect()->route('user.cart.index')
+        ->with('success', '✔ Đã thêm vào giỏ hàng thành công!');
+}
+
+    // 3. Xóa sản phẩm
     public function destroy($id)
     {
+        $userId = Auth::id();
+
         $cartItem = Cart::where('id', $id)
-                        ->where('user_id', Auth::id())
+                        ->where('user_id', $userId)
                         ->first();
 
         if ($cartItem) {
@@ -67,8 +90,10 @@ class CartController extends Controller
     // 4. Cập nhật số lượng
     public function update(Request $request, $id)
     {
+        $userId = Auth::id();
+
         $cartItem = Cart::where('id', $id)
-                        ->where('user_id', Auth::id())
+                        ->where('user_id', $userId)
                         ->first();
 
         if ($cartItem) {

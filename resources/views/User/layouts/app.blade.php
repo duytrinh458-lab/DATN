@@ -33,12 +33,16 @@
                     <a href="{{ url('/cart') }}" class="icon-btn" title="Giỏ hàng">
                         <span class="material-symbols-outlined">shopping_cart</span>
                     </a>
-                    <a href="{{ url('/wallet') }}" class="icon-btn wallet-glow" title="Ví Vanguard">
-                        <span class="material-symbols-outlined">account_balance_wallet</span>
-                    </a>
                     <a href="{{ url('/profile') }}" class="icon-btn" title="Trạng thái">
                         <span class="material-symbols-outlined">monitoring</span>
                     </a>
+                    <a href="{{ url('/wallet') }}" class="icon-btn wallet-glow" title="Ví Vanguard">
+    <span class="material-symbols-outlined">account_balance_wallet</span>
+
+    <span class="wallet-balance">
+        {{ number_format($walletBalance ?? 0, 0, ',', '.') }}₫
+    </span>
+</a>
                 </div>
                 <div class="divider-v"></div>
                 <a href="{{ url('/logout') }}" class="btn-terminal">ĐĂNG XUẤT</a>
