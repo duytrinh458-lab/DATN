@@ -45,7 +45,7 @@
 </a>
                 </div>
                 <div class="divider-v"></div>
-                <a href="{{ url('/logout') }}" class="btn-terminal">ĐĂNG XUẤT</a>
+                <a href="{{ url('/login') }}" class="btn-terminal">ĐĂNG XUẤT</a>
             </div>
         </nav>
         <div class="light-leak"></div>

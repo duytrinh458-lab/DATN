@@ -3,16 +3,23 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Middleware\Authenticate;
 
+// AUTH
 use App\Http\Controllers\AuthController;
+
+// USER CONTROLLERS
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
+use App\Http\Controllers\User\ProductController as UserProductController; // Để xem chi tiết SP
+use App\Http\Controllers\User\CheckoutController; // Xử lý mua ngay & thanh toán
 
+// ORDER (Dùng chung hoặc tùy cấu trúc của Duy)
 use App\Http\Controllers\OrderController;
 
+// ADMIN CONTROLLERS
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductController as P; // Alias P của Duy
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 
@@ -49,7 +56,7 @@ Route::prefix('admin')
 
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-        Route::resource('products', ProductController::class)->except(['show']);
+        Route::resource('products', P::class)->except(['show']);
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
         Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
@@ -70,16 +77,20 @@ Route::middleware([Authenticate::class])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // PRODUCTS
-    Route::get('/products', [ProductController::class, 'products'])->name('user.products');
+    Route::get('/products', [P::class, 'products'])->name('user.products');
+    Route::get('/products/{id}', [UserProductController::class, 'show'])->name('user.products.detail'); // THÊM MỚI: Xem chi tiết SP
 
-    // ================= CART (ĐÃ FIX USER PREFIX) =================
+    // ================= CHECKOUT (MỚI: LUỒNG MUA NGAY) =================
+    Route::prefix('checkout')->name('user.checkout.')->group(function () {
+        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');    // Bấm nút Mua ngay
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');             // Trang nhập thông tin nhận hàng
+        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process'); // Nút xác nhận mua cuối cùng
+    });
+
+    // ================= CART =================
     Route::prefix('cart')->name('user.cart.')->group(function () {
-
         Route::get('/', [CartController::class, 'index'])->name('index');
-
-        // ADD TO CART (FIX CHO Blade user.cart.add)
         Route::post('/add', [CartController::class, 'add'])->name('add');
-
         Route::delete('/{id}', [CartController::class, 'destroy'])->name('destroy');
         Route::put('/{id}', [CartController::class, 'update'])->name('update');
     });
@@ -101,12 +112,8 @@ Route::middleware([Authenticate::class])->group(function () {
 
     // ================= WALLET =================
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
-
         Route::get('/', [WalletController::class, 'index'])->name('index');
-
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
-
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
-
     });
 });

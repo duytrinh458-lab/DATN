@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Wallet; // Thêm Model Wallet để tạo ví
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -63,17 +64,11 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        if (User::where('phone', $phone)->exists()) {
-            return redirect('/register')->withErrors([
-                'phone' => 'Số điện thoại đã tồn tại'
-            ]);
-        }
-
         $otp = DB::table('otp_verifications')
             ->where('phone', $phone)
             ->where('otp_code', $request->otp_code)
             ->where('type', 'register')
-            ->where('is_used', 0)
+            ->where('is_used' , 0)
             ->where('expires_at', '>', now())
             ->first();
 
@@ -82,9 +77,11 @@ class AuthController extends Controller
         }
 
         try {
-            User::create([
+            DB::beginTransaction(); // Dùng Transaction để đảm bảo tạo cả User và Wallet
+
+            $user = User::create([
                 'username' => explode('@', $request->email)[0],
-                'full_name' => $request->full_name ?? null,
+                'full_name' => $request->full_name ?? 'UAV Pilot',
                 'email' => $request->email,
                 'phone' => $phone,
                 'password' => Hash::make($request->password),
@@ -92,21 +89,25 @@ class AuthController extends Controller
                 'is_verified' => 1,
                 'is_first_login' => 1,
                 'status' => 'active',
-                'balance' => 0 // 🔥 FIX: đảm bảo luôn có ví
             ]);
+
+            // 🔥 ĐÚNG CHUẨN SQL: Tạo ví riêng trong bảng wallets
+            DB::table('wallets')->insert([
+                'user_id' => $user->id,
+                'balance' => 0,
+                'updated_at' => now()
+            ]);
+
+            DB::table('otp_verifications')->where('id', $otp->id)->update(['is_used' => 1]);
+
+            DB::commit();
+            session()->forget('phone_step1');
+
+            return redirect('/login')->with('success', 'Đăng ký thành công!');
         } catch (\Exception $e) {
-            return redirect('/register')->withErrors([
-                'error' => 'Lỗi tạo tài khoản'
-            ]);
+            DB::rollBack();
+            return back()->with('error', 'Lỗi tạo tài khoản: ' . $e->getMessage());
         }
-
-        DB::table('otp_verifications')
-            ->where('id', $otp->id)
-            ->update(['is_used' => 1]);
-
-        session()->forget('phone_step1');
-
-        return redirect('/login')->with('success', 'Đăng ký thành công!');
     }
 
     // ================= LOGIN =================
@@ -118,49 +119,30 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-
-            $request->session()->regenerate(); // 🔥 chống session hijack
-
+            $request->session()->regenerate(); 
             $user = Auth::user();
 
             if ($user->is_first_login) {
                 return redirect()->route('password.change.form');
             }
 
-            if ($user->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            }
-
-            return redirect()->route('home');
+            return $user->role === 'admin' 
+                ? redirect()->route('admin.dashboard') 
+                : redirect()->route('home');
         }
 
         return back()->with('error', 'Sai email hoặc mật khẩu');
     }
 
-    // ================= LOGOUT (THÊM MỚI - NÊN CÓ) =================
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/login');
-    }
-
     // ================= CHANGE PASSWORD =================
-    public function showChangePasswordForm()
-    {
-        return view('Login.change-password');
-    }
-
     public function updatePassword(Request $request)
     {
         $request->validate([
             'password' => 'required|min:6|confirmed'
         ]);
 
-        $user = Auth::user();
+        // 🔥 FIX LỖI ĐỎ: Tìm lại User từ Model để IDE nhận diện hàm save()
+        $user = User::findOrFail(Auth::id());
 
         $user->password = Hash::make($request->password);
         $user->is_first_login = 0;
@@ -172,26 +154,6 @@ class AuthController extends Controller
     }
 
     // ================= FORGOT PASSWORD =================
-    public function sendOtpForgotPassword(Request $request)
-    {
-        $request->validate([
-            'phone' => 'required|numeric'
-        ]);
-
-        $otp = rand(100000, 999999);
-
-        DB::table('otp_verifications')->insert([
-            'phone' => $request->phone,
-            'otp_code' => $otp,
-            'type' => 'forgot_password',
-            'is_used' => 0,
-            'expires_at' => now()->addMinutes(5),
-            'created_at' => now()
-        ]);
-
-        return redirect('/forgot')->with('success', 'OTP của bạn là: ' . $otp);
-    }
-
     public function verifyOtpForgotPassword(Request $request)
     {
         $request->validate([
@@ -212,6 +174,7 @@ class AuthController extends Controller
             return redirect('/forgot')->with('error', 'OTP không hợp lệ');
         }
 
+        // 🔥 FIX LỖI ĐỎ: Đảm bảo trỏ đúng vào Model instance
         $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
@@ -221,10 +184,16 @@ class AuthController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        DB::table('otp_verifications')
-            ->where('id', $otp->id)
-            ->update(['is_used' => 1]);
+        DB::table('otp_verifications')->where('id', $otp->id)->update(['is_used' => 1]);
 
         return redirect('/login')->with('success', 'Đổi mật khẩu thành công');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 }

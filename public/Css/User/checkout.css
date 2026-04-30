@@ -1,109 +1,131 @@
-.checkout-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #00eaff;
-    margin-bottom: 20px;
+/* public/css/user/checkout.css */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&display=swap');
+
+.checkout-viewport {
+    padding: 120px 20px 60px;
+    background-color: #0b0e14;
+    min-height: 100vh;
 }
 
 .checkout-container {
+    max-width: 1100px;
+    margin: 0 auto;
     background: #0f172a;
-    border-radius: 15px;
-    padding: 30px;
+    border-radius: 24px;
+    padding: 40px;
     color: #fff;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
 }
 
 .checkout-title {
     text-align: center;
     color: #00eaff;
-    font-size: 2rem;
-    font-weight: bold;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    margin-bottom: 5px;
+    letter-spacing: 2px;
 }
 
 .checkout-subtitle {
     text-align: center;
     color: #94a3b8;
-    margin-bottom: 30px;
+    font-size: 10px;
+    letter-spacing: 5px;
+    margin-bottom: 40px;
 }
 
 .checkout-box {
     background: #1e293b;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 12px rgba(0, 234, 255, 0.2);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(0, 234, 255, 0.05);
+}
+
+.checkout-box h4 {
+    color: #00eaff;
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    border-left: 3px solid #00eaff;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+/* SỬA LỖI LAYOUT THÔNG TIN GIAO HÀNG TẠI ĐÂY */
+.shipping-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia 2 cột đều nhau */
+    gap: 20px;
+}
+
+.full-width {
+    grid-column: span 2; /* Chiếm hết chiều ngang */
 }
 
 .form-control {
     width: 100%;
-    margin-bottom: 10px;
     background: #0f172a;
     border: 1px solid #334155;
     color: #fff;
-    border-radius: 6px;
-    padding: 8px;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Cực kỳ quan trọng để không bị tràn */
+}
+
+.form-control:focus {
+    border-color: #00eaff;
+    background: #161e2e;
 }
 
 .payment-method {
-    margin-bottom: 10px;
-}
-
-.order-summary {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px 0;
-}
-
-.order-summary li {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-}
-
-.promo-code {
-    display: flex;
-    gap: 10px;
+    align-items: center;
+    gap: 15px;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 18px;
+    border-radius: 12px;
     margin-bottom: 15px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.3s;
 }
 
-.btn-apply {
-    background: #00eaff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    color: #0f172a;
-    font-weight: bold;
-}
-
-.order-total p {
-    margin: 5px 0;
+.payment-method:hover {
+    border-color: rgba(0, 234, 255, 0.3);
 }
 
 .grand-total {
     color: #00ff88;
-    font-size: 1.4rem;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: 'Space Grotesk';
 }
 
 .btn-confirm {
     width: 100%;
     background: linear-gradient(90deg, #00eaff, #00ff88);
     border: none;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
+    padding: 22px;
+    border-radius: 14px;
+    font-weight: 900;
     color: #0f172a;
-    transition: transform 0.2s ease, opacity 0.3s ease;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
 }
 
 .btn-confirm:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
 }
 
-.checkout-footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #334155;
-    color: #94a3b8;
+@media (max-width: 768px) {
+    .shipping-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
 }
