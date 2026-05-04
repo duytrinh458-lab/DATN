@@ -125,4 +125,13 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
+
+    // ================= test api cart =================
+    Route::get('/test-add-cart', function () {
+    return app(\App\Http\Controllers\Api\CartApiController::class)
+        ->add(new \Illuminate\Http\Request([
+            'product_id' => 1,
+            'quantity' => 1
+        ]));
+});
 });
