@@ -3,19 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CartItem;
+use App\Models\User;
 
 class Cart extends Model
 {
     protected $table = 'carts';
 
-    // Bảng carts bây giờ chỉ lưu mỗi user_id
     protected $fillable = [
         'user_id'
     ];
 
-    // Quan hệ: 1 Giỏ hàng có nhiều Chi tiết sản phẩm
     public function cartItems()
     {
-        return $this->hasMany(CartItem::class, 'cart_id');
+        return $this->hasMany(CartItem::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

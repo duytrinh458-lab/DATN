@@ -3,7 +3,7 @@
 @section('title', 'Thêm người dùng mới - Vanguard UAV')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/Admin/create.css') }}">
 @endpush
 
 @section('content')

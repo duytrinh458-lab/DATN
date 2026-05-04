@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product;
+use App\Models\Cart;
 
 class CartItem extends Model
 {
     protected $table = 'cart_items';
     
-    // Tắt timestamps vì bảng cart_items trong CSDL của bạn không có created_at / updated_at
     public $timestamps = false; 
 
     protected $fillable = [
@@ -18,9 +19,18 @@ class CartItem extends Model
         'unit_price'
     ];
 
-    // Quan hệ với sản phẩm (để ra View còn lấy được tên, ảnh sản phẩm)
+    protected $casts = [
+        'quantity' => 'integer',
+        'unit_price' => 'float',
+    ];
+
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class);
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo(Cart::class);
     }
 }

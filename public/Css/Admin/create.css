@@ -256,6 +256,12 @@ textarea.form-control {
     box-shadow: 0 16px 48px rgba(107, 114, 128, 0.4);
 }
 
+/* .btn-addnew {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: rgb(255, 0, 0);
+    box-shadow: 0 8px 32px rgba(34, 197, 94, 0.4);
+} */
+
 /* Responsive */
 @media (max-width: 768px) {
     .form-grid {

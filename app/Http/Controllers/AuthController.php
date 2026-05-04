@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use App\Models\Wallet; // Thêm Model Wallet để tạo ví
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -22,6 +21,17 @@ class AuthController extends Controller
 
     public function showForgot() { 
         return view('Login.forgot'); 
+    }
+
+    // ✅ FIX CHUẨN: Trang đổi mật khẩu
+    public function showChangePasswordForm()
+    {
+        // chưa đăng nhập → đá về login
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
+        return view('Login.change-password');
     }
 
     // ================= REGISTER =================
@@ -77,7 +87,7 @@ class AuthController extends Controller
         }
 
         try {
-            DB::beginTransaction(); // Dùng Transaction để đảm bảo tạo cả User và Wallet
+            DB::beginTransaction();
 
             $user = User::create([
                 'username' => explode('@', $request->email)[0],
@@ -91,7 +101,6 @@ class AuthController extends Controller
                 'status' => 'active',
             ]);
 
-            // 🔥 ĐÚNG CHUẨN SQL: Tạo ví riêng trong bảng wallets
             DB::table('wallets')->insert([
                 'user_id' => $user->id,
                 'balance' => 0,
@@ -122,6 +131,7 @@ class AuthController extends Controller
             $request->session()->regenerate(); 
             $user = Auth::user();
 
+            // 🔥 ép đổi mật khẩu lần đầu
             if ($user->is_first_login) {
                 return redirect()->route('password.change.form');
             }
@@ -137,11 +147,14 @@ class AuthController extends Controller
     // ================= CHANGE PASSWORD =================
     public function updatePassword(Request $request)
     {
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+
         $request->validate([
             'password' => 'required|min:6|confirmed'
         ]);
 
-        // 🔥 FIX LỖI ĐỎ: Tìm lại User từ Model để IDE nhận diện hàm save()
         $user = User::findOrFail(Auth::id());
 
         $user->password = Hash::make($request->password);
@@ -174,7 +187,6 @@ class AuthController extends Controller
             return redirect('/forgot')->with('error', 'OTP không hợp lệ');
         }
 
-        // 🔥 FIX LỖI ĐỎ: Đảm bảo trỏ đúng vào Model instance
         $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
@@ -189,6 +201,7 @@ class AuthController extends Controller
         return redirect('/login')->with('success', 'Đổi mật khẩu thành công');
     }
 
+    // ================= LOGOUT =================
     public function logout(Request $request)
     {
         Auth::logout();

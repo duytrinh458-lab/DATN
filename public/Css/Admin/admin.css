@@ -1,286 +1,123 @@
-/* ========================================
-   UAV ADMIN - PREMIUM BLUE MASTERPIECE
-========================================= */
-
-/* Màu XANH NHẠT PREMIUM */
-:root {
-    --blue-main: #3B82F6;
-    --blue-soft: #60A5FA;
-    --blue-pale: #93C5FD;
-    --blue-ultra: #DBEAFE;
-    
-    --bg-gradient: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
-    --glass-premium: rgba(255, 255, 255, 0.85);
-    --text-main: #1E293B;
-    --text-sub: #475569;
-    
-    --shadow-premium: 0 20px 60px rgba(59, 130, 246, 0.15);
-    --hover-premium: 0 30px 80px rgba(59, 130, 246, 0.25);
-}
-
-/* Base */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-gradient);
-    color: var(--text-main);
-    line-height: 1.6;
+    font-family: Arial;
+    margin: 0;
+    background: #f1f5f9;
 }
 
-/* Wrapper */
-.admin-wrapper { min-height: 100vh; display: flex; }
-
-/* ========================================
-   SIDEBAR - ULTRA PREMIUM 280px
-======================================= */
-.admin-sidebar {
-    width: 280px;
-    background: var(--glass-premium);
-    backdrop-filter: blur(25px);
-    border-right: 1px solid rgba(255,255,255,0.8);
-    position: fixed;
-    height: 100vh;
-    z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: var(--shadow-premium);
-}
-
-.admin-sidebar.collapsed { width: 72px; }
-
-.admin-sidebar .logo {
-    height: 80px;
-    background: linear-gradient(135deg, var(--blue-main) 0%, var(--blue-soft) 100%);
+/* layout */
+.admin-wrapper {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.5px;
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
 }
 
-.admin-sidebar.collapsed .logo { font-size: 15px; }
+/* SIDEBAR */
+.admin-sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #3b82f6, #60a5fa);
+    color: white;
+    padding-top: 20px;
+}
 
+/* logo */
+.logo {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+/* menu */
 .sidebar-links {
     list-style: none;
-    padding: 32px 0;
+    padding: 0;
+    margin: 0;
 }
 
-.sidebar-links li { margin: 6px 0; }
+.sidebar-links li {
+    margin: 10px 15px;
+}
 
+/* link */
 .sidebar-links a {
-    display: flex;
-    align-items: center;
-    padding: 18px 32px;
-    color: var(--text-sub);
+    display: block;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: #e0f2fe;
     text-decoration: none;
-    font-weight: 500;
-    font-size: 15px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    border-radius: 0 20px 20px 0;
-    margin: 0 12px;
-    position: relative;
-    overflow: hidden;
+    transition: 0.3s;
 }
 
-.sidebar-links a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, var(--blue-main), var(--blue-soft));
-    transform: scaleY(0);
-    transition: transform 0.3s ease;
+/* hover */
+.sidebar-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-.sidebar-links a:hover::before,
-.sidebar-links a.active::before {
-    transform: scaleY(1);
-}
-
-.sidebar-links a:hover,
+/* ACTIVE */
 .sidebar-links a.active {
-    background: var(--blue-ultra);
-    color: var(--blue-main);
-    transform: translateX(8px);
-    box-shadow: var(--hover-premium);
+    background: rgba(255, 255, 255, 0.35);
+    color: #1e3a8a;
+    font-weight: bold;
+    box-shadow: inset 3px 0 0 #1e40af;
 }
 
-.sidebar-links a i {
-    width: 22px;
-    margin-right: 18px;
-    font-size: 18px;
-    transition: color 0.3s ease;
+/* =========================
+   🔥 FIX LOGOUT BUTTON
+========================= */
+
+/* reset form */
+.logout-form {
+    margin: 0;
 }
 
-.sidebar-links a:hover i,
-.sidebar-links a.active i {
-    color: var(--blue-main);
-}
-
-.sidebar-links a span {
-    opacity: 0;
-    transform: translateX(-16px);
-    transition: all 0.3s ease;
-}
-
-.admin-sidebar.collapsed .sidebar-links a span { opacity: 0; }
-.admin-sidebar:not(.collapsed) .sidebar-links a span { opacity: 1; transform: translateX(0); }
-
-/* Main Content */
-.admin-main {
-    margin-left: 280px;
-    flex: 1;
-    padding: 36px;
-    transition: margin-left 0.4s ease;
-    min-height: 100vh;
-}
-
-.admin-sidebar.collapsed ~ .admin-main { margin-left: 72px; }
-
-/* Header - Premium */
-.admin-header {
-    background: var(--glass-premium);
-    backdrop-filter: blur(25px);
-    border-radius: 24px;
-    padding: 32px 40px;
-    margin-bottom: 40px;
-    border: 1px solid rgba(255,255,255,0.8);
-    box-shadow: var(--shadow-premium);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.admin-header h1 {
-    font-size: 28px;
-    background: linear-gradient(135deg, var(--blue-main), var(--blue-soft));
-    
-    /* Thuộc tính cho trình duyệt nhân Webkit (Chrome, Safari, Edge) */
-    -webkit-background-clip: text; 
-    
-    /* Thuộc tính chuẩn (Nên có dòng này) */
-    background-clip: text; 
-    
-    /* Bắt buộc phải có dòng này để chữ trở nên trong suốt, lộ nền phía sau */
-    -webkit-text-fill-color: transparent; 
-}
-
-/* Cards - Ultra Clean */
-.card {
-    background: var(--glass-premium);
-    backdrop-filter: blur(25px);
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.8);
-    box-shadow: var(--shadow-premium);
-    padding: 36px;
-    margin-bottom: 28px;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--hover-premium);
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.card-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-main);
-}
-
-/* Stats - Perfect */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 28px;
-    margin-bottom: 40px;
-}
-
-.stat-card {
-    padding: 36px;
-    border-radius: 24px;
-    background: var(--glass-premium);
-    border: 1px solid rgba(255,255,255,0.8);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* 🔥 button giống hệt link */
+.sidebar-links button {
+    width: 100%;
+    display: block;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: none;
+    border: none;
+    text-align: left;
+    color: #e0f2fe;
+    font-size: 14px;
     cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    transition: 0.3s;
 }
 
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--tech-gradient);
+/* hover giống a */
+.sidebar-links button:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-.stat-card:hover {
-    transform: translateY(-12px);
-    box-shadow: var(--hover-premium);
+/* 🔥 logout màu riêng */
+.logout-btn {
+    color: #fecaca;
 }
 
-.stat-icon {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 26px;
-    background: linear-gradient(135deg, var(--blue-pale), var(--blue-ultra));
-    color: var(--blue-main);
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);
+.logout-btn:hover {
+    background: #7f1d1d;
+    color: #fff;
 }
 
-.stat-number {
-    font-size: 44px;
-    font-weight: 800;
-    color: var(--text-main);
-    margin-bottom: 8px;
-    letter-spacing: -1px;
+/* MAIN */
+.admin-main {
+    flex: 1;
+    padding: 30px;
 }
 
-.stat-label {
-    color: var(--text-sub);
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: 0.3px;
-}
-
-/* Table */
+/* CARD TABLE */
 .table-container {
-    background: var(--glass-premium);
-    backdrop-filter: blur(25px);
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.8);
+    background: white;
+    border-radius: 20px;
+    padding: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     overflow: hidden;
-    box-shadow: var(--shadow-premium);
 }
 
-.table-header {
-    padding: 32px 40px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* HEADER TABLE */
+.table-container thead {
+    background: linear-gradient(90deg, #1e3a8a, #334155);
+    color: white;
 }
 
 table {
@@ -289,56 +126,28 @@ table {
 }
 
 th, td {
-    padding: 22px 40px;
+    padding: 15px;
     text-align: left;
-    border-bottom: 1px solid rgba(0,0,0,0.03);
 }
 
-th {
-    background: rgba(59, 130, 246, 0.06);
-    font-weight: 600;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-main);
+/* ROW */
+tbody tr {
+    border-bottom: 1px solid #e5e7eb;
 }
 
-/* Buttons */
+/* BUTTON */
 .btn {
-    padding: 14px 36px;
+    padding: 8px 14px;
+    border-radius: 8px;
     border: none;
-    border-radius: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
-    background: linear-gradient(135deg, var(--blue-main), var(--blue-soft));
     color: white;
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
 }
 
-.btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(59, 130, 246, 0.4);
+.btn-edit {
+    background: #22c55e;
 }
 
-/* Footer */
-.admin-footer {
-    margin-top: auto;
-    padding: 28px 40px;
-    background: var(--glass-premium);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255,255,255,0.8);
-    text-align: center;
-    color: var(--text-sub);
-    font-size: 15px;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .admin-sidebar { transform: translateX(-100%); }
-    .admin-main { margin-left: 0 !important; }
+.btn-delete {
+    background: #ef4444;
 }

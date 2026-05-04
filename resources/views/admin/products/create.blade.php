@@ -80,7 +80,7 @@
                         <i class="fas fa-tags"></i>
                         <input type="number" id="original_price" name="original_price" 
                                class="form-control" 
-                               value="{{ old('original_price') }}" min="0">
+                               value="{{ old('original_price') }}" min="1">
                     </div>
                 </div>
 

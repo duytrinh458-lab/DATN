@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Support\Facades\Auth;
 
 // AUTH
 use App\Http\Controllers\AuthController;
@@ -47,6 +48,13 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/change-password', 'showChangePasswordForm')->name('password.change.form');
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
 });
+
+/* ================= LOGOUT (🔥 THÊM MỚI) ================= */
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('login');
+})->name('logout');
+
 
 // ================= ADMIN =================
 Route::prefix('admin')
@@ -108,8 +116,6 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
         Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
-        
-        // ĐÃ THÊM: Route xử lý nút Đặt làm mặc định
         Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
     });
 
