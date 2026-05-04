@@ -55,7 +55,8 @@
                 <div class="cart-status-hud">
                     <span class="material-symbols-outlined">base_station</span>
                     <span class="font-mono text-[10px]">
-                        CART_STATUS: {{ auth()->check() && auth()->user()->cart ? auth()->user()->cart->cartItems->count() : 0 }} UNITS
+                        <!-- Xử lý lỗi đếm số lượng giỏ hàng nếu chưa đăng nhập -->
+                        CART_STATUS: {{ auth()->check() && \App\Models\Cart::where('user_id', auth()->id())->exists() ? \Illuminate\Support\Facades\DB::table('cart_items')->where('cart_id', \App\Models\Cart::where('user_id', auth()->id())->value('id'))->sum('quantity') : 0 }} UNITS
                     </span>
                 </div>
 
@@ -82,10 +83,10 @@
                     </div>
                 </div>
 
+                <!-- Đã xóa cái input cờ redirect_to_checkout đi vì không cần thiết nữa -->
                 <form id="purchase-form" action="{{ route('user.cart.add') }}" method="POST" class="purchase-interface">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                    <input type="hidden" name="redirect_to_checkout" id="redirect-flag" value="0">
                     
                     <div class="quantity-selector">
                         <label>ĐƠN VỊ CẤU HÌNH:</label>
@@ -121,9 +122,11 @@
         var thumbs = new Swiper(".thumb-swiper", { spaceBetween: 12, slidesPerView: 4, watchSlidesProgress: true });
         new Swiper(".main-swiper", { spaceBetween: 10, thumbs: { swiper: thumbs }, grabCursor: true });
 
+        // ĐÃ SỬA HÀM NÀY: Tự động đổi link Form sang Mua ngay trước khi gửi
         function buyNowAction() {
-            document.getElementById('redirect-flag').value = '1';
-            document.getElementById('purchase-form').submit();
+            var form = document.getElementById('purchase-form');
+            form.action = "{{ route('user.checkout.buyNow') }}"; 
+            form.submit();
         }
     </script>
 @endpush

@@ -31,12 +31,14 @@ class CheckoutController extends Controller
     }
 
     // Bước 2: Hiển thị giao diện thanh toán (Image 10)
+   // Bước 2: Hiển thị giao diện thanh toán
     public function index()
     {
         $item = session('checkout_item');
         if (!$item) return redirect()->route('user.products')->with('error', 'Hết phiên làm việc.');
 
-        return view('User.checkout', compact('item'));
+        // Đã sửa lại đường dẫn view để trỏ đúng vào thư mục orders
+        return view('User.orders.checkout', compact('item')); 
     }
 
     // Bước 3: Xử lý khi khách bấm "Xác nhận thanh toán"

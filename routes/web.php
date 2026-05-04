@@ -11,15 +11,15 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
-use App\Http\Controllers\User\ProductController as UserProductController; // Để xem chi tiết SP
-use App\Http\Controllers\User\CheckoutController; // Xử lý mua ngay & thanh toán
+use App\Http\Controllers\User\ProductController as UserProductController; 
+use App\Http\Controllers\User\CheckoutController; 
 
-// ORDER (Dùng chung hoặc tùy cấu trúc của Duy)
+// ORDER 
 use App\Http\Controllers\OrderController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ProductController as P; // Alias P của Duy
+use App\Http\Controllers\Admin\ProductController as P; 
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 
@@ -78,13 +78,13 @@ Route::middleware([Authenticate::class])->group(function () {
 
     // PRODUCTS
     Route::get('/products', [P::class, 'products'])->name('user.products');
-    Route::get('/products/{id}', [UserProductController::class, 'show'])->name('user.products.detail'); // THÊM MỚI: Xem chi tiết SP
+    Route::get('/products/{id}', [UserProductController::class, 'show'])->name('user.products.detail'); 
 
-    // ================= CHECKOUT (MỚI: LUỒNG MUA NGAY) =================
+    // ================= CHECKOUT =================
     Route::prefix('checkout')->name('user.checkout.')->group(function () {
-        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');    // Bấm nút Mua ngay
-        Route::get('/', [CheckoutController::class, 'index'])->name('index');             // Trang nhập thông tin nhận hàng
-        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process'); // Nút xác nhận mua cuối cùng
+        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');    
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');             
+        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process'); 
     });
 
     // ================= CART =================
@@ -108,6 +108,9 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
         Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
+        
+        // ĐÃ THÊM: Route xử lý nút Đặt làm mặc định
+        Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
     });
 
     // ================= WALLET =================

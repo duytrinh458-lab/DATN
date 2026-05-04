@@ -1,0 +1,158 @@
+/* public/css/user/profile.css */
+.profile-viewport {
+    padding: 100px 20px 60px;
+    background-color: #0b0e14;
+    min-height: 100vh;
+    color: #fff;
+}
+
+.profile-card {
+    background: #0f172a;
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 234, 255, 0.05);
+    height: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.profile-title-blue {
+    color: #00eaff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    border-left: 3px solid #00eaff;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+.profile-title-green {
+    color: #00ff88;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    border-left: 3px solid #00ff88;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+.form-label-vg {
+    color: #94a3b8;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control-vg {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-control-vg:focus {
+    border-color: #00eaff;
+    background: #161e2e;
+}
+
+.form-control-vg:disabled {
+    background: #0f172a;
+    color: #64748b;
+    cursor: not-allowed;
+    border-color: transparent;
+}
+
+.btn-vg-blue {
+    width: 100%;
+    background: linear-gradient(90deg, #007bff, #00eaff);
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-vg-blue:hover {
+    box-shadow: 0 5px 20px rgba(0, 234, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-vg-green {
+    width: 100%;
+    background: linear-gradient(90deg, #00eaff, #00ff88);
+    border: none;
+    padding: 16px;
+    border-radius: 10px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-vg-green:hover {
+    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+    transform: translateY(-2px);
+}
+
+.alert-vg-success {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.address-item {
+    background: #1e293b;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-left: 4px solid #334155;
+    transition: 0.3s;
+}
+
+.address-item.active {
+    border-left-color: #00ff88;
+    background: rgba(0, 255, 136, 0.05);
+}
+
+.badge-active {
+    display: inline-block;
+    background: #00ff88;
+    color: #0f172a;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.address-text {
+    color: #cbd5e1;
+    font-size: 15px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.address-time {
+    color: #64748b;
+    font-size: 12px;
+}

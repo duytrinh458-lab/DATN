@@ -129,3 +129,55 @@
     .shipping-grid { grid-template-columns: 1fr; }
     .full-width { grid-column: span 1; }
 }
+
+
+/* --- GIAO DIỆN THÔNG TIN ĐỊA CHỈ MẶC ĐỊNH --- */
+.address-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: #cbd5e1;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.address-card strong {
+    color: #00eaff;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.address-card-note {
+    margin-top: 10px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.address-warning {
+    color: #ff4757;
+    background: rgba(255, 71, 87, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ff4757;
+}
+
+.address-warning a {
+    color: #00eaff;
+    text-decoration: none;
+}
+
+.address-warning a:hover {
+    text-decoration: underline;
+}
+
+/* Xử lý khi nút xác nhận bị vô hiệu hóa (chưa có địa chỉ) */
+.btn-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.error-text {
+    color: #ff4757;
+}

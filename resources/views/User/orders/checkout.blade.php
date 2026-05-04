@@ -7,43 +7,60 @@
 @endpush
 
 @section('content')
+@php
+    // Lấy dữ liệu sản phẩm khách vừa bấm "Mua ngay"
+    $item = session('checkout_item');
+    
+    // Lấy thông tin người dùng và địa chỉ mặc định
+    $user = Auth::user();
+    $defaultAddress = \App\Models\Address::where('user_id', $user->id)->where('is_default', 1)->first();
+    
+    // Tính toán tiền tệ
+    $subtotal = $item ? ($item['price'] * $item['quantity']) : 0;
+    $shipping_fee = 30000; // Phí vận chuyển mặc định
+    $total = $subtotal + $shipping_fee;
+@endphp
+
 <div class="checkout-viewport">
     <div class="checkout-container">
         <h2 class="checkout-title">THANH TOÁN</h2>
         <p class="checkout-subtitle">HỆ THỐNG GIAO DỊCH VANGUARD-07 // SECURE LINE</p>
 
-        <form action="{{ route('user.orders.confirm') }}" method="POST">
+        <form action="{{ route('user.checkout.process') }}" method="POST">
             @csrf
+            <!-- Giữ nguyên các thẻ inline-flex của bản thiết kế gốc do bạn làm -->
             <div style="display: flex; gap: 30px; flex-wrap: wrap;">
                 
                 <div style="flex: 1.2; min-width: 350px;">
                     <div class="checkout-box">
                         <h4>THÔNG TIN GIAO HÀNG</h4>
-                        <div class="shipping-grid">
-                            <div class="full-width">
-                                <input type="text" name="name" class="form-control" placeholder="Họ tên đặc vụ" required>
+                        
+                        @if($defaultAddress)
+                            <div class="address-card">
+                                <strong>Đặc vụ: {{ $defaultAddress->full_name }}</strong>
+                                SĐT: {{ $defaultAddress->phone }}<br>
+                                Tọa độ: {{ $defaultAddress->street }}<br>
+                                Căn cứ: {{ $defaultAddress->district ? $defaultAddress->district . ', ' : '' }}{{ $defaultAddress->city ? $defaultAddress->city . ', ' : '' }}{{ $defaultAddress->province }}
                             </div>
-                            
-                            <input type="text" name="phone" class="form-control" placeholder="Số điện thoại" required>
-                            <input type="email" name="email" class="form-control" placeholder="Email nhận hóa đơn">
-                            
-                            <div class="full-width">
-                                <input type="text" name="address" class="form-control" placeholder="Địa chỉ chi tiết" required>
+                            <div class="address-card-note">
+                                *Hệ thống sẽ giao hàng đến Tọa độ mặc định này. Để thay đổi, vui lòng cập nhật tại Cài đặt Hồ sơ.
                             </div>
-
-                            <input type="text" name="city" class="form-control" placeholder="Tỉnh / Thành phố">
-                            <input type="text" name="district" class="form-control" placeholder="Quận / Huyện">
-                        </div>
+                        @else
+                            <div class="address-warning">
+                                ⚠️ CẢNH BÁO: CHƯA CÓ TỌA ĐỘ GIAO HÀNG!<br>
+                                Vui lòng quay lại <a href="{{ route('user.profile.index') }}">Hồ sơ</a> để thiết lập địa chỉ mặc định.
+                            </div>
+                        @endif
                     </div>
 
                     <div class="checkout-box">
                         <h4>PHƯƠNG THỨC THANH TOÁN</h4>
                         <label class="payment-method">
-                            <input type="radio" name="payment_method" value="vpay" checked> 
+                            <input type="radio" name="payment_method" value="wallet" checked> 
                             <span>Ví điện tử Vanguard (V-Pay)</span>
                         </label>
                         <label class="payment-method">
-                            <input type="radio" name="payment_method" value="cod"> 
+                            <input type="radio" name="payment_method" value="cash"> 
                             <span>Thanh toán khi nhận hàng (COD)</span>
                         </label>
                     </div>
@@ -52,23 +69,30 @@
                 <div style="flex: 0.8; min-width: 320px;">
                     <div class="checkout-box">
                         <h4>TÓM TẮT ĐƠN HÀNG</h4>
-                        <div style="margin-bottom: 20px;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                <span>Vanguard X1 Alpha</span>
-                                <span>45,000,000₫</span>
-                            </div>
-                            <div style="display:flex; justify-content:space-between; opacity:0.7; font-size:13px;">
-                                <span>Phí vận chuyển</span>
-                                <span>250,000₫</span>
-                            </div>
-                        </div>
-
-                        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: right;">
-                            <span style="font-size: 12px; opacity: 0.6; display: block; margin-bottom: 5px;">TỔNG QUYẾT TOÁN</span>
-                            <div class="grand-total">45,250,000₫</div>
-                        </div>
                         
-                        <button type="submit" class="btn-confirm">XÁC NHẬN GIAO DỊCH</button>
+                        @if($item)
+                            <div style="margin-bottom: 20px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                    <span>{{ $item['name'] }} <strong style="color: #00eaff;">x{{ $item['quantity'] }}</strong></span>
+                                    <span>{{ number_format($subtotal, 0, ',', '.') }}₫</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; opacity:0.7; font-size:13px;">
+                                    <span>Phí vận chuyển</span>
+                                    <span>{{ number_format($shipping_fee, 0, ',', '.') }}₫</span>
+                                </div>
+                            </div>
+
+                            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: right;">
+                                <span style="font-size: 12px; opacity: 0.6; display: block; margin-bottom: 5px;">TỔNG QUYẾT TOÁN</span>
+                                <div class="grand-total">{{ number_format($total, 0, ',', '.') }}₫</div>
+                            </div>
+                            
+                            <button type="submit" class="btn-confirm" {{ !$defaultAddress ? 'disabled' : '' }}>
+                                XÁC NHẬN GIAO DỊCH
+                            </button>
+                        @else
+                            <div class="error-text">Lỗi: Không tìm thấy sản phẩm trong phiên giao dịch.</div>
+                        @endif
                     </div>
                 </div>
 

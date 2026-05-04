@@ -37,12 +37,11 @@
                         <span class="material-symbols-outlined">monitoring</span>
                     </a>
                     <a href="{{ url('/wallet') }}" class="icon-btn wallet-glow" title="Ví Vanguard">
-    <span class="material-symbols-outlined">account_balance_wallet</span>
-
-    <span class="wallet-balance">
-        {{ number_format($walletBalance ?? 0, 0, ',', '.') }}₫
-    </span>
-</a>
+                        <span class="material-symbols-outlined">account_balance_wallet</span>
+                        <span class="wallet-balance">
+                            {{ number_format($walletBalance ?? 0, 0, ',', '.') }}₫
+                        </span>
+                    </a>
                 </div>
                 <div class="divider-v"></div>
                 <a href="{{ url('/login') }}" class="btn-terminal">ĐĂNG XUẤT</a>
@@ -73,5 +72,31 @@
     </footer>
 
     @stack('scripts')
+
+    <!-- HỆ THỐNG THÔNG BÁO VANGUARD TOAST -->
+    @if(session('success') || session('error'))
+        <div id="vanguard-toast" class="{{ session('success') ? 'toast-success' : 'toast-error' }}">
+            <span class="material-symbols-outlined">
+                {{ session('success') ? 'check_circle' : 'warning' }}
+            </span>
+            <span class="toast-msg">{{ session('success') ?? session('error') }}</span>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toast = document.getElementById('vanguard-toast');
+                if (toast) {
+                    setTimeout(() => { 
+                        toast.classList.add('show'); 
+                    }, 100);
+
+                    setTimeout(() => { 
+                        toast.classList.remove('show'); 
+                    }, 5000);
+                }
+            });
+        </script>
+    @endif
+
 </body>
 </html>

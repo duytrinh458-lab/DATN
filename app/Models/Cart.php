@@ -3,21 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product; // ✔ FIX QUAN TRỌNG
 
 class Cart extends Model
 {
     protected $table = 'carts';
 
+    // Bảng carts bây giờ chỉ lưu mỗi user_id
     protected $fillable = [
-        'user_id',
-        'product_id',
-        'quantity'
+        'user_id'
     ];
 
-    // Quan hệ với sản phẩm
-    public function product()
+    // Quan hệ: 1 Giỏ hàng có nhiều Chi tiết sản phẩm
+    public function cartItems()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->hasMany(CartItem::class, 'cart_id');
     }
 }

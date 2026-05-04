@@ -4,6 +4,14 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/products.css') }}">
+<!-- Thêm 1 chút CSS nhỏ để bỏ gạch chân của thẻ a -->
+<style>
+    .product-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -36,24 +44,32 @@
         @isset($products)
             @foreach($products as $product)
                 <div class="product-card-v4">
-                    <div class="img-wrapper">
-                        <img src="{{ $product->images && $product->images->first() 
-                            ? asset($product->images->first()->image_url) 
-                            : asset('images/uav1.jpg') }}" 
-                        alt="{{ $product->name }}">
-                    </div>
-
-                    <div class="card-body">
-                        <h3>{{ $product->name }}</h3>
-                        <p>{{ Str::limit($product->description, 50) }}</p>
-
-                        <div class="price">
-                            {{ number_format($product->sale_price, 0, ',', '.') }}₫
+                    
+                    <!-- BẮT ĐẦU SỬA: Bọc thẻ <a> quanh ảnh và tên sản phẩm -->
+                    <a href="{{ route('user.products.detail', $product->id) }}" class="product-link">
+                        <div class="img-wrapper">
+                            <img src="{{ $product->images && $product->images->first() 
+                                ? asset($product->images->first()->image_url) 
+                                : asset('images/uav1.jpg') }}" 
+                            alt="{{ $product->name }}">
                         </div>
 
-                        {{-- ACTION BUTTONS - GIỮ NGUYÊN HOÀN TOÀN LOGIC CỦA DUY --}}
+                        <div class="card-body">
+                            <h3>{{ $product->name }}</h3>
+                            <p>{{ Str::limit($product->description, 50) }}</p>
+
+                            <div class="price">
+                                {{ number_format($product->sale_price, 0, ',', '.') }}₫
+                            </div>
+                        </div>
+                    </a>
+                    <!-- KẾT THÚC SỬA -->
+
+                    <!-- Khu vực nút bấm giữ nguyên và tách biệt khỏi thẻ <a> để click không bị loạn -->
+                    <div class="card-body" style="padding-top: 0;"> 
                         <div class="product-actions">
-                            <form action="{{ route('user.orders.store') }}" method="POST">
+                            <!-- ĐÃ SỬA: Sửa lại route của nút Mua ngay thành route checkout.buyNow -->
+                            <form action="{{ route('user.checkout.buyNow') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                                 <input type="hidden" name="quantity" value="1">
@@ -68,6 +84,7 @@
                             </form>
                         </div>
                     </div>
+
                 </div>
             @endforeach
         @else

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,13 +14,14 @@ class CartController extends Controller
     // 1. Xem giỏ hàng
     public function index() {
         $userId = Auth::id();
+        if (!$userId) return redirect()->route('login');
 
-        if (!$userId) {
-            return redirect()->route('login');
-        }
+        // Tìm giỏ hàng, nếu chưa có thì tạo mới
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
 
-        $cartItems = Cart::with(['product.images'])
-            ->where('user_id', $userId)
+        // Lấy chi tiết các sản phẩm trong giỏ kèm theo ảnh
+        $cartItems = CartItem::with(['product.images'])
+            ->where('cart_id', $cart->id)
             ->get();
 
         $total = $cartItems->sum(function($item) {
@@ -31,53 +33,48 @@ class CartController extends Controller
 
     // 2. Thêm vào giỏ
     public function add(Request $request) 
-{
-    // dd('ADD CART RUN');
-    $request->validate([
-        'product_id' => 'required|exists:products,id',
-        'quantity' => 'nullable|integer|min:1'
-    ]);
-
-    $userId = Auth::id();
-
-    if (!$userId) {
-        return redirect()->route('login');
-    }
-
-    $product = Product::findOrFail($request->product_id);
-
-    $quantity = $request->quantity ?? 1;
-
-    if (($product->stock ?? 0) < $quantity) {
-        return back()->with('error', 'Số lượng UAV trong kho không đủ!');
-    }
-
-    $cart = Cart::where('user_id', $userId)
-                ->where('product_id', $request->product_id)
-                ->first();
-
-    if ($cart) {
-        $cart->increment('quantity', $quantity);
-    } else {
-        Cart::create([
-            'user_id' => $userId,
-            'product_id' => $request->product_id,
-            'quantity' => $quantity
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'nullable|integer|min:1'
         ]);
-    }
 
-    return redirect()->route('user.cart.index')
-        ->with('success', '✔ Đã thêm vào giỏ hàng thành công!');
-}
+        $userId = Auth::id();
+        if (!$userId) return redirect()->route('login')->with('error', 'Vui lòng đăng nhập.');
+
+        $product = Product::findOrFail($request->product_id);
+        $quantity = $request->quantity ?? 1;
+
+        if (($product->stock ?? 0) < $quantity) {
+            return back()->with('error', 'Số lượng UAV trong kho không đủ!');
+        }
+
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
+
+        // Tìm xem sản phẩm này đã có trong giỏ hàng cụ thể này chưa
+        $cartItem = CartItem::where('cart_id', $cart->id)
+                            ->where('product_id', $request->product_id)
+                            ->first();
+
+        if ($cartItem) {
+            $cartItem->increment('quantity', $quantity);
+        } else {
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $request->product_id,
+                'quantity' => $quantity,
+                'unit_price' => $product->sale_price
+            ]);
+        }
+
+        // Thay vì chuyển thẳng vào giỏ, ta cho khách ở lại trang sản phẩm để mua tiếp
+        return back()->with('success', '✔ Đã thêm UAV vào giỏ hàng thành công!');
+    }
 
     // 3. Xóa sản phẩm
     public function destroy($id)
     {
-        $userId = Auth::id();
-
-        $cartItem = Cart::where('id', $id)
-                        ->where('user_id', $userId)
-                        ->first();
+        $cartItem = CartItem::find($id);
 
         if ($cartItem) {
             $cartItem->delete();
@@ -90,11 +87,7 @@ class CartController extends Controller
     // 4. Cập nhật số lượng
     public function update(Request $request, $id)
     {
-        $userId = Auth::id();
-
-        $cartItem = Cart::where('id', $id)
-                        ->where('user_id', $userId)
-                        ->first();
+        $cartItem = CartItem::find($id);
 
         if ($cartItem) {
             $cartItem->update(['quantity' => $request->quantity]);
