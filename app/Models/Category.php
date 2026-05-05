@@ -21,6 +21,8 @@ class Category extends Model
         'sort_order'
     ];
 
+    public $timestamps = false;
+
     // Một danh mục có nhiều sản phẩm
     public function products()
     {

@@ -107,7 +107,7 @@
                     <div class="input-group">
                         <i class="fas fa-boxes"></i>
                         <input type="number" id="stock" name="stock" class="form-control" 
-                               value="{{ old('stock', 0) }}" min="0">
+                               value="{{ old('stock', 1) }}" min="1">
                     </div>
                 </div>
 

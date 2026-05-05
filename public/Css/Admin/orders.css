@@ -1,3 +1,4 @@
+
 /* --- PHÂN LOẠI TRẠNG THÁI ĐƠN HÀNG --- */
 .order-status {
     padding: 6px 12px;
@@ -17,25 +18,26 @@
     border: 1px solid rgba(245, 158, 11, 0.2); 
 }
 
-.status-confirmed { 
+.status-processing { 
     background: rgba(6, 182, 212, 0.1); 
     color: #0891B2; 
     border: 1px solid rgba(6, 182, 212, 0.2); 
 }
 
-.status-shipped { 
+.status-shipping { 
     background: rgba(59, 130, 246, 0.1); 
     color: #2563EB; 
     border: 1px solid rgba(59, 130, 246, 0.2); 
 }
 
-.status-completed { 
-    background: rgba(16, 185, 129, 0.1); 
-    color: #059669; 
-    border: 1px solid rgba(16, 185, 129, 0.2); 
+.status-delivered { 
+    background: rgba(16, 185, 129, 0.12); 
+    color: #047857; 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
-.status-canceled { 
+.status-cancelled { 
     background: rgba(239, 68, 68, 0.1); 
     color: #DC2626; 
     border: 1px solid rgba(239, 68, 68, 0.2); 
@@ -55,20 +57,34 @@
     font-weight: 500;
 }
 
-/* Tối ưu khoảng cách cho cột ID đơn hàng */
 .user-id {
     font-family: 'Monaco', monospace;
     font-weight: bold;
     color: #64748B;
 }
 
-/* ngăn cách nhé -------------------------------------------------------------------------------------show*/
-
-
-/* --- CHI TIẾT ĐƠN HÀNG (SHOW PAGE) --- */
+/* ================= CHI TIẾT ĐƠN HÀNG ================= */
 .order-detail-page {
     max-width: 1000px;
     margin: 0 auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
 }
 
 .detail-grid {
@@ -104,7 +120,7 @@
     font-weight: 600;
 }
 
-/* Tinh chỉnh bảng sản phẩm */
+/* Bảng sản phẩm */
 .uav-table th {
     background: transparent;
     border-bottom: 2px solid var(--blue-ultra);
@@ -118,20 +134,88 @@
     padding-top: 10px;
 }
 
-/* Nút quay lại */
-.btn-back-text {
+/* ================= NÚT QUAY LẠI (FIX MẠNH) ================= */
+.header-actions .btn-back-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
     text-decoration: none;
-    color: var(--text-sub);
-    font-weight: 600;
-    transition: 0.3s;
+    font-weight: 700;
+    font-size: 14px;
+
+    color: #ffffff;
+
+    padding: 10px 16px;
+    border-radius: 12px;
+
+    /* GIỐNG NÚT UPDATE */
+    background: linear-gradient(135deg, #3B82F6, #eb2525);
+
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+
+    transition: all 0.25s ease;
 }
 
-.btn-back-text:hover {
-    color: var(--blue-main);
+/* Hover */
+.header-actions .btn-back-text:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.45);
 }
 
+/* Click */
+.header-actions .btn-back-text:active {
+    transform: translateY(0px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+}
+
+/* icon */
+.header-actions .btn-back-text i {
+    transition: 0.3s ease;
+}
+
+.header-actions .btn-back-text:hover i {
+    transform: translateX(-3px);
+}
+
+/* ================= NÚT CẬP NHẬT ================= */
 .btn-update {
-    padding: 12px 30px;
+    padding: 12px 26px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-update:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.45);
+}
+
+.btn-update:active {
+    transform: translateY(0px);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+}
+
+.btn-update i {
+    transition: 0.3s ease;
+}
+
+.btn-update:hover i {
+    transform: rotate(10deg);
 }
 
 /* Responsive */
@@ -139,6 +223,7 @@
     .uav-form-inline {
         flex-direction: column;
     }
+
     .uav-form-inline button {
         width: 100%;
     }

@@ -28,15 +28,25 @@ class OrderController extends Controller
         $items = DB::table('order_items')
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->where('order_items.order_id', $id)
-            ->select('products.name', 'order_items.quantity', 'order_items.price')
+            ->select(
+                'products.name',
+                'order_items.quantity',
+                'order_items.unit_price',
+                'order_items.total_price'
+            )
             ->get();
 
         return view('admin.orders.show', compact('order', 'items'));
     }
 
-    // 🔄 Cập nhật trạng thái
+    // 🔄 Cập nhật trạng thái (FIX AN TOÀN)
     public function update(Request $request, $id)
     {
+        // ✅ CHẶN SAI STATUS TRƯỚC KHI UPDATE
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipping,delivered'
+        ]);
+
         DB::table('orders')
             ->where('id', $id)
             ->update([

@@ -1,0 +1,200 @@
+/* ========================================
+   CATEGORY PAGE - DÙNG CHUNG (INDEX + FORM)
+======================================== */
+
+.category-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ================= HEADER ================= */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.admin-header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+/* ================= BUTTON ADD ================= */
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 18px;
+    border-radius: 12px;
+
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+
+    color: #fff !important;
+
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+
+    box-shadow: 0 10px 25px rgba(34,197,94,0.35);
+
+    transition: all 0.25s ease;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+}
+
+/* ================= CARD ================= */
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 25px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* ========================================
+   🔥 TABLE (INDEX)
+======================================== */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background: #f9fafb;
+}
+
+.table th {
+    padding: 14px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+.table td {
+    padding: 16px 14px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* ========================================
+   🔥 FORM (CREATE + EDIT)
+======================================== */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+/* input đẹp giống user */
+.form-group input {
+    width: 96%;
+    padding: 12px 14px;
+
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.2s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+/* ================= BUTTON SUBMIT ================= */
+.btn-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px 22px;
+    border-radius: 12px;
+
+    font-weight: 800;
+    font-size: 14px;
+
+    color: #fff !important;
+    border: none;
+
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+
+    transition: all 0.25s ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+}
+
+/* ================= FOOTER FORM ================= */
+.form-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* ================= ACTION BUTTON ================= */
+.btn-edit {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    color: #fff !important;
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.btn-delete {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* ================= EMPTY ================= */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9ca3af;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-footer {
+        justify-content: center;
+    }
+}

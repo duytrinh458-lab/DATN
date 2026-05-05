@@ -12,24 +12,27 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
-use App\Http\Controllers\User\ProductController as UserProductController; 
-use App\Http\Controllers\User\CheckoutController; 
+use App\Http\Controllers\User\ProductController; // ✅ FIX ĐÚNG CONTROLLER
+use App\Http\Controllers\User\CheckoutController;
 
-// ORDER 
+// ORDER
 use App\Http\Controllers\OrderController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ProductController as P; 
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CategoryController;
 
 use App\Http\Middleware\AdminMiddleware;
+
 
 // ================= ROOT =================
 Route::get('/', function () {
     return redirect('/login');
 });
+
 
 // ================= AUTH =================
 Route::controller(AuthController::class)->group(function () {
@@ -49,7 +52,8 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
 });
 
-/* ================= LOGOUT (🔥 THÊM MỚI) ================= */
+
+// ================= LOGOUT =================
 Route::post('/logout', function () {
     Auth::logout();
     return redirect()->route('login');
@@ -64,38 +68,50 @@ Route::prefix('admin')
 
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-        Route::resource('products', P::class)->except(['show']);
+        // PRODUCTS
+        Route::resource('products', AdminProductController::class)->except(['show']);
 
-        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders');
+        // CATEGORIES
+        Route::resource('categories', CategoryController::class);
+
+        // ORDERS
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{id}/update', [AdminOrderController::class, 'update'])->name('orders.update');
 
+        // USERS
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-        Route::post('/users/{id}/update', [UserController::class, 'update'])->name('users.update');
-        Route::post('/users/{id}/delete', [UserController::class, 'delete'])->name('users.delete');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
     });
 
-// ================= USER (CÓ ĐĂNG NHẬP) =================
+
+// ================= USER =================
 Route::middleware([Authenticate::class])->group(function () {
 
-    // HOME
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     // PRODUCTS
-    Route::get('/products', [P::class, 'products'])->name('user.products');
-    Route::get('/products/{id}', [UserProductController::class, 'show'])->name('user.products.detail'); 
+    Route::get('/products', [ProductController::class, 'products'])->name('user.products');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('user.products.detail');
 
-    // ================= CHECKOUT =================
+    // CATEGORIES
+    // CATEGORY USER
+Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
+Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
+
+    // CHECKOUT
     Route::prefix('checkout')->name('user.checkout.')->group(function () {
-        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');    
-        Route::get('/', [CheckoutController::class, 'index'])->name('index');             
-        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process'); 
+        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');
+        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process');
     });
 
-    // ================= CART =================
+    // CART
     Route::prefix('cart')->name('user.cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add', [CartController::class, 'add'])->name('add');
@@ -103,14 +119,14 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::put('/{id}', [CartController::class, 'update'])->name('update');
     });
 
-    // ================= ORDERS =================
+    // ORDERS
     Route::prefix('orders')->name('user.orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
     });
 
-    // ================= PROFILE =================
+    // PROFILE
     Route::prefix('profile')->name('user.profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
@@ -118,19 +134,11 @@ Route::middleware([Authenticate::class])->group(function () {
         Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
     });
 
-    // ================= WALLET =================
+    // WALLET
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
         Route::get('/', [WalletController::class, 'index'])->name('index');
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
 
-    // ================= test api cart =================
-    Route::get('/test-add-cart', function () {
-    return app(\App\Http\Controllers\Api\CartApiController::class)
-        ->add(new \Illuminate\Http\Request([
-            'product_id' => 1,
-            'quantity' => 1
-        ]));
-});
 });

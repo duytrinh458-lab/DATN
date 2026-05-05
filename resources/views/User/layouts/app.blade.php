@@ -23,9 +23,9 @@
 
             <ul class="nav-links">
                 <li><a href="{{ url('/home') }}">TRANG CHỦ</a></li>
-                <li><a href="{{ url('/products') }}">SẢN PHẨM</a></li>
-                <li><a href="{{ url('/services') }}">DỊCH VỤ</a></li>
-                <li><a href="{{ url('/news') }}">TIN TỨC</a></li>
+                <li><a href="{{ route('user.products') }}">SẢN PHẨM</a></li>
+<li><a href="{{ route('user.categories') }}">DANH MỤC</a></li>
+                <!-- <li><a href="{{ url('/news') }}">TIN TỨC</a></li> -->
                 <li><a href="{{ url('/orders') }}">ĐƠN HÀNG</a></li>
             </ul>
 

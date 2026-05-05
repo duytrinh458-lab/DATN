@@ -1,92 +1,131 @@
-/* --- FIX NÚT KHÔNG BỊ MỜ + KHÔNG BỊ OVERRIDE --- */
+/* ========================================
+   BUTTON SYSTEM FIX (CLEAN + NO OVERRIDE BUG)
+======================================== */
 
-/* Button chung (giữ cho toàn hệ thống) */
+/* ================= BASE BUTTON ================= */
 .btn {
-    background: linear-gradient(135deg, #3B82F6, #2563EB);
-    color: #fff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
     font-weight: 700;
     border-radius: 12px;
-    padding: 12px 24px;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-    opacity: 1 !important;
+
     transition: all 0.25s ease;
+
+    opacity: 1;
 }
 
-.btn:hover {
-    background: linear-gradient(135deg, #2563EB, #1D4ED8);
+/* ================= PRIMARY BUTTON (BLUE) ================= */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: #fff !important;
+    border: none;
+    padding: 12px 24px;
+
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn-primary-custom:hover {
     transform: translateY(-2px);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
     box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
 }
 
-
-/* 🔥 FIX RIÊNG TRANG USER (TRÁNH BỊ ADMIN.CSS ĐÈ) */
-.user-form-page .btn-submit,
-.user-form-page .btn {
-    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+/* ================= SUCCESS BUTTON (GREEN) ================= */
+.btn-success-custom {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #fff !important;
-    font-weight: 700;
-    border-radius: 12px;
-    padding: 14px 24px;
+    border: none;
+    padding: 12px 24px;
+
     box-shadow: 0 8px 20px rgba(34,197,94,0.4);
 }
 
-.user-form-page .btn-submit:hover,
-.user-form-page .btn:hover {
-    background: linear-gradient(135deg, #16a34a, #15803d) !important;
+.btn-success-custom:hover {
     transform: translateY(-2px);
+    background: linear-gradient(135deg, #16a34a, #15803d);
     box-shadow: 0 12px 30px rgba(34,197,94,0.6);
 }
 
-
-/* 🔥 FIX NÚT VIEW DETAIL */
+/* ================= VIEW DETAIL BUTTON ================= */
 .btn-view-detail {
-    text-decoration: none;
     background: linear-gradient(135deg, #3B82F6, #2563EB);
     color: #fff !important;
-    padding: 10px 22px;
+
+    padding: 10px 18px;
     border-radius: 10px;
+
     font-size: 13px;
     font-weight: 700;
-    transition: all 0.25s ease;
 
-    display: inline-block;
     min-width: 110px;
     text-align: center;
+    text-decoration: none;
+
+    display: inline-block;
 
     box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
 }
 
 .btn-view-detail:hover {
-    background: linear-gradient(135deg, #2563EB, #1D4ED8);
     transform: translateY(-2px);
+    background: linear-gradient(135deg, #2563EB, #1D4ED8);
     box-shadow: 0 10px 25px rgba(37, 99, 235, 0.6);
 }
 
-
-/* 🔥 FIX NÚT ADD NEW */
+/* ================= ADD NEW BUTTON ================= */
 .btn-add-new {
-    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #fff !important;
-    font-weight: 700;
-    border-radius: 14px !important;
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 12px 20px;
+
     box-shadow: 0 8px 20px rgba(34,197,94,0.4);
 }
 
 .btn-add-new:hover {
-    background: linear-gradient(135deg, #16a34a, #15803d) !important;
-    box-shadow: 0 12px 30px rgba(34,197,94,0.6);
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #16a34a, #15803d);
 }
 
+/* ================= FORM FIX ================= */
+.form-group input,
+.form-group select,
+.form-select {
+    width: 100%;
+    padding: 12px 14px;
 
-/* 🔥 FIX TOÀN BỘ LINK/NÚT KHÔNG BỊ FADE */
-button,
-a,
-.btn {
-    opacity: 1 !important;
+    border-radius: 12px !important;
+
+    border: 1px solid #e5e7eb;
+
+    font-size: 14px;
+
+    background: #fff;
+
+    transition: all 0.2s ease;
 }
 
+.form-group input:focus,
+.form-group select:focus,
+.form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    outline: none;
+}
 
-/* 🔥 FIX CARD KHÔNG LÀM MỜ */
+/* ================= CARDS ================= */
 .card {
     opacity: 1 !important;
+    border-radius: 16px;
+    padding: 25px;
+    background: #fff;
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    border: 1px solid #f1f5f9;
 }

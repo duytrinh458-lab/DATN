@@ -39,6 +39,7 @@
                         <th class="center">Hành động</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach($orders as $order)
                     <tr>
@@ -46,12 +47,22 @@
                         <td><span class="user-name">{{ $order->full_name }}</span></td>
                         <td><span class="user-phone">{{ $order->phone }}</span></td>
                         <td><span class="order-price">{{ number_format($order->total) }}đ</span></td>
+
                         <td class="center">
                             <span class="order-status status-{{ $order->status }}">
                                 {{ strtoupper($order->status) }}
                             </span>
                         </td>
-                        <td><span class="order-date">{{ $order->created_at->format('d/m/Y H:i') }}</span></td>
+
+                        {{-- 🔥 FIX: created_at → ordered_at --}}
+                        <td>
+                            <span class="order-date">
+                                {{ $order->ordered_at 
+                                    ? \Carbon\Carbon::parse($order->ordered_at)->format('d/m/Y H:i') 
+                                    : '-' }}
+                            </span>
+                        </td>
+
                         <td class="center">
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="btn-view-detail">
                                 Chi tiết
@@ -60,6 +71,7 @@
                     </tr>
                     @endforeach
                 </tbody>
+
             </table>
         </div>
     </div>

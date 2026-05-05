@@ -3,7 +3,7 @@
 @section('title', 'Chi tiết người dùng #' . $user->id)
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/Admin/users.css') }}">
 @endpush
 
 @section('content')
