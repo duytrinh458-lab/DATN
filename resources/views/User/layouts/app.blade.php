@@ -26,6 +26,7 @@
                 <li><a href="{{ url('/products') }}">SẢN PHẨM</a></li>
                 <li><a href="{{ url('/services') }}">DỊCH VỤ</a></li>
                 <li><a href="{{ url('/news') }}">TIN TỨC</a></li>
+                <li><a href="{{ url('/orders') }}">ĐƠN HÀNG</a></li>
             </ul>
 
             <div class="auth-group">

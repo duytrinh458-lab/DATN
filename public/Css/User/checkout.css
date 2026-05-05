@@ -1,4 +1,4 @@
-/* public/css/user/checkout.css */
+/* public/Css/User/checkout.css */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&display=swap');
 
 .checkout-viewport {
@@ -53,15 +53,14 @@
     text-transform: uppercase;
 }
 
-/* SỬA LỖI LAYOUT THÔNG TIN GIAO HÀNG TẠI ĐÂY */
 .shipping-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Chia 2 cột đều nhau */
+    grid-template-columns: 1fr 1fr; 
     gap: 20px;
 }
 
 .full-width {
-    grid-column: span 2; /* Chiếm hết chiều ngang */
+    grid-column: span 2; 
 }
 
 .form-control {
@@ -74,7 +73,7 @@
     font-size: 14px;
     outline: none;
     transition: all 0.3s ease;
-    box-sizing: border-box; /* Cực kỳ quan trọng để không bị tràn */
+    box-sizing: border-box; 
 }
 
 .form-control:focus {
@@ -125,13 +124,6 @@
     box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
 }
 
-@media (max-width: 768px) {
-    .shipping-grid { grid-template-columns: 1fr; }
-    .full-width { grid-column: span 1; }
-}
-
-
-/* --- GIAO DIỆN THÔNG TIN ĐỊA CHỈ MẶC ĐỊNH --- */
 .address-card {
     background: #0f172a;
     border: 1px solid #334155;
@@ -172,7 +164,6 @@
     text-decoration: underline;
 }
 
-/* Xử lý khi nút xác nhận bị vô hiệu hóa (chưa có địa chỉ) */
 .btn-confirm:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -180,4 +171,20 @@
 
 .error-text {
     color: #ff4757;
+}
+
+/* CSS cho thanh cuộn danh sách sản phẩm */
+.checkout-items-list::-webkit-scrollbar {
+    width: 6px;
+}
+.checkout-items-list::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+.checkout-items-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 234, 255, 0.3);
+    border-radius: 4px;
+}
+.checkout-items-list::-webkit-scrollbar-thumb:hover {
+    background: #00eaff;
 }

@@ -3,32 +3,24 @@
 @section('title', 'Thanh toán - Vanguard')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('css/user/checkout.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/User/checkout.css') }}">
 @endpush
 
 @section('content')
-@php
-    // Lấy dữ liệu sản phẩm khách vừa bấm "Mua ngay"
-    $item = session('checkout_item');
-    
-    // Lấy thông tin người dùng và địa chỉ mặc định
-    $user = Auth::user();
-    $defaultAddress = \App\Models\Address::where('user_id', $user->id)->where('is_default', 1)->first();
-    
-    // Tính toán tiền tệ
-    $subtotal = $item ? ($item['price'] * $item['quantity']) : 0;
-    $shipping_fee = 30000; // Phí vận chuyển mặc định
-    $total = $subtotal + $shipping_fee;
-@endphp
-
 <div class="checkout-viewport">
     <div class="checkout-container">
         <h2 class="checkout-title">THANH TOÁN</h2>
         <p class="checkout-subtitle">HỆ THỐNG GIAO DỊCH VANGUARD-07 // SECURE LINE</p>
 
+        <!-- Route trỏ về hàm placeOrder trong Controller -->
         <form action="{{ route('user.checkout.process') }}" method="POST">
             @csrf
-            <!-- Giữ nguyên các thẻ inline-flex của bản thiết kế gốc do bạn làm -->
+            
+            <!-- Truyền ID địa chỉ lên Controller một cách âm thầm -->
+            @if($defaultAddress)
+                <input type="hidden" name="address_id" value="{{ $defaultAddress->id }}">
+            @endif
+
             <div style="display: flex; gap: 30px; flex-wrap: wrap;">
                 
                 <div style="flex: 1.2; min-width: 350px;">
@@ -70,16 +62,27 @@
                     <div class="checkout-box">
                         <h4>TÓM TẮT ĐƠN HÀNG</h4>
                         
-                        @if($item)
-                            <div style="margin-bottom: 20px;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <span>{{ $item['name'] }} <strong style="color: #00eaff;">x{{ $item['quantity'] }}</strong></span>
-                                    <span>{{ number_format($subtotal, 0, ',', '.') }}₫</span>
+                        @if(isset($checkoutItems) && count($checkoutItems) > 0)
+                            <!-- Danh sách sản phẩm (Có thể scroll nếu mua nhiều món) -->
+                            <div class="checkout-items-list" style="margin-bottom: 20px; max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                                @foreach($checkoutItems as $item)
+                                <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <img src="{{ asset($item['image']) }}" alt="{{ $item['name'] }}" style="width: 45px; height: 45px; border-radius: 8px; object-fit: cover; border: 1px solid var(--outline);">
+                                        <span style="font-size: 14px;">{{ $item['name'] }} <br><strong style="color: #00eaff;">x{{ $item['quantity'] }}</strong></span>
+                                    </div>
+                                    <span style="font-size: 14px; font-weight: bold; margin-top: auto;">{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}₫</span>
                                 </div>
-                                <div style="display:flex; justify-content:space-between; opacity:0.7; font-size:13px;">
-                                    <span>Phí vận chuyển</span>
-                                    <span>{{ number_format($shipping_fee, 0, ',', '.') }}₫</span>
-                                </div>
+                                @endforeach
+                            </div>
+
+                            <div style="display:flex; justify-content:space-between; opacity:0.7; font-size:13px; margin-bottom: 10px;">
+                                <span>Tạm tính</span>
+                                <span>{{ number_format($total, 0, ',', '.') }}₫</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; opacity:0.7; font-size:13px; margin-bottom: 20px;">
+                                <span>Phí vận chuyển</span>
+                                <span style="color: #00ff88; font-weight: bold;">FREE</span>
                             </div>
 
                             <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: right;">

@@ -106,9 +106,8 @@ Route::middleware([Authenticate::class])->group(function () {
     // ================= ORDERS =================
     Route::prefix('orders')->name('user.orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::post('/checkout', [OrderController::class, 'store'])->name('store');
-        Route::post('/confirm', [OrderController::class, 'confirm'])->name('confirm');
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
+        Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
     });
 
     // ================= PROFILE =================
