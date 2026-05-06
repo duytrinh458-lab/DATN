@@ -4,57 +4,69 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\CartApiController;
 use App\Http\Controllers\Api\ProfileApiController;
+use App\Http\Controllers\Api\UserApiController;
+use App\Http\Controllers\Api\AuthApiController;
+use App\Http\Controllers\Api\OrderApiController;
+use App\Http\Controllers\Api\WalletApiController;
+use App\Http\Controllers\Api\AddressApiController;
 
-// ================= PRODUCT API (USER) =================
+// ==========================================================
+// 1. PUBLIC API (Không cần đăng nhập)
+// ==========================================================
+
+// Chuẩn RESTful của nhóm
+Route::post('/auth/signup', [AuthApiController::class, 'signup']);
+Route::post('/auth/login', [AuthApiController::class, 'login']);
 Route::get('/products', [ProductApiController::class, 'index']);
 Route::get('/products/{id}', [ProductApiController::class, 'show']);
-Route::get('/products-search', [ProductApiController::class, 'search']);
 
+// ALIAS (Bí danh) cho Thầy
+Route::post('/signup', [AuthApiController::class, 'signup']);
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::get('/get_list_products', [ProductApiController::class, 'index']);
+Route::get('/get_products', [ProductApiController::class, 'index']);
+Route::get('/search', [ProductApiController::class, 'search']);
 
-// ================= CART API =================
+// ==========================================================
+// 2. PRIVATE API (Bắt buộc đăng nhập - Có Token)
+// ==========================================================
 Route::middleware('auth:sanctum')->group(function () {
-
-    Route::get('/cart', [CartApiController::class, 'index']);
-
-    Route::post('/cart/add', [CartApiController::class, 'add']);
-
-    // update theo product_id (không dùng id cart_item)
-    Route::put('/cart/{product_id}', [CartApiController::class, 'update']);
-
-    // delete theo product_id
-    Route::delete('/cart/{product_id}', [CartApiController::class, 'destroy']);
-});
-
-// ================= USER API =================
-use App\Http\Controllers\Api\UserApiController;
-
-// Route::middleware('auth:sanctum')->group(function () {
-
-    // lấy danh sách user
-    Route::get('/users', [UserApiController::class, 'index']);
-
-    // chi tiết user
-    Route::get('/users/{id}', [UserApiController::class, 'show']);
-
-    // tạo user
-    Route::post('/users', [UserApiController::class, 'store']);
-
-    // cập nhật user
-    Route::put('/users/{id}', [UserApiController::class, 'update']);
-
-    // xóa user
-    Route::delete('/users/{id}', [UserApiController::class, 'destroy']);
-// });
-
-// ================= PROFILE API =================
-Route::middleware('auth:sanctum')->group(function () {
-
-    // lấy thông tin user đang login
+    
+    // --- AUTH & PROFILE ---
+    Route::post('/auth/logout', [AuthApiController::class, 'logout']);
     Route::get('/profile', [ProfileApiController::class, 'me']);
-
-    // cập nhật profile
     Route::put('/profile', [ProfileApiController::class, 'update']);
 
-    // đổi mật khẩu
-    Route::put('/profile/password', [ProfileApiController::class, 'changePassword']);
+    Route::post('/logout', [AuthApiController::class, 'logout']); // Alias
+    Route::get('/get_user_info', [ProfileApiController::class, 'me']); // Alias
+    Route::post('/set_user_info', [ProfileApiController::class, 'update']); // Alias
+    Route::post('/change_password', [ProfileApiController::class, 'changePassword']); // Alias
+
+    // --- GIỎ HÀNG (CART) ---
+    Route::get('/cart', [CartApiController::class, 'index']);
+    Route::post('/cart/add', [CartApiController::class, 'add']);
+    
+    Route::post('/add_to_cart', [CartApiController::class, 'add']); // Alias
+
+    // --- ĐỊA CHỈ (ADDRESS) ---
+    Route::get('/addresses', [AddressApiController::class, 'index']);
+    Route::post('/addresses', [AddressApiController::class, 'store']);
+    
+    Route::get('/get_list_order_address', [AddressApiController::class, 'index']); // Alias
+    Route::post('/add_order_address', [AddressApiController::class, 'store']); // Alias
+
+    // --- VÍ V-PAY (WALLET) ---
+    Route::get('/wallet/balance', [WalletApiController::class, 'balance']);
+    Route::post('/wallet/deposit', [WalletApiController::class, 'deposit']);
+    
+    Route::get('/get_current_balance', [WalletApiController::class, 'balance']); // Alias
+
+    // --- LỆNH ĐIỀU ĐỘNG (ORDERS) ---
+    Route::get('/orders', [OrderApiController::class, 'index']);
+    Route::post('/orders', [OrderApiController::class, 'store']);
+    Route::post('/orders/{id}/cancel', [OrderApiController::class, 'cancel']);
+
+    Route::get('/get_list_purchases', [OrderApiController::class, 'index']); // Alias
+    Route::post('/create_order', [OrderApiController::class, 'store']); // Alias
+    Route::post('/cancel_order', [OrderApiController::class, 'cancel']); // Alias
 });
