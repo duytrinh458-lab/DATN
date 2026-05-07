@@ -5,16 +5,24 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     // ================= DANH SÁCH =================
-    public function products()
-    {
-        $products = Product::with('images')->latest()->get();
+    public function products(Request $request)
+{
+    $query = Product::with('images');
 
-        return view('User.products.products', compact('products'));
+    // Tìm kiếm theo tên sản phẩm
+    if ($request->filled('search')) {
+        $query->where('name', 'like', '%' . $request->search . '%');
     }
+
+    $products = $query->latest()->get();
+
+    return view('User.products.products', compact('products'));
+}
 
     // ================= CHI TIẾT =================
     public function show($id)

@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\WalletApiController;
 use App\Http\Controllers\Api\AddressApiController;
+use App\Http\Controllers\Api\NotificationApiController;
+use App\Http\Controllers\Api\AdminDashboardApiController;
 
 // ==========================================================
 // 1. PUBLIC API (Không cần đăng nhập)
@@ -17,20 +19,27 @@ use App\Http\Controllers\Api\AddressApiController;
 // Chuẩn RESTful của nhóm
 Route::post('/auth/signup', [AuthApiController::class, 'signup']);
 Route::post('/auth/login', [AuthApiController::class, 'login']);
+Route::post('/auth/verify-otp', [AuthApiController::class, 'verifyOtp']);
+Route::post('/auth/resend-otp', [AuthApiController::class, 'resendOtp']);
+
 Route::get('/products', [ProductApiController::class, 'index']);
 Route::get('/products/{id}', [ProductApiController::class, 'show']);
 
 // ALIAS (Bí danh) cho Thầy
 Route::post('/signup', [AuthApiController::class, 'signup']);
 Route::post('/login', [AuthApiController::class, 'login']);
+Route::post('/verify_register_otp', [AuthApiController::class, 'verifyOtp']);
+Route::post('/resend_otp', [AuthApiController::class, 'resendOtp']);
+
 Route::get('/get_list_products', [ProductApiController::class, 'index']);
 Route::get('/get_products', [ProductApiController::class, 'index']);
 Route::get('/search', [ProductApiController::class, 'search']);
 
+
 // ==========================================================
 // 2. PRIVATE API (Bắt buộc đăng nhập - Có Token)
 // ==========================================================
-Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
     
     // --- AUTH & PROFILE ---
     Route::post('/auth/logout', [AuthApiController::class, 'logout']);
@@ -69,4 +78,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get_list_purchases', [OrderApiController::class, 'index']); // Alias
     Route::post('/create_order', [OrderApiController::class, 'store']); // Alias
     Route::post('/cancel_order', [OrderApiController::class, 'cancel']); // Alias
-});
+
+
+    // --- THÔNG BÁO (NOTIFICATIONS) ---
+    Route::get('/notifications', [NotificationApiController::class, 'index']);
+Route::get('/get_notification', [NotificationApiController::class, 'index']); // Alias
+
+    // --- DASHBOARD ADMIN ---
+    Route::get('/admin/dashboard', [AdminDashboardApiController::class, 'index']);
+Route::get('/admin_get_dashboard_stats', [AdminDashboardApiController::class, 'index']); // Alias
+
+
+
+// });

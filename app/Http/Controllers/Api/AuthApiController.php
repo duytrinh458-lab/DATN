@@ -84,4 +84,45 @@ class AuthApiController extends Controller
             'message' => 'Đã đăng xuất hệ thống'
         ]);
     }
+
+    // 📌 XÁC THỰC OTP (VERIFY OTP) - Placeholder
+    public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'phone' => 'required',
+        'otp' => 'required'
+    ]);
+
+    // OTP demo
+    if ($request->otp != '123456') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Mã OTP không đúng'
+        ], 400);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Xác thực OTP thành công'
+    ]);
+}
+
+public function resendOtp(Request $request)
+{
+    $request->validate([
+        'phone' => 'required'
+    ]);
+
+    // OTP demo
+    $otp = rand(100000, 999999);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Gửi lại mã OTP thành công',
+        'data' => [
+            'phone' => $request->phone,
+            'otp' => $otp
+        ]
+    ]);
+}
 }

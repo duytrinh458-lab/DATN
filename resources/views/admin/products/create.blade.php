@@ -3,7 +3,7 @@
 @section('title', 'Thêm sản phẩm mới')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/create.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/addproduct.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endpush
 
@@ -13,7 +13,7 @@
         <h1><i class="fas fa-drone"></i> Thêm sản phẩm UAV mới</h1>
         <div class="header-actions">
             <a href="{{ route('admin.products.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Danh sách
+                <i class="fas fa-arrow-left"></i> Về trang danh sách
             </a>
         </div>
     </div>

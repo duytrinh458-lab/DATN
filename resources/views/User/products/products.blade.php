@@ -4,14 +4,12 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/products.css') }}">
-<!-- Thêm 1 chút CSS nhỏ để bỏ gạch chân của thẻ a -->
-<style>
-    .product-link {
+    <!-- .product-link {
         text-decoration: none;
         color: inherit;
         display: block;
     }
-</style>
+</style> -->
 @endpush
 
 @section('content')

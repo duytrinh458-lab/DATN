@@ -1,9 +1,10 @@
 /* ================= INPUT / SELECT (FIX BO TRÒN + ĐẸP HƠN) ================= */
+
 .form-group select {
     width: 100%;
     padding: 12px 14px;
 
-    border-radius: 12px !important; /* 🔥 bo góc rõ hơn */
+    border-radius: 12px !important;
 
     border: 1px solid #e5e7eb;
 
@@ -15,13 +16,14 @@
     background: #fff;
 
     transition: all 0.2s ease;
+    box-sizing: border-box;
 }
 
 .form-group input {
-    width: 97%;
+    width: 100%;
     padding: 12px 14px;
 
-    border-radius: 12px !important; /* 🔥 bo góc rõ hơn */
+    border-radius: 12px !important;
 
     border: 1px solid #e5e7eb;
 
@@ -33,25 +35,38 @@
     background: #fff;
 
     transition: all 0.2s ease;
+
+    box-sizing: border-box;
 }
 
-/* khi focus */
+/* focus */
 .form-group input:focus,
 .form-group select:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-
     transform: translateY(-1px);
 }
 
-/* hover nhẹ cho input */
+/* hover */
 .form-group input:hover,
 .form-group select:hover {
     border-color: #cbd5e1;
 }
 
 
+/* ================= LABEL ================= */
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #374151;
+    letter-spacing: 0.2px;
+}
+
+
 /* ================= NÚT QUAY LẠI ================= */
+
 a.btn-back {
     display: inline-flex;
     align-items: center;
@@ -65,8 +80,6 @@ a.btn-back {
     font-size: 14px;
 
     color: #fff !important;
-
-    border: none !important;
 
     background: linear-gradient(135deg, #3B82F6, #2563EB) !important;
 
@@ -83,6 +96,7 @@ a.btn-back:hover {
 
 
 /* ================= NÚT SUBMIT ================= */
+
 button.btn-submit,
 input.btn-submit {
     display: inline-flex;
@@ -90,7 +104,7 @@ input.btn-submit {
     justify-content: center;
     gap: 8px;
 
-    padding: 12px 22px;
+    padding: 12px 52px;
 
     border-radius: 12px;
 
@@ -117,11 +131,33 @@ input.btn-submit:hover {
     box-shadow: 0 15px 35px rgba(37, 99, 235, 0.45);
 }
 
-/* ================= LABEL SPACING ================= */
-.form-group label {
-    display: block;
-    font-weight: 700;
-    margin-bottom: 8px; /* 🔥 tạo khoảng cách với input */
-    color: #374151;
-    letter-spacing: 0.2px;
+
+/* ================= FORM LAYOUT FIX ================= */
+
+.form-grid {
+    margin-bottom: 20px;
+}
+
+.form-actions {
+    margin-top: 35px;
+    padding-top: 20px;
+
+    display: flex;
+    gap: 12px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.form-container {
+    padding-bottom: 50px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
