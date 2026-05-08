@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartApiController extends Controller
 {
-    // 📌 GET /api/cart
+    // 📌 1. GET /api/cart (Xem giỏ hàng)
     public function index()
     {
         $userId = Auth::id();
@@ -35,7 +35,7 @@ class CartApiController extends Controller
         ]);
     }
 
-    // 📌 POST /api/cart/add
+    // 📌 2. POST /api/cart/add (Thêm vào giỏ)
     public function add(Request $request)
     {
         $userId = Auth::id();
@@ -67,18 +67,19 @@ class CartApiController extends Controller
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity ?? 1,
-                'unit_price' => $product->price ?? 0
+                // ĐÃ SỬA LỖI: Lấy giá sale_price từ Database chuẩn
+                'unit_price' => $product->sale_price ?? 0 
             ]);
         }
 
         return response()->json([
             'status' => true,
-            'message' => 'Đã thêm vào giỏ',
+            'message' => 'Đã thêm UAV vào giỏ',
             'data' => $item
         ]);
     }
 
-    // 📌 PUT /api/cart/{product_id}
+    // 📌 3. PUT /api/cart/{product_id} (Cập nhật số lượng)
     public function update(Request $request, $product_id)
     {
         $userId = Auth::id();
@@ -108,12 +109,12 @@ class CartApiController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Cập nhật thành công',
+            'message' => 'Cập nhật số lượng thành công',
             'data' => $item
         ]);
     }
 
-    // 📌 DELETE /api/cart/{product_id}
+    // 📌 4. DELETE /api/cart/{product_id} (Xóa 1 món)
     public function destroy($product_id)
     {
         $userId = Auth::id();
@@ -133,7 +134,25 @@ class CartApiController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Đã xoá sản phẩm'
+            'message' => 'Đã xoá sản phẩm khỏi giỏ'
+        ]);
+    }
+
+    // 📌 5. DELETE /api/cart/clear (Làm sạch toàn bộ giỏ - MỚI THÊM)
+    public function clear()
+    {
+        $userId = Auth::id();
+
+        $cart = Cart::where('user_id', $userId)->first();
+
+        if ($cart) {
+            // Xóa tất cả các dòng trong cart_items thuộc về cart_id này
+            CartItem::where('cart_id', $cart->id)->delete();
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã dọn sạch giỏ hàng'
         ]);
     }
 }
