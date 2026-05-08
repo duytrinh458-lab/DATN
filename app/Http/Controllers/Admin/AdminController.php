@@ -16,10 +16,10 @@ class AdminController extends Controller
         $orderCount   = Order::count();
         $userCount    = User::count();
 
-        // ✅ FIX: đúng cột + đúng status
+        // Doanh thu đơn đã giao
         $revenue = Order::where('status', 'delivered')->sum('total');
 
-        // 🔥 Sản phẩm bán chạy nhất
+        // Sản phẩm bán chạy
         $bestProduct = DB::table('order_items')
             ->join('products', 'order_items.product_id', '=', 'products.id')
             ->select(
@@ -30,12 +30,17 @@ class AdminController extends Controller
             ->orderByDesc('total_sold')
             ->first();
 
+
+        // 💬 COMMENT = reviews (theo DB của bạn)
+        $commentCount = DB::table('reviews')->count();
+
         return view('Admin.dashboard', compact(
             'productCount',
             'orderCount',
             'userCount',
             'revenue',
-            'bestProduct'
+            'bestProduct',
+            'commentCount'
         ));
     }
 }

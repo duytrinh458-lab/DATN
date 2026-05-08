@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\InteractionController;
+
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -86,6 +88,26 @@ Route::prefix('admin')
         Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // ================= TƯƠNG TÁC (FIX CHUẨN) =================
+        Route::prefix('interactions')->name('interactions.')->group(function () {
+
+            // 📌 danh sách comments
+            Route::get('/comments', [InteractionController::class, 'comments'])
+                ->name('comments');
+
+            // 📌 xóa comment
+            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])
+                ->name('comments.delete');
+
+            // likes
+            Route::get('/likes', [InteractionController::class, 'likes'])
+                ->name('likes');
+
+            // ratings
+            Route::get('/ratings', [InteractionController::class, 'ratings'])
+                ->name('ratings');
+        });
 
     });
 

@@ -1,0 +1,294 @@
+:root {
+    --bg-surface: #10141a;
+    --surface-low: #181c22;
+    --surface-container: #1c2026;
+    --primary: #c3f5ff;
+    --primary-container: #00e5ff;
+    --font-head: 'Space Grotesk', sans-serif;
+}
+
+/* ===== GLOBAL ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg-surface);
+}
+
+/* ===== LAYOUT ===== */
+.vanguard-detail-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+}
+
+/* ===== BREADCRUMB ===== */
+.vanguard-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    color: #849396;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-family: var(--font-head);
+    letter-spacing: 2px;
+}
+
+.vanguard-breadcrumb .active {
+    color: var(--primary-container);
+}
+
+/* ===== GRID FIX (QUAN TRỌNG) ===== */
+.product-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 48px;
+    align-items: start;
+}
+
+.gallery-col,
+.control-panel-col {
+    min-width: 0;
+    width: 100%;
+}
+
+.gallery-col { grid-column: span 7; }
+.control-panel-col { grid-column: span 5; }
+
+/* ===== PANEL ===== */
+.glass-panel {
+    width: 100%;
+    background: rgba(49, 53, 60, 0.3);
+    backdrop-filter: blur(20px);
+    border: 0.5px solid rgba(132, 147, 150, 0.15);
+}
+
+/* ===== INFO CARD FIX ===== */
+.info-card {
+    width: 100%;
+    padding: 32px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ===== MAIN IMAGE ===== */
+.main-frame {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--surface-low);
+}
+
+.main-swiper,
+.main-swiper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===== THUMBNAIL FIX ===== */
+.thumb-swiper {
+    margin-top: 12px;
+}
+
+.thumb-swiper .swiper-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.thumb-swiper .swiper-slide {
+    width: 60px !important;
+    height: 55px;
+    border-radius: 6px;
+    overflow: hidden;
+    opacity: 0.4;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: 0.2s ease;
+}
+
+.thumb-swiper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.swiper-slide-thumb-active {
+    opacity: 1;
+    border: 2px solid var(--primary-container);
+}
+
+/* ===== CART ===== */
+.cart-status-hud {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--primary-container);
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: rgba(0, 229, 255, 0.05);
+    border-left: 3px solid var(--primary-container);
+}
+
+/* ===== TITLE ===== */
+.uav-title {
+    font-family: var(--font-head);
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #dfe2eb;
+    margin: 10px 0;
+}
+
+/* ===== PRICE ===== */
+.price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.current-price {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--primary-container);
+}
+
+.old-price {
+    color: rgba(223, 226, 235, 0.4);
+    text-decoration: line-through;
+}
+
+/* ===== TELEMETRY ===== */
+.telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* ===== STOCK ===== */
+.stock-info {
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+/* ===== INPUT ===== */
+.quantity-selector input {
+    width: 100%;
+    padding: 10px;
+    background: var(--surface-low);
+    border: 1px solid rgba(132,147,150,0.3);
+    color: #fff;
+    border-radius: 6px;
+    outline: none;
+}
+
+/* ===== BUTTON STACK ===== */
+.button-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ===== BUTTON BUY ===== */
+.btn-buy-now {
+    background: linear-gradient(135deg, #c3f5ff, #00e5ff);
+    color: #001f24;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 900;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-buy-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+}
+
+/* ===== CART BUTTON ===== */
+.btn-add-to-cart {
+    background: rgba(24, 28, 34, 0.85);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: #dfe2eb;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/* ===== COMMENT FIX (KHÔNG DÍNH RIGHT) ===== */
+.comments-panel {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* FORM COMMENT FIX */
+.comment-form {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* TEXTAREA FIX */
+.comment-form textarea {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    padding: 10px;
+    background: var(--surface-low);
+    border: 1px solid rgba(132,147,150,0.3);
+    color: #fff;
+    border-radius: 8px;
+    resize: none;
+    outline: none;
+}
+
+/* BUTTON FIX */
+.comment-form button {
+    width: 90px;
+    height: 42px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #c3f5ff, #00e5ff);
+    color: #001f24;
+}
+
+/* COMMENT LIST */
+.comment-list {
+    margin-top: 15px;
+}
+
+.comment-list div {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .product-layout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-col,
+    .control-panel-col {
+        grid-column: span 12;
+    }
+}

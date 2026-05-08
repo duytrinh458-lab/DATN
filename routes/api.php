@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AddressApiController;
 use App\Http\Controllers\Api\NotificationApiController;
 use App\Http\Controllers\Api\AdminDashboardApiController;
 use App\Http\Controllers\Api\NewsApiController;
+use App\Http\Controllers\Api\BrandApiController;
 
 // ==========================================================
 // 1. PUBLIC API (Không cần đăng nhập)
@@ -33,6 +34,8 @@ Route::get('/products/{id}', [ProductApiController::class, 'show']);
 Route::get('/search', [ProductApiController::class, 'search']);
 Route::get('/check_new_items', [ProductApiController::class, 'checkNewItems']);
 Route::get('/get_comments_product/{id}', [ProductApiController::class, 'getComments']);
+Route::get('/get_list_brand', [BrandApiController::class, 'index']);
+
 
 // --- NHÓM 8: TIN TỨC (PUBLIC) ---
 Route::get('/get_list_news', [NewsApiController::class, 'index']);
@@ -42,7 +45,7 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
 // ==========================================================
 // 2. PRIVATE API (Bắt buộc đăng nhập)
 // ==========================================================
-Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
     
     // --- NHÓM 1 & 2: AUTH & PROFILE ---
     Route::post('/logout', [AuthApiController::class, 'logout']);
@@ -81,12 +84,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- NHÓM 6: ĐƠN HÀNG (Duy đang thiếu Chi tiết/Lộ trình/Xác nhận) ---
     Route::get('/get_list_purchases', [OrderApiController::class, 'index']); 
     Route::get('/get_order_detail/{id}', [OrderApiController::class, 'show']); // Mới: Chi tiết đơn
-    Route::post('/create_order', [OrderApiController::class, 'store']);
-    Route::post('/cancel_order/{id}', [OrderApiController::class, 'cancel']);
     Route::get('/get_order_status/{id}', [OrderApiController::class, 'getStatus']); // Mới
     Route::get('/get_order_timeline/{id}', [OrderApiController::class, 'getTimeline']); // Mới
     Route::post('/confirm_received/{id}', [OrderApiController::class, 'confirmReceived']); // Mới
     Route::post('/request_refund/{id}', [OrderApiController::class, 'requestRefund']); // Mới
+    Route::post('/cancel_order/{id}', [OrderApiController::class, 'cancel']);
+    Route::post('/create_order', [OrderApiController::class, 'store']);
+
 
     // --- NHÓM 8: THÔNG BÁO ---
     Route::get('/get_notification', [NotificationApiController::class, 'index']); // Mới: Lấy danh sách noti
@@ -110,4 +114,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/add_user', [UserApiController::class, 'store']); // Mới
     Route::put('/edit_user/{id}', [UserApiController::class, 'update']); // Mới
     Route::delete('/del_user/{id}', [UserApiController::class, 'destroy']); // Mới
-});
+// });

@@ -30,29 +30,52 @@ class UserController extends Controller
     }
 
     // 💾 Lưu user mới
-    public function store(Request $request)
-    {
-        $request->validate([
-            'full_name' => 'nullable|string|max:255', // ✅ cho phép trống
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required|unique:users,phone',
-            'password' => 'required|min:6',
-            'role' => 'required'
-        ]);
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'full_name' => 'nullable|string|max:100',
 
-        User::create([
-            'username' => explode('@', $request->email)[0], // ✅ FIX LỖI
-            'full_name' => $request->full_name ?? null,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-            'role' => $request->role, // lấy từ select box
-            'status' => 'active'
-        ]);
+        'email' => 'nullable|email|max:100|unique:users,email',
 
-        return redirect()->route('admin.users')
-            ->with('success', 'Thêm user thành công');
+        'phone' => 'required|string|max:15|unique:users,phone',
+
+        'password' => 'required|string|min:6',
+
+        'role' => 'required|in:admin,customer'
+    ]);
+
+    // tạo username tự động từ phone hoặc email
+    $username = $validated['email']
+        ? explode('@', $validated['email'])[0]
+        : 'user' . time();
+
+    // tránh trùng username
+    if (User::where('username', $username)->exists()) {
+        $username .= rand(100, 999);
     }
+
+    User::create([
+        'username' => $username,
+
+        'full_name' => $validated['full_name'],
+
+        'email' => $validated['email'],
+
+        'phone' => $validated['phone'],
+
+        'password' => Hash::make($validated['password']),
+
+        'role' => $validated['role'],
+
+        'status' => 'active',
+
+        'is_verified' => 1
+    ]);
+
+    return redirect()
+        ->route('admin.users')
+        ->with('success', 'Thêm user thành công');
+}
 
     // 🔄 Update role / status
     public function update(Request $request, $id)
