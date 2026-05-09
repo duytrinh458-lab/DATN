@@ -48,11 +48,7 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
 // ==========================================================
 // 2. PRIVATE API (Bắt buộc đăng nhập - Có Token)
 // ==========================================================
-<<<<<<< HEAD
-//Route::middleware('auth:sanctum')->group(function () {
-=======
 Route::middleware('auth:sanctum')->group(function () {
->>>>>>> bf8e5ccbebc891b0df97c24a4febd142b2b8ad95
     
     // --- NHÓM 1 & 2: AUTH & HỒ SƠ ---
     Route::post('/logout', [AuthApiController::class, 'logout']);
