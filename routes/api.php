@@ -48,7 +48,11 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
 // ==========================================================
 // 2. PRIVATE API (Bắt buộc đăng nhập - Có Token)
 // ==========================================================
+<<<<<<< HEAD
 //Route::middleware('auth:sanctum')->group(function () {
+=======
+Route::middleware('auth:sanctum')->group(function () {
+>>>>>>> bf8e5ccbebc891b0df97c24a4febd142b2b8ad95
     
     // --- NHÓM 1 & 2: AUTH & HỒ SƠ ---
     Route::post('/logout', [AuthApiController::class, 'logout']);
@@ -108,10 +112,11 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
     Route::delete('/del_products/{id}', [ProductApiController::class, 'destroy']);
     Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'adminUpdateStatus']);
     Route::post('/admin_approve_refund/{refund_id}', [OrderApiController::class, 'adminApproveRefund']);
-    Route::get('/admin_get_users', [UserApiController::class, 'index']); 
-    Route::get('/admin_get_user_detail/{id}', [UserApiController::class, 'show']); 
-    Route::post('/admin_add_user', [UserApiController::class, 'store']); 
-    Route::put('/admin_edit_user/{id}', [UserApiController::class, 'update']); 
-    Route::delete('/admin_del_user/{id}', [UserApiController::class, 'destroy']); 
-//})
-;
+    
+    // Quản lý Người dùng (Duy đang thiếu phần này)
+    Route::get('/get_list_users', [UserApiController::class, 'index']); // Mới
+    Route::get('/get_user_detail/{id}', [UserApiController::class, 'show']); // Mới
+    Route::post('/add_user', [UserApiController::class, 'store']); // Mới
+    Route::put('/edit_user/{id}', [UserApiController::class, 'update']); // Mới
+    Route::delete('/del_user/{id}', [UserApiController::class, 'destroy']); // Mới
+});

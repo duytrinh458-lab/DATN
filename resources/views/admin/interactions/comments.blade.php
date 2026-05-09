@@ -28,10 +28,10 @@
             <td>{{ $c->id }}</td>
             <td>{{ $c->full_name }}</td>
             <td>{{ $c->product_name }}</td>
-            <td>{{ $c->content }}</td>
+            <td>{{ $c->comment }}</td>
             <td>{{ $c->created_at }}</td>
             <td>
-                <form action="{{ route('interactions.comments.delete', $c->id) }}" method="POST">
+                <form action="{{ route('admin.interactions.comments.delete', $c->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button onclick="return confirm('Xóa comment này?')" class="btn btn-delete">

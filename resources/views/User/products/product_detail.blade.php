@@ -4,7 +4,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<link rel="stylesheet" href="{{ asset('Css/User/productdetail.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/User/prodetail.css') }}">
 @endpush
 
 @section('content')
@@ -64,15 +64,15 @@
             </div>
 
             <!-- COMMENTS -->
-            <div class="comments-panel glass-panel">
+            <div class="comments-section glass-panel">
 
                 <h3>Bình luận</h3>
 
                 @auth
-                <form action="{{ url('/api/set_comments_product/' . $product->id) }}" method="POST">
+                <form action="{{ url('/set_comments_product/' . $product->id) }}" method="POST">
                     @csrf
                     <textarea name="comment" style="width:100%;min-height:70px"></textarea>
-                    <button type="submit">Gửi</button>
+                    <button type="submit" class="submit-comment-btn">Gửi</button>
                 </form>
                 @else
                     <p>Đăng nhập để bình luận</p>
@@ -80,11 +80,33 @@
 
                 <div class="comment-list">
                     @forelse($reviews as $cmt)
+                    <!-- EDIT -->
+                                <form action="{{ route('comment.update', $cmt->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                            style="padding:5px 10px;background:#00e5ff;border:0;border-radius:6px;cursor:pointer">
+                                        Sửa
+                                    </button>
+                                </form>
+
+                                <!-- DELETE -->
+                                <form action="{{ route('comment.delete', $cmt->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                            onclick="return confirm('Xóa bình luận?')"
+                                            style="padding:5px 10px;background:#ff4d4d;color:#fff;border:0;border-radius:6px;cursor:pointer">
+                                        Xóa
+                                    </button>
+                                </form>
                         <div>
                             <b>{{ $cmt->user->full_name ?? 'User' }}</b>
                             <div>{{ $cmt->comment }}</div>
                             <small>⭐ {{ $cmt->rating ?? 0 }}/5</small>
                         </div>
+
+                         
                     @empty
                         <p>Chưa có bình luận</p>
                     @endforelse
