@@ -11,50 +11,33 @@ use Illuminate\Support\Facades\Auth;
 
 class CartApiController extends Controller
 {
-    // 📌 1. GET /api/cart (Xem giỏ hàng)
     public function index()
     {
         $userId = Auth::id();
-
         $cart = Cart::where('user_id', $userId)->first();
 
         if (!$cart) {
-            return response()->json([
-                'status' => true,
-                'data' => []
-            ]);
+            return response()->json(['status' => true, 'data' => []]);
         }
 
-        $items = CartItem::with('product')
-            ->where('cart_id', $cart->id)
-            ->get();
-
-        return response()->json([
-            'status' => true,
-            'data' => $items
-        ]);
+        $items = CartItem::with('product')->where('cart_id', $cart->id)->get();
+        return response()->json(['status' => true, 'data' => $items]);
     }
 
-    // 📌 2. POST /api/cart/add (Thêm vào giỏ)
     public function add(Request $request)
     {
-        $userId = Auth::id();
+        // 🔥 Chặn lỗi 500: Bắt buộc truyền ID sản phẩm
+        $request->validate(['product_id' => 'required']);
 
+        $userId = Auth::id();
         $product = Product::find($request->product_id);
 
         if (!$product) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Sản phẩm không tồn tại'
-            ], 404);
+            return response()->json(['status' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
         }
 
-        // lấy cart của user
-        $cart = Cart::firstOrCreate([
-            'user_id' => $userId
-        ]);
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
 
-        // check sản phẩm trong cart_items
         $item = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $request->product_id)
             ->first();
@@ -67,92 +50,50 @@ class CartApiController extends Controller
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity ?? 1,
-                // ĐÃ SỬA LỖI: Lấy giá sale_price từ Database chuẩn
                 'unit_price' => $product->sale_price ?? 0 
             ]);
         }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã thêm UAV vào giỏ',
-            'data' => $item
-        ]);
+        return response()->json(['status' => true, 'message' => 'Đã thêm UAV vào giỏ', 'data' => $item]);
     }
 
-    // 📌 3. PUT /api/cart/{product_id} (Cập nhật số lượng)
     public function update(Request $request, $product_id)
     {
-        $userId = Auth::id();
+        // 🔥 Chặn lỗi 500: Nếu không gửi quantity lên thì báo lỗi chứ không cho sập DB
+        $request->validate(['quantity' => 'required|numeric|min:1']);
 
+        $userId = Auth::id();
         $cart = Cart::where('user_id', $userId)->first();
 
-        if (!$cart) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Cart không tồn tại'
-            ], 404);
-        }
+        if (!$cart) return response()->json(['status' => false, 'message' => 'Cart không tồn tại'], 404);
 
-        $item = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product_id)
-            ->first();
+        $item = CartItem::where('cart_id', $cart->id)->where('product_id', $product_id)->first();
 
-        if (!$item) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Sản phẩm không có trong giỏ'
-            ], 404);
-        }
+        if (!$item) return response()->json(['status' => false, 'message' => 'Sản phẩm không có trong giỏ'], 404);
 
         $item->quantity = $request->quantity;
         $item->save();
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Cập nhật số lượng thành công',
-            'data' => $item
-        ]);
+        return response()->json(['status' => true, 'message' => 'Cập nhật số lượng thành công', 'data' => $item]);
     }
 
-    // 📌 4. DELETE /api/cart/{product_id} (Xóa 1 món)
     public function destroy($product_id)
     {
         $userId = Auth::id();
-
         $cart = Cart::where('user_id', $userId)->first();
+        if (!$cart) return response()->json(['status' => false, 'message' => 'Cart không tồn tại'], 404);
 
-        if (!$cart) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Cart không tồn tại'
-            ], 404);
-        }
-
-        CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product_id)
-            ->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã xoá sản phẩm khỏi giỏ'
-        ]);
+        CartItem::where('cart_id', $cart->id)->where('product_id', $product_id)->delete();
+        return response()->json(['status' => true, 'message' => 'Đã xoá sản phẩm khỏi giỏ']);
     }
 
-    // 📌 5. DELETE /api/cart/clear (Làm sạch toàn bộ giỏ - MỚI THÊM)
     public function clear()
     {
         $userId = Auth::id();
-
         $cart = Cart::where('user_id', $userId)->first();
-
         if ($cart) {
-            // Xóa tất cả các dòng trong cart_items thuộc về cart_id này
             CartItem::where('cart_id', $cart->id)->delete();
         }
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã dọn sạch giỏ hàng'
-        ]);
+        return response()->json(['status' => true, 'message' => 'Đã dọn sạch giỏ hàng']);
     }
 }

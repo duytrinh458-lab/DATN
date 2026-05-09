@@ -1,0 +1,69 @@
+{
+	"info": {
+		"name": "Hạm Đội UAV - Full 65 API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01. Xác thực & Bảo mật",
+			"item": [
+				{
+					"name": "Đăng nhập",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.status === true) {",
+									"    pm.environment.set(\"token\", jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": { "raw": "{{base_url}}/login" }
+					}
+				},
+				{ "name": "Đăng ký", "request": { "method": "POST", "url": "{{base_url}}/signup" }},
+				{ "name": "Xác thực OTP", "request": { "method": "POST", "url": "{{base_url}}/verify_register_otp" }}
+			]
+		},
+		{
+			"name": "02. Hạm đội & Sản phẩm",
+			"item": [
+				{ "name": "Danh sách UAV", "request": { "method": "GET", "url": "{{base_url}}/get_list_products" }},
+				{ "name": "Chi tiết UAV", "request": { "method": "GET", "url": "{{base_url}}/products/1" }},
+				{ "name": "Tìm kiếm UAV", "request": { "method": "GET", "url": "{{base_url}}/search?q=Phantom" }}
+			]
+		},
+		{
+			"name": "03. Giỏ hàng & Đơn hàng",
+			"item": [
+				{ "name": "Xem giỏ hàng", "request": { "method": "GET", "url": "{{base_url}}/cart" }},
+				{ "name": "Thêm vào giỏ", "request": { "method": "POST", "url": "{{base_url}}/add_to_cart" }},
+				{ "name": "Đặt hàng (Checkout)", "request": { "method": "POST", "url": "{{base_url}}/create_order" }}
+			]
+		},
+		{
+			"name": "05. Quản trị Admin",
+			"item": [
+				{ "name": "Thống kê Dashboard", "request": { "method": "GET", "url": "{{base_url}}/admin_get_dashboard_stats" }},
+				{ "name": "Danh sách người dùng", "request": { "method": "GET", "url": "{{base_url}}/admin_get_users" }}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+	}
+}

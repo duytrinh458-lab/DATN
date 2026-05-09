@@ -21,7 +21,8 @@ class Review extends Model
         'is_approved'
     ];
 
-    public $timestamps = true;
+    // 🔥 SỬA LỖI 500: Tắt timestamps vì DB không có cột updated_at
+    public $timestamps = false;
 
     // user comment
     public function user()
