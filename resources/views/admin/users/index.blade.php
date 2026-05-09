@@ -3,7 +3,7 @@
 @section('title', 'Hệ thống Quản trị - Vanguard UAV')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('Css/admin/users.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/Admin/adduser.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endpush
 
@@ -15,7 +15,7 @@
                 <p>Quản lý quyền hạn và trạng thái tài khoản hệ thống</p>
             </div>
             <div class="header-actions">
-                <a href="{{ route('admin.users.create') }}" class="btn btn-add-new">
+                <a href="{{ route('admin.users.create') }}" class="btn-add-new">
                     <i class="fas fa-user-plus"></i>
                     <span>Thêm người dùng</span>
                 </a>

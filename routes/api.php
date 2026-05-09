@@ -37,8 +37,8 @@ Route::get('/products/{id}', [ProductApiController::class, 'show']);
 Route::get('/search', [ProductApiController::class, 'search']);
 Route::get('/check_new_items', [ProductApiController::class, 'checkNewItems']);
 Route::get('/get_comments_product/{id}', [ProductApiController::class, 'getComments']);
-Route::get('/get_categories', [ProductApiController::class, 'getCategories']); // API 15
-Route::get('/get_list_brand', [ProductApiController::class, 'getBrands']);      // API 16
+Route::get('/get_categories', [ProductApiController::class, 'getCategories']);
+Route::get('/get_list_brand', [ProductApiController::class, 'getBrands']);
 
 // --- NHÓM 8: TIN TỨC (PUBLIC) ---
 Route::get('/get_list_news', [NewsApiController::class, 'index']);
@@ -62,7 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- NHÓM 3: TƯƠNG TÁC NÂNG CAO ---
     Route::post('/set_comments_product/{id}', [ProductApiController::class, 'setComment']);
     Route::post('/like_product/{id}', [ProductApiController::class, 'likeProduct']);
-    Route::get('/get_list_search_history', [ProductApiController::class, 'getSearchHistory']); // API 22
+    Route::post('/save_search', [ProductApiController::class, 'saveSearch']); // API 21 bị thiếu
+    Route::get('/get_list_search_history', [ProductApiController::class, 'getSearchHistory']);
 
     // --- NHÓM 4: GIỎ HÀNG (CART) ---
     Route::get('/cart', [CartApiController::class, 'index']);
@@ -94,7 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get_order_timeline/{id}', [OrderApiController::class, 'getTimeline']);
     Route::post('/confirm_received/{id}', [OrderApiController::class, 'confirmReceived']);
     Route::post('/request_refund/{id}', [OrderApiController::class, 'requestRefund']);
-    Route::put('/edit_purchase/{id}', [OrderApiController::class, 'editNote']); // API 42 (Giả lập)
+    Route::put('/edit_purchase/{id}', [OrderApiController::class, 'editNote']);
 
     // --- NHÓM 8: THÔNG BÁO ---
     Route::get('/get_notification', [NotificationApiController::class, 'index']);
@@ -102,17 +103,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- NHÓM 9: QUẢN TRỊ (ADMIN) ---
     Route::get('/admin_get_dashboard_stats', [AdminDashboardApiController::class, 'index']);
-    
-    // Quản lý Sản phẩm (Admin)
     Route::post('/add_products', [ProductApiController::class, 'store']);
     Route::put('/edit_products/{id}', [ProductApiController::class, 'update']);
     Route::delete('/del_products/{id}', [ProductApiController::class, 'destroy']);
-    
-    // Quản lý Đơn hàng (Admin)
     Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'adminUpdateStatus']);
     Route::post('/admin_approve_refund/{refund_id}', [OrderApiController::class, 'adminApproveRefund']);
-    
-    // Vá lỗi số 4: Quản lý Người dùng (Admin) - Đúng chuẩn Alias
     Route::get('/admin_get_users', [UserApiController::class, 'index']); 
     Route::get('/admin_get_user_detail/{id}', [UserApiController::class, 'show']); 
     Route::post('/admin_add_user', [UserApiController::class, 'store']); 

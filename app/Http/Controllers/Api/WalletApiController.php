@@ -6,15 +6,31 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // Thêm DB để ghi log giao dịch
+use Illuminate\Support\Facades\DB;
 
 class WalletApiController extends Controller
 {
-    // 📌 API 48: Lấy số dư ví hiện tại (GET /api/get_current_balance)
-    public function balance()
+    // 🔐 CHECK AUTH CHUNG
+    private function getUserId()
     {
         $userId = Auth::id();
-        
+
+        if (!$userId) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Chưa đăng nhập hoặc token không hợp lệ'
+            ], 401);
+        }
+
+        return $userId;
+    }
+
+    // 📌 API 48: Lấy số dư ví hiện tại
+    public function balance()
+    {
+        $userId = $this->getUserId();
+        if ($userId instanceof \Illuminate\Http\JsonResponse) return $userId;
+
         $wallet = Wallet::firstOrCreate(
             ['user_id' => $userId],
             ['balance' => 0]
@@ -28,17 +44,21 @@ class WalletApiController extends Controller
         ]);
     }
 
-    // 📌 API 49: Xem lịch sử giao dịch (GET /api/get_balance_history)
+    // 📌 API 49: Lịch sử giao dịch
     public function history()
     {
-        $userId = Auth::id();
+        $userId = $this->getUserId();
+        if ($userId instanceof \Illuminate\Http\JsonResponse) return $userId;
+
         $wallet = Wallet::where('user_id', $userId)->first();
 
         if (!$wallet) {
-            return response()->json(['status' => true, 'data' => []]);
+            return response()->json([
+                'status' => true,
+                'data' => []
+            ]);
         }
 
-        // Lấy danh sách giao dịch từ bảng wallet_transactions
         $transactions = DB::table('wallet_transactions')
             ->where('wallet_id', $wallet->id)
             ->orderBy('id', 'desc')
@@ -50,44 +70,43 @@ class WalletApiController extends Controller
         ]);
     }
 
-    // 📌 API 50: Tạo lệnh nạp tiền (POST /api/create_deposit_request)
+    // 📌 API 50: Nạp tiền
     public function deposit(Request $request)
     {
         $request->validate([
             'amount' => 'required|numeric|min:10000'
         ]);
 
-        $userId = Auth::id();
+        $userId = $this->getUserId();
+        if ($userId instanceof \Illuminate\Http\JsonResponse) return $userId;
+
         $wallet = Wallet::firstOrCreate(
             ['user_id' => $userId],
             ['balance' => 0]
         );
 
-        // Ghi lại lịch sử nạp tiền vào bảng wallet_transactions
         DB::table('wallet_transactions')->insert([
             'wallet_id' => $wallet->id,
-            'type' => 'deposit', // Loại: Nạp tiền
+            'type' => 'deposit',
             'amount' => $request->amount,
-            'reference_code' => 'DEP-' . time(), // Mã tham chiếu nạp tiền
-            'status' => 'success', // Vì mình đang làm test nên cho success luôn
+            'reference_code' => 'DEP-' . time(),
+            'status' => 'success',
             'created_at' => now()
         ]);
 
-        // Cộng tiền vào ví
         $wallet->balance += $request->amount;
         $wallet->save();
 
         return response()->json([
             'status' => true,
-            'message' => 'Nạp tiền vào ví V-Pay thành công!',
+            'message' => 'Nạp tiền thành công',
             'data' => [
                 'balance' => $wallet->balance
             ]
         ]);
     }
 
-    // 📌 API 51: Xác nhận nạp tiền (POST /api/confirm_deposit)
-    // Dùng để giả lập việc xác nhận sau khi nạp qua ngân hàng/momo
+    // 📌 API 51: xác nhận nạp tiền (mock)
     public function confirmDeposit(Request $request)
     {
         return response()->json([

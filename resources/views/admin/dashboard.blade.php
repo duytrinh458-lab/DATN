@@ -11,6 +11,7 @@
     <h1>Trang quản trị</h1>
 
     <div class="stats">
+
         <div class="card">
             <h3>Sản phẩm</h3>
             <p>{{ $productCount ?? 0 }}</p>
@@ -33,20 +34,28 @@
             </p>
         </div>
 
+        {{-- 💬 BÌNH LUẬN --}}
         <div class="card">
-    <h3>Sản phẩm bán chạy</h3>
+            <h3>Lượt Bình luận</h3>
+            <p>{{ $commentCount ?? 0 }}</p>
+        </div>
 
-    @if($bestProduct)
-        <p style="font-size:16px;">
-            {{ $bestProduct->name }}
-        </p>
-        <p style="color:#f59e0b;">
-            {{ $bestProduct->total_sold }} đã bán
-        </p>
-    @else
-        <p>Chưa có dữ liệu</p>
-    @endif
-</div>
+        {{-- ⭐ SẢN PHẨM BÁN CHẠY --}}
+        <div class="card">
+            <h3>Sản phẩm bán chạy</h3>
+
+            @if($bestProduct)
+                <p style="font-size:16px;">
+                    {{ $bestProduct->name }}
+                </p>
+                <p style="color:#f59e0b;">
+                    {{ $bestProduct->total_sold }} đã bán
+                </p>
+            @else
+                <p>Chưa có dữ liệu</p>
+            @endif
+        </div>
+
     </div>
 </div>
 @endsection

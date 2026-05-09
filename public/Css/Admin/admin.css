@@ -151,3 +151,54 @@ tbody tr {
 .btn-delete {
     background: #ef4444;
 }
+
+/* ================= ALERT TITLE PREMIUM ================= */
+
+.alert-title {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 16px 20px;
+    margin: 20px 0;
+
+    border-radius: 14px;
+
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+
+    color: #ffffff !important;
+
+    border: none !important;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+    box-shadow:
+        0 10px 25px rgba(239, 68, 68, 0.25),
+        0 4px 10px rgba(0,0,0,0.08);
+
+    transition: all 0.25s ease;
+}
+
+/* icon */
+.alert-title i {
+    color: #fff !important;
+    font-size: 18px;
+}
+
+/* hover */
+.alert-title:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 35px rgba(239, 68, 68, 0.35),
+        0 6px 14px rgba(0,0,0,0.12);
+}

@@ -149,15 +149,32 @@ class OrderApiController extends Controller
 
     // 📌 API 45: LỘ TRÌNH GIAO HÀNG (GET /api/orders/{id}/timeline)
     public function getTimeline($id)
-    {
-        $order = Order::find($id);
-        // Tạo timeline giả lập dựa trên trạng thái để đi báo cáo
-        $timeline = [
-            ['time' => $order->ordered_at, 'desc' => 'Đơn hàng đã được khởi tạo'],
-            ['time' => $order->updated_at, 'desc' => 'Trạng thái hiện tại: ' . $order->status]
-        ];
-        return response()->json(['status' => true, 'data' => $timeline]);
+{
+    $order = Order::find($id);
+
+    if (!$order) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Không tìm thấy đơn hàng'
+        ], 404);
     }
+
+    $timeline = [
+        [
+            'time' => $order->ordered_at,
+            'desc' => 'Đơn hàng đã được khởi tạo'
+        ],
+        [
+            'time' => $order->updated_at,
+            'desc' => 'Trạng thái hiện tại: ' . $order->status
+        ]
+    ];
+
+    return response()->json([
+        'status' => true,
+        'data' => $timeline
+    ]);
+}
 
     // 📌 API 46: XÁC NHẬN ĐÃ NHẬN (POST /api/orders/{id}/confirm)
     public function confirmReceived($id)

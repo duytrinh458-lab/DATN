@@ -6,23 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class ProfileApiController extends Controller
 {
-    /**
-     * 📌 API 10: Xem thông tin cá nhân (get_user_info)
-     */
+    // 📌 API 10: Xem thông tin cá nhân
     public function me(Request $request)
     {
         return response()->json([
             'status' => true,
-            'data' => $request->user()
+            'data' => Auth::user()
         ]);
     }
 
-    /**
-     * 📌 API 11: Cập nhật hồ sơ (set_user_info)
-     */
+    // 📌 API 11: Cập nhật hồ sơ
     public function update(Request $request)
     {
         /** @var \App\Models\User $user */
@@ -34,12 +31,11 @@ class ProfileApiController extends Controller
             'address'   => 'nullable|string',
         ]);
 
-        // Cập nhật từng trường
         $user->full_name = $request->full_name ?? $user->full_name;
-        $user->phone = $request->phone ?? $user->phone;
-        $user->address = $request->address ?? $user->address;
-        
-        $user->save(); // Sẽ không còn báo đỏ nhờ dòng @var bên trên
+        $user->phone     = $request->phone ?? $user->phone;
+        $user->address   = $request->address ?? $user->address;
+
+        $user->save();
 
         return response()->json([
             'status' => true,
@@ -48,9 +44,7 @@ class ProfileApiController extends Controller
         ]);
     }
 
-    /**
-     * 📌 API 12: Lưu mã thiết bị nhận thông báo (set_devtoken)
-     */
+    // 📌 API 12: Lưu device token
     public function setDeviceToken(Request $request)
     {
         $request->validate([
@@ -68,20 +62,19 @@ class ProfileApiController extends Controller
         ]);
     }
 
-    /**
-     * 📌 API 13: Lấy cài đặt thông báo (get_push_setting)
-     */
+    // 📌 API 13: Lấy setting push
     public function getPushSetting()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         return response()->json([
             'status' => true,
-            'allow_push' => Auth::user()->allow_push
+            'allow_push' => $user->allow_push
         ]);
     }
 
-    /**
-     * 📌 API 14: Bật/Tắt thông báo (set_push_setting)
-     */
+    // 📌 API 14: set push setting
     public function setPushSetting(Request $request)
     {
         $request->validate([
@@ -99,9 +92,7 @@ class ProfileApiController extends Controller
         ]);
     }
 
-    /**
-     * 📌 API: Đổi mật khẩu (change_password)
-     */
+    // 📌 API change password
     public function changePassword(Request $request)
     {
         $request->validate([
