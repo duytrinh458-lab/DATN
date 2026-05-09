@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Auth;
 
 // AUTH
@@ -12,7 +11,7 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
-use App\Http\Controllers\User\ProductController; // ✅ FIX ĐÚNG CONTROLLER
+use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\CheckoutController;
 
 // ORDER
@@ -25,7 +24,6 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\InteractionController;
-
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -65,23 +63,18 @@ Route::post('/logout', function () {
 // ================= ADMIN =================
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware([Authenticate::class, AdminMiddleware::class])
+    ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-        // PRODUCTS
         Route::resource('products', AdminProductController::class)->except(['show']);
-
-        // CATEGORIES
         Route::resource('categories', CategoryController::class);
 
-        // ORDERS
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{id}/update', [AdminOrderController::class, 'update'])->name('orders.update');
 
-        // USERS
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -89,51 +82,39 @@ Route::prefix('admin')
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // ================= TƯƠNG TÁC (FIX CHUẨN) =================
+        // ================= INTERACTIONS (ADMIN) =================
         Route::prefix('interactions')->name('interactions.')->group(function () {
 
-            // 📌 danh sách comments
-            Route::get('/comments', [InteractionController::class, 'comments'])
-                ->name('comments');
+            Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
 
-            // 📌 xóa comment
             Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])
                 ->name('comments.delete');
 
-            // likes
-            Route::get('/likes', [InteractionController::class, 'likes'])
-                ->name('likes');
+            Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
 
-            // ratings
-            Route::get('/ratings', [InteractionController::class, 'ratings'])
-                ->name('ratings');
+            Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
         });
 
     });
 
 
 // ================= USER =================
-Route::middleware([Authenticate::class])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // PRODUCTS
     Route::get('/products', [ProductController::class, 'products'])->name('user.products');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('user.products.detail');
 
-    // CATEGORIES
-    // CATEGORY USER
-Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
-Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
+    Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
+    Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
 
-    // CHECKOUT
     Route::prefix('checkout')->name('user.checkout.')->group(function () {
         Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');
         Route::get('/', [CheckoutController::class, 'index'])->name('index');
         Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process');
     });
 
-    // CART
     Route::prefix('cart')->name('user.cart.')->group(function () {
         Route::get('/', [CartController::class, 'index'])->name('index');
         Route::post('/add', [CartController::class, 'add'])->name('add');
@@ -141,14 +122,12 @@ Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('
         Route::put('/{id}', [CartController::class, 'update'])->name('update');
     });
 
-    // ORDERS
     Route::prefix('orders')->name('user.orders.')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
     });
 
-    // PROFILE
     Route::prefix('profile')->name('user.profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
@@ -156,11 +135,19 @@ Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('
         Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
     });
 
-    // WALLET
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
         Route::get('/', [WalletController::class, 'index'])->name('index');
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
 
+    // ================= COMMENT =================
+    Route::post('/set_comments_product/{id}', [InteractionController::class, 'storeComment'])
+        ->name('comment.store');
+
+    Route::post('/comment/{id}/update', [InteractionController::class, 'updateComment'])
+        ->name('comment.update');
+
+    Route::delete('/comment/{id}', [InteractionController::class, 'deleteComment'])
+        ->name('comment.delete');
 });

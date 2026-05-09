@@ -41,7 +41,7 @@ body {
     color: var(--primary-container);
 }
 
-/* ===== GRID FIX (QUAN TRỌNG) ===== */
+/* ===== GRID ===== */
 .product-layout-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -55,8 +55,13 @@ body {
     width: 100%;
 }
 
-.gallery-col { grid-column: span 7; }
-.control-panel-col { grid-column: span 5; }
+.gallery-col {
+    grid-column: span 7;
+}
+
+.control-panel-col {
+    grid-column: span 5;
+}
 
 /* ===== PANEL ===== */
 .glass-panel {
@@ -66,7 +71,7 @@ body {
     border: 0.5px solid rgba(132, 147, 150, 0.15);
 }
 
-/* ===== INFO CARD FIX ===== */
+/* ===== INFO CARD ===== */
 .info-card {
     width: 100%;
     padding: 32px;
@@ -91,7 +96,7 @@ body {
     display: block;
 }
 
-/* ===== THUMBNAIL FIX ===== */
+/* ===== THUMBNAIL ===== */
 .thumb-swiper {
     margin-top: 12px;
 }
@@ -188,14 +193,21 @@ body {
     outline: none;
 }
 
-/* ===== BUTTON STACK ===== */
+/* ===== BUTTON ROW ===== */
 .button-stack {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
+    width: 100%;
+    margin-top: 20px;
 }
 
-/* ===== BUTTON BUY ===== */
+.button-stack button {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ===== BUY NOW BUTTON ===== */
 .btn-buy-now {
     background: linear-gradient(135deg, #c3f5ff, #00e5ff);
     color: #001f24;
@@ -206,7 +218,7 @@ body {
     font-family: var(--font-head);
     text-transform: uppercase;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.25s ease;
 }
 
 .btn-buy-now:hover {
@@ -214,7 +226,7 @@ body {
     box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
 }
 
-/* ===== CART BUTTON ===== */
+/* ===== ADD TO CART ===== */
 .btn-add-to-cart {
     background: rgba(24, 28, 34, 0.85);
     border: 1px solid rgba(0, 229, 255, 0.3);
@@ -225,10 +237,37 @@ body {
     font-family: var(--font-head);
     text-transform: uppercase;
     cursor: pointer;
+    transition: 0.25s ease;
 }
 
-/* ===== COMMENT FIX (KHÔNG DÍNH RIGHT) ===== */
-.comments-panel {
+.btn-add-to-cart:hover {
+    border-color: var(--primary-container);
+    box-shadow: 0 0 18px rgba(0,229,255,0.2);
+}
+
+/* ===== FAVORITE BUTTON ===== */
+.btn-favorite {
+    background: rgba(255, 33, 33, 0.63);
+    border: 1px solid rgba(114, 33, 33, 0.15);
+    color: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-favorite:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: #6d1b1bea;
+    color: #ff0000b6;
+    box-shadow: 0 0 18px rgba(255,77,109,0.25);
+}
+
+/* ===== COMMENTS ===== */
+/* .comments-panel {
     margin-top: 20px;
     padding: 16px;
     border-radius: 10px;
@@ -236,32 +275,44 @@ body {
     overflow: hidden;
 }
 
-/* FORM COMMENT FIX */
-.comment-form {
+.comments-panel h3 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-family: var(--font-head);
+} */
+
+/* ===== COMMENT FORM ===== */
+/* .comment-form {
     display: flex;
     gap: 10px;
     width: 100%;
     align-items: stretch;
-}
+} */
 
-/* TEXTAREA FIX */
-.comment-form textarea {
+/* ===== TEXTAREA ===== */
+/* .comment-form textarea {
     flex: 1;
     min-width: 0;
-    height: 42px;
-    padding: 10px;
+    min-height: 70px;
+    padding: 12px;
     background: var(--surface-low);
     border: 1px solid rgba(132,147,150,0.3);
-    color: #fff;
+    color: #ff0000;
     border-radius: 8px;
-    resize: none;
+    resize: vertical;
     outline: none;
+    font-family: inherit;
+    transition: 0.2s ease;
 }
 
-/* BUTTON FIX */
-.comment-form button {
-    width: 90px;
-    height: 42px;
+.comment-form textarea:focus {
+    border-color: var(--primary-container);
+    box-shadow: 0 0 15px rgba(0,229,255,0.2);
+} */
+
+/* ===== COMMENT BUTTON ===== */
+.submit-comment-btn {
+    width: 100px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -269,16 +320,31 @@ body {
     text-transform: uppercase;
     background: linear-gradient(135deg, #c3f5ff, #00e5ff);
     color: #001f24;
+    transition: 0.25s ease;
 }
 
-/* COMMENT LIST */
+.comment-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0,229,255,0.35);
+}
+
+/* ===== COMMENT LIST ===== */
 .comment-list {
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .comment-list div {
-    padding: 10px 0;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: #dfe2eb;
+}
+
+.comment-list b {
+    color: var(--primary-container);
+}
+
+.comment-list small {
+    color: #9ca3af;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -290,5 +356,20 @@ body {
     .gallery-col,
     .control-panel-col {
         grid-column: span 12;
+    }
+}
+
+@media (max-width: 768px) {
+    .button-stack {
+        flex-direction: column;
+    }
+
+    .comment-form {
+        flex-direction: column;
+    }
+
+    .comment-form button {
+        width: 100%;
+        height: 48px;
     }
 }

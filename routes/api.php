@@ -45,7 +45,7 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
 // ==========================================================
 // 2. PRIVATE API (Bắt buộc đăng nhập)
 // ==========================================================
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     
     // --- NHÓM 1 & 2: AUTH & PROFILE ---
     Route::post('/logout', [AuthApiController::class, 'logout']);
@@ -114,4 +114,4 @@ Route::get('/get_news/{id}', [NewsApiController::class, 'show']);
     Route::post('/add_user', [UserApiController::class, 'store']); // Mới
     Route::put('/edit_user/{id}', [UserApiController::class, 'update']); // Mới
     Route::delete('/del_user/{id}', [UserApiController::class, 'destroy']); // Mới
-// });
+});
