@@ -64,6 +64,25 @@ class ProductApiController extends Controller
         ]);
     }
 
+    // 📌 API 21: Lưu lịch sử tìm kiếm thủ công (POST /api/search/save)
+    public function saveSearch(Request $request)
+    {
+        $request->validate(['keyword' => 'required']);
+
+        if (Auth::check()) {
+            DB::table('search_histories')->insert([
+                'user_id' => Auth::id(),
+                'keyword' => $request->keyword,
+                'created_at' => now()
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã lưu từ khóa tìm kiếm'
+        ]);
+    }
+
     // 📌 API 19: Hàng mới về
     public function checkNewItems()
     {
@@ -195,5 +214,32 @@ class ProductApiController extends Controller
 
         $product->delete();
         return response()->json(['status' => true, 'message' => 'Đã loại bỏ UAV khỏi hệ thống']);
+    }
+
+
+    // 📌 API 15: Xem danh sách phân loại UAV
+    public function getCategories()
+    {
+        $categories = DB::table('categories')->where('is_active', 1)->get();
+        return response()->json(['status' => true, 'data' => $categories]);
+    }
+
+    // 📌 API 16: Danh sách thương hiệu (Hãng sản xuất)
+    public function getBrands()
+    {
+        $brands = DB::table('brands')->get();
+        return response()->json(['status' => true, 'data' => $brands]);
+    }
+
+    // 📌 API 22: Xem lịch sử tìm kiếm của user
+    public function getSearchHistory()
+    {
+        $histories = DB::table('search_histories')
+            ->where('user_id', Auth::id())
+            ->orderBy('id', 'desc')
+            ->limit(10)
+            ->get();
+            
+        return response()->json(['status' => true, 'data' => $histories]);
     }
 }

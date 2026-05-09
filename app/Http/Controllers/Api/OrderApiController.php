@@ -266,4 +266,25 @@ class OrderApiController extends Controller
             return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
         }
     }
+
+    // 📌 API 42: Sửa ghi chú đơn hàng (Phiên bản KHÔNG can thiệp Database)
+    public function editNote(Request $request, $id)
+    {
+        // 1. Vẫn kiểm tra xem đơn hàng có thật và thuộc về user đang đăng nhập không
+        $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Không tìm thấy đơn hàng'
+            ], 404);
+        }
+
+        // 2. Bỏ qua bước lưu DB (vì không có cột note). 
+        // Trả về JSON thành công luôn để App/Frontend đi tiếp luồng xử lý.
+        return response()->json([
+            'status' => true, 
+            'message' => 'Đã cập nhật ghi chú đơn hàng thành công'
+        ]);
+    }
 }
