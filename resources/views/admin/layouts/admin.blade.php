@@ -56,6 +56,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.transactions.index') }}"
+                   class="{{ request()->routeIs('admin.transactions.*') ? 'active' : '' }}">
+                    Quản Lý Giao Dịch
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('admin.categories.index') }}"
                    class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                     Danh mục

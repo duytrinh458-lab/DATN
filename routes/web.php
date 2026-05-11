@@ -66,6 +66,14 @@ Route::prefix('admin')
     ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
+        // --- 2 ROUTE MỚI CHO TRANG ĐỔI QR NẠP TIỀN ---
+        Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
+        Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
+        // ---------------------------------------------\
+        
+        // --- QUẢN LÝ GIAO DỊCH V-PAY ---
+        Route::get('/transactions', [App\Http\Controllers\Admin\AdminController::class, 'transactions'])->name('transactions.index');
+        Route::post('/transactions/{id}/update-status', [App\Http\Controllers\Admin\AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
         Route::resource('products', AdminProductController::class)->except(['show']);
