@@ -1,0 +1,58 @@
+.refund-wrapper { 
+    padding: 20px; 
+}
+.refund-wrapper h1 { 
+    color: #111827; 
+    font-size: 26px; 
+    font-weight: 700; 
+    margin-bottom: 25px; 
+}
+.rf-card { 
+    background: #ffffff; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08); 
+    padding: 25px; 
+    overflow-x: auto; 
+}
+.table-tech { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+.table-tech th { 
+    background: #f3f4f6; 
+    color: #374151; 
+    font-weight: 700; 
+    padding: 12px 15px; 
+    text-align: left; 
+    border-bottom: 2px solid #e5e7eb; 
+}
+.table-tech td { 
+    padding: 15px; 
+    border-bottom: 1px solid #f3f4f6; 
+    vertical-align: middle; 
+    color: #1f2937; 
+}
+.btn-action { 
+    padding: 6px 12px; 
+    border-radius: 6px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    border: none; 
+    font-size: 13px; 
+    color: white; 
+    margin-right: 5px; 
+}
+.btn-approve { background: #10b981; }
+.btn-approve:hover { background: #059669; }
+.btn-reject { background: #ef4444; }
+.btn-reject:hover { background: #dc2626; }
+
+.status-badge { 
+    padding: 5px 10px; 
+    border-radius: 4px; 
+    font-size: 12px; 
+    font-weight: bold; 
+}
+.st-pending { background: #fef3c7; color: #d97706; }
+.st-approved { background: #dcfce7; color: #16a34a; }
+.st-rejected { background: #fee2e2; color: #dc2626; }

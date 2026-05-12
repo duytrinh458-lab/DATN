@@ -43,6 +43,11 @@
                                 <span class="status-badge status-shipping">ĐANG GIAO</span>
                             @elseif($order->status == 'delivered')
                                 <span class="status-badge status-delivered">HOÀN THÀNH</span>
+                            
+                            {{-- 💡 BỔ SUNG TRẠNG THÁI HOÀN TIỀN --}}
+                            @elseif($order->status == 'refunded')
+                                <span class="status-badge" style="color: #c084fc; border: 1px solid #c084fc; background: rgba(192, 132, 252, 0.1); font-weight: bold;">ĐÃ HOÀN TIỀN</span>
+                            
                             @elseif($order->status == 'cancelled')
                                 <span class="status-badge status-cancelled">ĐÃ HỦY</span>
                             @endif
@@ -63,13 +68,11 @@
                                 XEM CHI TIẾT
                             </a>
                             
-                            <!-- Chỉ hiện nút Hủy lệnh khi đơn hàng đang chờ duyệt -->
                             @if($order->status == 'pending')
                                 <button type="button" class="btn-cancel-order" onclick="openCancelModal({{ $order->id }}, '{{ $order->order_code }}')">
                                     HỦY LỆNH
                                 </button>
                                 
-                                <!-- Form ngầm để gửi request Hủy -->
                                 <form id="cancel-form-{{ $order->id }}" action="{{ route('user.orders.cancel', $order->id) }}" method="POST" style="display: none;">
                                     @csrf
                                     <input type="hidden" name="reason" id="reason-input-{{ $order->id }}">
@@ -91,7 +94,6 @@
     </div>
 </div>
 
-<!-- GIAO DIỆN MODAL XÁC NHẬN HỦY ĐƠN -->
 <div id="vg-cancel-modal" class="vg-modal-overlay">
     <div class="vg-modal-box">
         <span class="material-symbols-outlined vg-modal-icon">warning</span>

@@ -69,6 +69,13 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('admin.refunds.index') }}"
+                   class="{{ request()->routeIs('admin.refunds.*') ? 'active' : '' }}">
+                    Hoàn Trả
+                </a>
+            </li>
+
             <!-- 🔥 LOGOUT -->
             <li>
                 <form action="{{ route('logout') }}" method="POST" class="logout-form">

@@ -14,8 +14,8 @@ use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\CheckoutController;
 
-// ORDER
-use App\Http\Controllers\OrderController;
+// USER ORDER CONTROLLER
+use App\Http\Controllers\User\OrderController;
 
 // ADMIN CONTROLLERS
 use App\Http\Controllers\Admin\AdminController;
@@ -66,14 +66,18 @@ Route::prefix('admin')
     ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
-        // --- 2 ROUTE MỚI CHO TRANG ĐỔI QR NẠP TIỀN ---
+        // --- QUẢN LÝ CẤU HÌNH QR V-PAY ---
         Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
         Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
-        // ---------------------------------------------\
         
         // --- QUẢN LÝ GIAO DỊCH V-PAY ---
-        Route::get('/transactions', [App\Http\Controllers\Admin\AdminController::class, 'transactions'])->name('transactions.index');
-        Route::post('/transactions/{id}/update-status', [App\Http\Controllers\Admin\AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
+        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
+        Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
+        
+        // --- 💡 ĐÃ THÊM: QUẢN LÝ YÊU CẦU HOÀN TRẢ ---
+        Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds.index');
+        Route::post('/refunds/{id}/update-status', [AdminController::class, 'updateRefundStatus'])->name('refunds.updateStatus');
+
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
         Route::resource('products', AdminProductController::class)->except(['show']);
@@ -92,14 +96,9 @@ Route::prefix('admin')
 
         // ================= INTERACTIONS (ADMIN) =================
         Route::prefix('interactions')->name('interactions.')->group(function () {
-
             Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
-
-            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])
-                ->name('comments.delete');
-
+            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
             Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
-
             Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
         });
 
@@ -134,6 +133,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+
+        // --- HOÀN HÀNG USER ---
+        Route::get('/{id}/refund', [OrderController::class, 'showRefundForm'])->name('refund');
+        Route::post('/{id}/refund', [OrderController::class, 'submitRefund'])->name('refund.submit');
     });
 
     Route::prefix('profile')->name('user.profile.')->group(function () {
@@ -150,12 +153,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ================= COMMENT =================
-    Route::post('/set_comments_product/{id}', [InteractionController::class, 'storeComment'])
-        ->name('comment.store');
-
-    Route::post('/comment/{id}/update', [InteractionController::class, 'updateComment'])
-        ->name('comment.update');
-
-    Route::delete('/comment/{id}', [InteractionController::class, 'deleteComment'])
-        ->name('comment.delete');
+    Route::post('/set_comments_product/{id}', [InteractionController::class, 'storeComment'])->name('comment.store');
+    Route::post('/comment/{id}/update', [InteractionController::class, 'updateComment'])->name('comment.update');
+    Route::delete('/comment/{id}', [InteractionController::class, 'deleteComment'])->name('comment.delete');
 });

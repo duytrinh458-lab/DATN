@@ -93,6 +93,38 @@
     margin-bottom: 20px;
 }
 
+/* --- PHẦN BỔ SUNG: NÚT VÀ HỘP CẢNH BÁO HOÀN TRẢ --- */
+.refund-action-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255, 71, 87, 0.05); /* Nền đỏ cực nhạt */
+    border: 1px dashed rgba(255, 71, 87, 0.4);
+    border-radius: 8px;
+}
+
+.btn-neon-danger {
+    display: block;
+    text-align: center;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: #ff4757;
+    border: 1px solid #ff4757;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 1px;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-neon-danger:hover {
+    background: #ff4757;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); /* Hiệu ứng Neon Đỏ */
+}
+
 @media (max-width: 850px) {
     .detail-grid { grid-template-columns: 1fr; }
 }

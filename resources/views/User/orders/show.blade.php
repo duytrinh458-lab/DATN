@@ -23,7 +23,6 @@
         </div>
 
         <div class="detail-grid">
-            <!-- CỘT TRÁI: DANH SÁCH SẢN PHẨM -->
             <div class="left-col">
                 <div class="detail-box">
                     <h4>HẠM ĐỘI ĐIỀU ĐỘNG ({{ $order->orderItems->count() }})</h4>
@@ -40,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- CỘT PHẢI: TỌA ĐỘ VÀ THANH TOÁN -->
             <div class="right-col">
                 <div class="detail-box">
                     <h4>TỌA ĐỘ GIAO NHẬN</h4>
@@ -68,12 +66,47 @@
                     
                     <div style="margin-top: 20px; padding: 15px; background: rgba(0,255,136,0.05); border-radius: 8px; border: 1px dashed #00ff88; text-align: center; font-size: 13px;">
                         TRẠNG THÁI: 
-                        @if($order->status == 'pending') <span style="color: #ffab00;">CHỜ DUYỆT</span>
-                        @elseif($order->status == 'shipping') <span style="color: #00eaff;">ĐANG GIAO</span>
-                        @elseif($order->status == 'delivered') <span style="color: #00ff88;">ĐÃ HOÀN THÀNH</span>
-                        @else <span style="color: #ff4757;">ĐÃ HỦY</span>
+                        @if($order->status == 'pending') 
+                            <span style="color: #ffab00;">CHỜ DUYỆT</span>
+                        @elseif($order->status == 'shipping') 
+                            <span style="color: #00eaff;">ĐANG GIAO</span>
+                        @elseif($order->status == 'delivered') 
+                            <span style="color: #00ff88;">ĐÃ HOÀN THÀNH</span>
+                        @elseif($order->status == 'refunded') 
+                            <span style="color: #c084fc; font-weight: 900; letter-spacing: 1px;">ĐÃ TRẢ HÀNG & HOÀN TIỀN</span>
+                        @else 
+                            <span style="color: #ff4757;">ĐÃ HỦY</span>
                         @endif
                     </div>
+
+                    @if($order->status == 'delivered' && !$hasRefundRequest)
+                        {{-- TH 1: Đã giao và CHƯA gửi yêu cầu -> Hiện nút bấm --}}
+                        <div class="refund-action-box" style="margin-top: 20px; padding: 20px; background: rgba(255, 71, 87, 0.05); border: 1px dashed rgba(255, 71, 87, 0.4); border-radius: 8px;">
+                            <h4 style="color: #ff4757; font-size: 13px; margin-bottom: 10px; border-left: none; padding-left: 0; text-align: center;">
+                                ⚠️ GẶP SỰ CỐ VỚI THIẾT BỊ?
+                            </h4>
+                            <p style="font-size: 12px; opacity: 0.8; margin-bottom: 15px; line-height: 1.5; color: #fca5a5; text-align: center;">
+                                Báo cáo lỗi kỹ thuật hoặc sự cố vận chuyển trong vòng 24h để được hệ thống hoàn tiền vào ví V-Pay.
+                            </p>
+                            <a href="{{ route('user.orders.refund', $order->id) }}" class="btn-neon-danger">
+                                KHỞI TẠO HOÀN TRẢ
+                            </a>
+                        </div>
+
+                    @elseif($hasRefundRequest || $order->status == 'refunded')
+                        {{-- TH 2: Đã gửi yêu cầu HOẶC đã duyệt xong -> Ẩn nút, hiện thông báo --}}
+                        <div class="refund-action-box" style="margin-top: 20px; padding: 20px; background: rgba(0, 234, 255, 0.05); border: 1px solid rgba(0, 234, 255, 0.3); border-radius: 8px; text-align: center;">
+                            <span class="material-symbols-outlined" style="color: #00eaff; vertical-align: middle; font-size: 24px;">verified_user</span>
+                            <div style="color: #00eaff; font-size: 13px; font-weight: bold; margin-top: 10px; letter-spacing: 1px;">
+                                @if($order->status == 'refunded')
+                                    YÊU CẦU HOÀN TIỀN ĐÃ HOÀN TẤT
+                                @else
+                                    YÊU CẦU HOÀN TRẢ ĐANG ĐƯỢC THẨM ĐỊNH
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
