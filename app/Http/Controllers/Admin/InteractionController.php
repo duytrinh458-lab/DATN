@@ -15,43 +15,42 @@ class InteractionController extends Controller
     {
         $request->validate([
             'comment' => 'required|string|max:1000',
-            'rating' => 'nullable|integer|min:1|max:5',
+            'rating'  => 'nullable|integer|min:1|max:5',
         ]);
 
-        // 🔥 CHECK ĐÃ REVIEW CHƯA
-        $existing = DB::table('reviews')
-            ->where('user_id', auth()->id())
-            ->where('product_id', $id)
-            ->first();
+        $userId = auth()->id();
 
-        if ($existing) {
-            return back()->with('error', 'Không thể đánh giá lại trên cùng 1 sản phẩm');
-        }
-
-        // 🔥 CHECK ĐÃ MUA CHƯA
         $hasBought = DB::table('orders')
             ->join('order_items', 'orders.id', '=', 'order_items.order_id')
-            ->where('orders.user_id', auth()->id())
+            ->where('orders.user_id', $userId)
             ->where('order_items.product_id', $id)
             ->exists();
 
         if (!$hasBought) {
-            return back()->with('error', 'Bạn phải mua sản phẩm này trước khi đánh giá');
+            return back()->with('error', 'Bạn phải mua sản phẩm trước khi đánh giá');
         }
 
-        // 🔥 LẤY ORDER GẦN NHẤT
-        $orderId = DB::table('orders')
-            ->where('user_id', auth()->id())
-            ->orderBy('id', 'desc')
-            ->value('id');
+        $existing = DB::table('reviews')
+            ->where('user_id', $userId)
+            ->where('product_id', $id)
+            ->first();
 
-        // INSERT
+        if ($existing) {
+            return back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi');
+        }
+
         DB::table('reviews')->insert([
-            'user_id' => auth()->id(),
+            'user_id'    => $userId,
             'product_id' => $id,
-            'order_id' => $orderId,
-            'rating' => $request->rating ?? 5,
-            'comment' => $request->comment,
+            'order_id'   => DB::table('orders')
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->where('orders.user_id', $userId)
+                ->where('order_items.product_id', $id)
+                ->orderBy('orders.id', 'desc')
+                ->value('orders.id'),
+
+            'rating'     => $request->rating ?? 5,
+            'comment'    => $request->comment,
             'created_at' => now(),
         ]);
 
@@ -59,35 +58,41 @@ class InteractionController extends Controller
     }
 
     /* =========================
-        EDIT COMMENT
+        UPDATE COMMENT (AJAX)
     ========================= */
     public function updateComment(Request $request, $id)
     {
         $request->validate([
             'comment' => 'required|string|max:1000',
-            'rating' => 'nullable|integer|min:1|max:5',
         ]);
 
-        DB::table('reviews')
+        $updated = DB::table('reviews')
             ->where('id', $id)
             ->where('user_id', auth()->id())
             ->update([
                 'comment' => $request->comment,
-                'rating' => $request->rating ?? 5,
             ]);
 
-        return back()->with('success', 'Đã cập nhật đánh giá');
+        return response()->json([
+            'success' => $updated ? true : false,
+        ]);
     }
 
     /* =========================
-        DELETE COMMENT
+        DELETE COMMENT (AJAX + WEB)
     ========================= */
     public function deleteComment($id)
     {
-        DB::table('reviews')
+        $deleted = DB::table('reviews')
             ->where('id', $id)
             ->where('user_id', auth()->id())
             ->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => $deleted ? true : false,
+            ]);
+        }
 
         return back()->with('success', 'Đã xóa đánh giá');
     }
@@ -95,24 +100,23 @@ class InteractionController extends Controller
     /* =========================
         ADMIN VIEW
     ========================= */
-   public function comments()
-{
-    $comments = DB::table('reviews')
-        ->join('users', 'users.id', '=', 'reviews.user_id')
-        ->join('products', 'products.id', '=', 'reviews.product_id')
-        ->select(
-            'reviews.id',
-            'reviews.comment',
-            'reviews.rating',
-            'reviews.created_at',
-            'users.full_name',
-            'products.name as product_name'
-        )
-        ->orderBy('reviews.id', 'desc')
-        ->get();
+    public function comments()
+    {
+        $comments = DB::table('reviews')
+            ->join('users', 'users.id', '=', 'reviews.user_id')
+            ->join('products', 'products.id', '=', 'reviews.product_id')
+            ->select(
+                'reviews.*',
+                'users.full_name',
+                'users.avatar',
+                'products.name as product_name'
+            )
+            ->orderBy('reviews.id', 'desc')
+            ->get();
 
-    return view('admin.interactions.comments', compact('comments'));
-}
+        return view('admin.interactions.comments', compact('comments'));
+    }
+
     public function likes()
     {
         return view('admin.interactions.likes');

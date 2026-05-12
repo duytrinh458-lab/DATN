@@ -3,11 +3,11 @@
 @section('title', 'Thêm người dùng mới - Vanguard UAV')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('Css/Admin/adduser.css') }}">
-
+<link rel="stylesheet" href="{{ asset('Css/Admin/adduser.css') }}">
 @endpush
 
 @section('content')
+
 <div class="user-form-page">
 
     <header class="admin-header">
@@ -17,17 +17,19 @@
         </div>
 
         <div class="header-actions">
-           <a href="{{ route('admin.users.index') }}" class="btn-back">
-    <i class="fas fa-arrow-left"></i> Quay lại
-</a>
+            <a href="{{ route('admin.users.index') }}" class="btn-back">
+                ← Quay lại
+            </a>
         </div>
     </header>
 
+    {{-- ERROR --}}
     @if ($errors->any())
         <div class="alert error-alert">
             <div class="alert-title">
-                <i class="fas fa-exclamation-triangle"></i> Đã có lỗi xảy ra:
+                ⚠ Đã có lỗi xảy ra:
             </div>
+
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -47,11 +49,8 @@
 
             <div class="form-grid">
 
-                <div class="form-group">
-                    <label>Tên đăng nhập</label>
-                    <input type="text" name="username" required>
-                </div>
-
+                {{-- ❗ KHÔNG CẦN username (controller tự tạo) --}}
+                
                 <div class="form-group">
                     <label>Họ và Tên</label>
                     <input type="text" name="full_name">
@@ -84,7 +83,7 @@
 
             <div class="form-footer">
                 <button type="submit" class="btn-submit">
-                    <i class="fas fa-save"></i> Thêm người dùng
+                    💾 Thêm người dùng
                 </button>
             </div>
 
@@ -93,4 +92,5 @@
     </div>
 
 </div>
+
 @endsection

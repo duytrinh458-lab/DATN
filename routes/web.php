@@ -66,6 +66,7 @@ Route::prefix('admin')
     ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
+<<<<<<< HEAD
         // --- QUẢN LÝ CẤU HÌNH QR V-PAY ---
         Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
         Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
@@ -77,6 +78,13 @@ Route::prefix('admin')
         // --- 💡 ĐÃ THÊM: QUẢN LÝ YÊU CẦU HOÀN TRẢ ---
         Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds.index');
         Route::post('/refunds/{id}/update-status', [AdminController::class, 'updateRefundStatus'])->name('refunds.updateStatus');
+=======
+        Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
+        Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
+
+        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
+        Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
+>>>>>>> 9b3cc20 (comments)
 
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
@@ -94,10 +102,21 @@ Route::prefix('admin')
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // ================= INTERACTIONS (ADMIN) =================
+        // ================= INTERACTIONS =================
         Route::prefix('interactions')->name('interactions.')->group(function () {
             Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
+<<<<<<< HEAD
             Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
+=======
+
+            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])
+                ->name('comments.delete');
+
+            // ⭐ NEW: reply comment
+            Route::post('/comments/reply', [InteractionController::class, 'replyComment'])
+                ->name('comments.reply');
+
+>>>>>>> 9b3cc20 (comments)
             Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
             Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
         });
@@ -151,9 +170,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
+   // ================= COMMENT (USER) =================
 
-    // ================= COMMENT =================
-    Route::post('/set_comments_product/{id}', [InteractionController::class, 'storeComment'])->name('comment.store');
-    Route::post('/comment/{id}/update', [InteractionController::class, 'updateComment'])->name('comment.update');
-    Route::delete('/comment/{id}', [InteractionController::class, 'deleteComment'])->name('comment.delete');
+// TẠO COMMENT
+Route::post('/comment/update/{id}', [InteractionController::class, 'updateComment'])
+    ->middleware('auth')
+    ->name('user.comment.update');
+
+Route::post('/comment/store/{id}', [InteractionController::class, 'storeComment'])
+    ->middleware('auth')
+    ->name('user.comment.store');
+
+Route::delete('/comment/delete/{id}', [InteractionController::class, 'deleteComment'])
+    ->middleware('auth')
+    ->name('user.comment.delete');
+
 });

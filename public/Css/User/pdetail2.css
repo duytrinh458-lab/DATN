@@ -1,0 +1,598 @@
+:root {
+    --bg-surface: #10141a;
+    --surface-low: #181c22;
+    --surface-container: #1c2026;
+    --primary: #c3f5ff;
+    --primary-container: #00e5ff;
+    --font-head: 'Space Grotesk', sans-serif;
+}
+
+/* ===== GLOBAL ===== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg-surface);
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* ===== LAYOUT ===== */
+.vanguard-detail-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 120px 20px 60px;
+}
+
+/* ===== BREADCRUMB ===== */
+.vanguard-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    color: #849396;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-family: var(--font-head);
+    letter-spacing: 2px;
+}
+
+.vanguard-breadcrumb .active {
+    color: var(--primary-container);
+}
+
+/* ===== GRID ===== */
+.product-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 48px;
+    align-items: start;
+}
+
+.gallery-col,
+.control-panel-col {
+    width: 100%;
+    min-width: 0;
+}
+
+.gallery-col {
+    grid-column: span 7;
+}
+
+.control-panel-col {
+    grid-column: span 5;
+}
+
+/* ===== PANEL ===== */
+.glass-panel {
+    width: 100%;
+    background: rgba(49, 53, 60, 0.3);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(132, 147, 150, 0.15);
+    border-radius: 14px;
+}
+
+/* ===== INFO CARD ===== */
+.info-card {
+    padding: 32px;
+    overflow: hidden;
+}
+
+.cart-count {
+    color: var(--primary-container);
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.product-title {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: #fff;
+    font-family: var(--font-head);
+}
+
+.product-price {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-container);
+    margin-bottom: 20px;
+}
+
+.stock-box {
+    margin-bottom: 20px;
+}
+
+.stock-in {
+    color: #22c55e;
+    font-weight: 700;
+}
+
+.stock-out {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+/* ===== PRODUCT SPEC ===== */
+.product-spec {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.product-spec p {
+    margin: 0;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    color: #d1d5db;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===== MAIN IMAGE ===== */
+.main-frame {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--surface-low);
+}
+
+/* ===== MAIN IMAGE ===== */
+.main-swiper {
+    width: 100%;
+    height: 100%;
+}
+
+.main-swiper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===== COMMENT AVATAR FIX ===== */
+.comment-avatar {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    max-width: 50px !important;
+    max-height: 50px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    display: block;
+    overflow: hidden;
+    border: 2px solid #00e5ff;
+}
+
+/* ===== THUMB ===== */
+.thumb-swiper {
+    margin-top: 15px;
+}
+
+.thumb-swiper .swiper-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.thumb-swiper .swiper-slide {
+    width: 70px !important;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0.45;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: 0.25s ease;
+}
+
+.thumb-swiper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.swiper-slide-thumb-active {
+    opacity: 1;
+    border: 2px solid var(--primary-container);
+}
+
+/* ===== INPUT ===== */
+.quantity-input {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    outline: none;  
+}
+.quantity-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(0,229,255,0.18),
+        rgba(0,229,255,0.05)
+    );
+
+    border: 1px solid rgba(0,229,255,0.35);
+    border-left: 4px solid #00e5ff;
+
+    border-radius: 8px;
+
+    color: #00e5ff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    box-shadow: 0 0 12px rgba(0,229,255,0.12);
+}
+
+/* ===== BUTTONS ===== */
+.button-stack {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.button-stack button {
+    flex: 1;
+}
+
+.btn-buy-now {
+    background: linear-gradient(135deg, #c3f5ff, #00e5ff);
+    color: #001f24;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-buy-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.35);
+}
+
+.btn-add-to-cart {
+    background: rgba(24, 28, 34, 0.85);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.btn-add-to-cart:hover {
+    border-color: var(--primary-container);
+    box-shadow: 0 0 20px rgba(0,229,255,0.2);
+}
+
+/* ===== COMMENTS ===== */
+.comments-section {
+    margin-top: 25px;
+    padding: 22px;
+}
+
+.comment-title {
+    margin: 0 0 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.comment-textarea {
+    width: 100%;
+    min-height: 90px;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    color: #fff;
+    resize: vertical;
+    outline: none;
+}
+
+.comment-textarea:focus {
+    border-color: var(--primary-container);
+}
+
+.submit-comment-btn {
+    width: 120px;
+    height: 42px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--primary-container);
+    color: #001f24;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submit-comment-btn:hover {
+    opacity: 0.9;
+}
+
+/* ===== COMMENT LIST ===== */
+.comment-list {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* QUAN TRỌNG: KHÔNG DÙNG .comment-list div */
+.comment-item {
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.comment-header {
+    margin-bottom: 12px;
+}
+
+.comment-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.comment-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-container);
+}
+
+.comment-username {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.comment-rating {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #facc15;
+}
+
+.comment-content {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #d1d5db;
+}
+
+/* ===== COMMENT BUTTON ===== */
+.comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-comment-edit,
+.btn-comment-delete {
+    padding: 7px 14px;
+    border: 0;
+    border-radius: 7px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-comment-edit {
+    background: #00e5ff;
+    color: #001f24;
+}
+
+.btn-comment-delete {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.btn-comment-edit:hover,
+.btn-comment-delete:hover {
+    opacity: 0.85;
+}
+
+.empty-comment,
+.comment-login-text {
+    color: #9ca3af;
+}
+
+/* =========================
+   EDIT COMMENT
+========================= */
+
+.edit-comment-textarea{
+    width:100%;
+    min-height:90px;
+
+    margin-top:14px;
+    margin-bottom:12px;
+
+    padding:14px 16px;
+
+    background:rgba(10,15,25,0.95);
+
+    border:1px solid rgba(0,210,255,0.35);
+
+    border-radius:14px;
+
+    color:#eafcff;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+    resize:vertical;
+
+    outline:none;
+
+    transition:0.25s ease;
+}
+
+.edit-comment-textarea:focus{
+    border-color:#00d2ff;
+
+    box-shadow:
+        0 0 0 3px rgba(0,210,255,0.12),
+        0 0 18px rgba(0,210,255,0.18);
+}
+
+/* BUTTON GROUP */
+.comment-actions{
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:14px;
+
+    flex-wrap:wrap;
+}
+
+/* SAVE */
+.btn-comment-save{
+    background:linear-gradient(135deg,#00d2ff,#00ffc6);
+
+    color:#041018;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.btn-comment-save:hover{
+    transform:translateY(-2px);
+
+    box-shadow:0 0 16px rgba(0,210,255,0.4);
+}
+
+/* CANCEL */
+.btn-comment-cancel{
+    background:rgba(255,255,255,0.08);
+
+    color:#fff;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.btn-comment-cancel:hover{
+    background:rgba(255,255,255,0.14);
+}
+
+/* EDIT BUTTON */
+.btn-comment-edit{
+    background:rgba(0,210,255,0.12);
+
+    color:#00d2ff;
+
+    border:1px solid rgba(0,210,255,0.3);
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.btn-comment-edit:hover{
+    background:#00d2ff;
+
+    color:#041018;
+}
+
+/* DELETE BUTTON */
+.btn-comment-delete{
+    background:rgba(255,70,70,0.12);
+
+    color:#ff5c5c;
+
+    border:1px solid rgba(255,70,70,0.25);
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.btn-comment-delete:hover{
+    background:#ff4d4d;
+
+    color:#fff;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .product-layout-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-col,
+    .control-panel-col {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .button-stack {
+        flex-direction: column;
+    }
+
+    .product-title {
+        font-size: 1.8rem;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+    }
+
+    .comment-user {
+        align-items: flex-start;
+    }
+}
