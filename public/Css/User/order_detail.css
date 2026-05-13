@@ -12,6 +12,16 @@
     margin: 0 auto;
 }
 
+.back-link {
+    color: #00eaff;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
 .detail-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -26,6 +36,13 @@
     margin-bottom: 25px;
 }
 
+.header-box {
+    border-color: #00eaff;
+}
+
+.text-center { text-align: center; }
+.order-date { font-size: 13px; opacity: 0.6; }
+
 .detail-box h4 {
     color: #00eaff;
     font-size: 14px;
@@ -36,7 +53,6 @@
     padding-left: 15px;
 }
 
-/* Item Row */
 .product-item {
     display: flex;
     gap: 20px;
@@ -57,13 +73,11 @@
     color: #fff;
     font-size: 16px;
 }
+.quantity-text { font-size: 13px; opacity: 0.7; }
+.product-price { color: #00eaff; font-weight: bold; }
 
-.product-price {
-    color: #00eaff;
-    font-weight: bold;
-}
+.address-text { font-size: 15px; line-height: 1.6; }
 
-/* Financial Row */
 .finance-row {
     display: flex;
     justify-content: space-between;
@@ -71,6 +85,9 @@
     font-size: 14px;
     opacity: 0.8;
 }
+
+.free-ship { color: #00ff88; }
+.bold-text { font-weight: bold; }
 
 .total-row {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -91,16 +108,39 @@
     font-size: 12px;
     font-weight: bold;
     margin-bottom: 20px;
+    background: rgba(0, 234, 255, 0.1);
+    color: #00eaff;
+    border: 1px solid #00eaff;
 }
 
-/* --- PHẦN BỔ SUNG: NÚT VÀ HỘP CẢNH BÁO HOÀN TRẢ --- */
-.refund-action-box {
+/* --- TRẠNG THÁI --- */
+.status-box {
     margin-top: 20px;
-    padding: 20px;
-    background: rgba(255, 71, 87, 0.05); /* Nền đỏ cực nhạt */
-    border: 1px dashed rgba(255, 71, 87, 0.4);
+    padding: 15px;
+    background: rgba(0,255,136,0.05);
     border-radius: 8px;
+    border: 1px dashed #00ff88;
+    text-align: center;
+    font-size: 13px;
 }
+
+.status-text { font-weight: normal; }
+.status-text.warning { color: #ffab00; }
+.status-text.info { color: #00eaff; }
+.status-text.success { color: #00ff88; }
+.status-text.warning-bold { color: #ffab00; font-weight: bold; letter-spacing: 1px; }
+.status-text.neon-purple { color: #c084fc; font-weight: 900; letter-spacing: 1px; }
+.status-text.danger { color: #ff4757; }
+
+/* --- NÚT HOÀN TRẢ --- */
+.refund-action-box { margin-top: 20px; padding: 20px; border-radius: 8px; }
+.danger-box { background: rgba(255, 71, 87, 0.05); border: 1px dashed rgba(255, 71, 87, 0.4); }
+.danger-title { color: #ff4757; font-size: 13px; margin-bottom: 10px; border-left: none; padding-left: 0; }
+.danger-desc { font-size: 12px; opacity: 0.8; margin-bottom: 15px; line-height: 1.5; color: #fca5a5; }
+
+.info-box { background: rgba(0, 234, 255, 0.05); border: 1px solid rgba(0, 234, 255, 0.3); }
+.info-icon { color: #00eaff; vertical-align: middle; font-size: 24px; }
+.info-title { color: #00eaff; font-size: 13px; font-weight: bold; margin-top: 10px; letter-spacing: 1px; }
 
 .btn-neon-danger {
     display: block;
@@ -122,7 +162,7 @@
 .btn-neon-danger:hover {
     background: #ff4757;
     color: #fff;
-    box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); /* Hiệu ứng Neon Đỏ */
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
 }
 
 @media (max-width: 850px) {

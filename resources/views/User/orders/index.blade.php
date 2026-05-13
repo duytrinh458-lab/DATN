@@ -30,6 +30,14 @@
         @if(isset($orders) && $orders->count() > 0)
             <div class="orders-grid">
                 @foreach($orders as $order)
+                    {{-- 💡 KIỂM TRA ĐƠN NÀY CÓ YÊU CẦU HOÀN TRẢ ĐANG CHỜ KHÔNG --}}
+                    @php
+                        $isRefunding = \Illuminate\Support\Facades\DB::table('refunds')
+                                        ->where('order_id', $order->id)
+                                        ->where('status', 'pending')
+                                        ->exists();
+                    @endphp
+
                     <div class="order-card">
                         <div class="order-header-row">
                             <div>
@@ -42,12 +50,14 @@
                             @elseif($order->status == 'shipping')
                                 <span class="status-badge status-shipping">ĐANG GIAO</span>
                             @elseif($order->status == 'delivered')
-                                <span class="status-badge status-delivered">HOÀN THÀNH</span>
-                            
-                            {{-- 💡 BỔ SUNG TRẠNG THÁI HOÀN TIỀN --}}
+                                {{-- NẾU CÓ YÊU CẦU HOÀN TRẢ THÌ HIỆN CHỜ HOÀN TRẢ --}}
+                                @if($isRefunding)
+                                    <span class="status-badge status-refunding">CHỜ HOÀN TRẢ</span>
+                                @else
+                                    <span class="status-badge status-delivered">HOÀN THÀNH</span>
+                                @endif
                             @elseif($order->status == 'refunded')
-                                <span class="status-badge" style="color: #c084fc; border: 1px solid #c084fc; background: rgba(192, 132, 252, 0.1); font-weight: bold;">ĐÃ HOÀN TIỀN</span>
-                            
+                                <span class="status-badge status-refunded">ĐÃ HOÀN TIỀN</span>
                             @elseif($order->status == 'cancelled')
                                 <span class="status-badge status-cancelled">ĐÃ HỦY</span>
                             @endif
@@ -118,7 +128,7 @@
     function openCancelModal(orderId, orderCode) {
         currentOrderId = orderId;
         document.getElementById('modal-order-code').innerText = orderCode;
-        document.getElementById('cancel-reason-field').value = ''; // Reset textarea
+        document.getElementById('cancel-reason-field').value = ''; 
         document.getElementById('vg-cancel-modal').classList.add('active');
     }
 
@@ -129,11 +139,8 @@
 
     function executeCancel() {
         if (currentOrderId) {
-            // Lấy lý do nhập từ modal
             let reason = document.getElementById('cancel-reason-field').value;
-            // Gán vào form ngầm tương ứng
             document.getElementById('reason-input-' + currentOrderId).value = reason;
-            // Gửi form đi
             document.getElementById('cancel-form-' + currentOrderId).submit();
         }
     }
