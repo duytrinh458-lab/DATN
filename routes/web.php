@@ -66,24 +66,19 @@ Route::prefix('admin')
     ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
-        // --- QUẢN LÝ CẤU HÌNH QR V-PAY ---
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+
+        // QR V-PAY
         Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
         Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
-        
-        // --- QUẢN LÝ GIAO DỊCH V-PAY ---
+
+        // Transactions
         Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
         Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
-        
-        // --- 💡 ĐÃ THÊM: QUẢN LÝ YÊU CẦU HOÀN TRẢ ---
+
+        // Refunds
         Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds.index');
         Route::post('/refunds/{id}/update-status', [AdminController::class, 'updateRefundStatus'])->name('refunds.updateStatus');
-        Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
-        Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
-
-        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
-        Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
-
-        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('categories', CategoryController::class);
@@ -99,17 +94,11 @@ Route::prefix('admin')
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // ================= INTERACTIONS =================
+        // Interactions
         Route::prefix('interactions')->name('interactions.')->group(function () {
             Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
             Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
-
-            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])
-                ->name('comments.delete');
-
-            // ⭐ NEW: reply comment
-            Route::post('/comments/reply', [InteractionController::class, 'replyComment'])
-                ->name('comments.reply');
+            Route::post('/comments/reply', [InteractionController::class, 'replyComment'])->name('comments.reply');
 
             Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
             Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
@@ -147,7 +136,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
 
-        // --- HOÀN HÀNG USER ---
+        // Refund
         Route::get('/{id}/refund', [OrderController::class, 'showRefundForm'])->name('refund');
         Route::post('/{id}/refund', [OrderController::class, 'submitRefund'])->name('refund.submit');
     });
@@ -155,8 +144,13 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('profile')->name('user.profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
+
+        // Address CRUD
         Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
         Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
+        Route::get('/address/{id}/edit', [ProfileController::class, 'editAddress'])->name('address.edit');
+        Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])->name('address.update');
+        Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])->name('address.destroy');
     });
 
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
@@ -164,19 +158,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
-   // ================= COMMENT (USER) =================
 
-// TẠO COMMENT
-Route::post('/comment/update/{id}', [InteractionController::class, 'updateComment'])
-    ->middleware('auth')
-    ->name('user.comment.update');
-
-Route::post('/comment/store/{id}', [InteractionController::class, 'storeComment'])
-    ->middleware('auth')
-    ->name('user.comment.store');
-
-Route::delete('/comment/delete/{id}', [InteractionController::class, 'deleteComment'])
-    ->middleware('auth')
-    ->name('user.comment.delete');
+    // ================= COMMENT (USER) =================
+    Route::post('/comment/update/{id}', [InteractionController::class, 'updateComment'])->name('user.comment.update');
+    Route::post('/comment/store/{id}', [InteractionController::class, 'storeComment'])->name('user.comment.store');
+    Route::delete('/comment/delete/{id}', [InteractionController::class, 'deleteComment'])->name('user.comment.delete');
 
 });

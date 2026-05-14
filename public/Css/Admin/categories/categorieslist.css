@@ -167,6 +167,7 @@
     text-decoration: none;
     color: #fff !important;
     background: linear-gradient(135deg, #3B82F6, #2563EB);
+    margin-right: 10px;
 }
 
 .btn-delete {
@@ -178,6 +179,7 @@
     cursor: pointer;
     color: #fff;
     background: linear-gradient(135deg, #ef4444, #dc2626);
+    margin-left: 10px;
 }
 
 /* ================= EMPTY ================= */

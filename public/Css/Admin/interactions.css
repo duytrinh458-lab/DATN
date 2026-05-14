@@ -1,0 +1,136 @@
+/* ========================================
+   ADMIN COMMENTS PAGE
+======================================== */
+
+.admin-comments-page {
+    width: 100%;
+}
+
+/* ================= TITLE ================= */
+
+.admin-comments-page h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #111827;
+}
+
+/* ================= ALERT ================= */
+
+.alert {
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #ecfdf3;
+    color: #027a48;
+    border: 1px solid #abefc6;
+}
+
+/* ================= TABLE ================= */
+
+.comments-table-wrapper {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+}
+
+.comments-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.comments-table thead {
+    background: #111827;
+}
+
+.comments-table thead th {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 16px;
+    text-align: left;
+    border: none;
+}
+
+.comments-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: 0.2s ease;
+}
+
+.comments-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+.comments-table tbody td {
+    padding: 16px;
+    font-size: 14px;
+    color: #374151;
+    vertical-align: top;
+}
+
+/* ================= CONTENT ================= */
+
+.comment-user {
+    font-weight: 700;
+    color: #111827;
+}
+
+.comment-product {
+    font-weight: 600;
+    color: #2563eb;
+}
+
+.comment-content {
+    max-width: 350px;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+.comment-rating {
+    font-weight: 700;
+    color: #f59e0b;
+}
+
+.comment-date {
+    white-space: nowrap;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* ================= BUTTON ================= */
+
+.delete-btn {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+
+    .comments-table {
+        min-width: 900px;
+    }
+
+    .comments-table-wrapper {
+        overflow-x: auto;
+    }
+}

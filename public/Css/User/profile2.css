@@ -1,146 +1,165 @@
-/* public/css/user/profile.css */
+/* ========================================
+   PROFILE PAGE - VANGUARD
+======================================== */
+
 .profile-viewport {
-    padding: 100px 20px 60px;
-    background-color: #0b0e14;
+    padding: 110px 20px 60px;
+    background: #0b0e14;
     min-height: 100vh;
     color: #fff;
 }
 
+/* ================= LAYOUT ================= */
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+/* ================= CARD ================= */
+
 .profile-card {
     background: #0f172a;
-    padding: 30px;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 234, 255, 0.05);
+    padding: 28px;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 234, 255, 0.08);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
     height: 100%;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* ================= TITLES ================= */
+
+.profile-title-blue,
+.profile-title-green {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+    padding-left: 14px;
+    text-transform: uppercase;
 }
 
 .profile-title-blue {
     color: #00eaff;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 25px;
     border-left: 3px solid #00eaff;
-    padding-left: 15px;
-    text-transform: uppercase;
 }
 
 .profile-title-green {
     color: #00ff88;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 25px;
     border-left: 3px solid #00ff88;
-    padding-left: 15px;
-    text-transform: uppercase;
+}
+
+/* ================= FORM ================= */
+
+.mb-4 {
+    margin-bottom: 18px;
+}
+
+.form-label-vg {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 7px;
+    color: #cbd5e1;
+    letter-spacing: .5px;
+    font-weight: 600;
 }
 
 .form-control-vg {
-    width: 98%;
-    max-width: 100%;
+    width: 100%;
     background: #1e293b;
     border: 1px solid #334155;
     color: #fff;
-    border-radius: 8px;
-    /* margin-bottom: 25px; */
-
-    /* GIẢM SIZE CHO GỌN */
-    padding: 10px 12px;
-    font-size: 13px;
-
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
     outline: none;
-    transition: all 0.25s ease;
-    line-height: 1.4;
+    transition: 0.25s ease;
+    line-height: 1.5;
 }
 
 .form-control-vg:focus {
     border-color: #00eaff;
-    background: #161e2e;
-    box-shadow: 0 0 0 2px rgba(0, 234, 255, 0.08);
+    background: #131c2b;
+    box-shadow: 0 0 0 3px rgba(0, 234, 255, 0.08);
 }
 
-/* TEXTAREA RIÊNG GỌN HƠN */
 textarea.form-control-vg {
-    min-height: 50px;
-    width: 98%;
+    min-height: 25px;
     resize: vertical;
 }
 
-/* INPUT EMAIL DISABLED GỌN HƠN */
 .form-control-vg:disabled {
-    background: #0f172a;
+    background: #111827;
     color: #64748b;
+    border-color: #1f2937;
     cursor: not-allowed;
-    border-color: transparent;
 }
 
-/* LABEL GỌN HƠN 1 CHÚT */
-.form-label-vg {
-    font-size: 11px;
-    margin-bottom: 6px;
-    letter-spacing: 0.8px;
-    opacity: 0.85;
+/* ================= BUTTON ================= */
+
+.btn-vg-blue,
+.btn-vg-green {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    margin-top: 12px;
+    border-radius: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-transform: uppercase;
+    font-size: 13px;
 }
 
 .btn-vg-blue {
-    width: 100%;
     background: linear-gradient(90deg, #007bff, #00eaff);
-    border: none;
-    padding: 16px;
-    margin-top: 30px;
-    border-radius: 10px;
-    font-weight: 800;
     color: #fff;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: 0.3s;
-    text-transform: uppercase;
 }
 
 .btn-vg-blue:hover {
-    box-shadow: 0 5px 20px rgba(57, 216, 136, 0.4);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 234, 255, 0.25);
 }
 
 .btn-vg-green {
-    width: 100%;
     background: linear-gradient(90deg, #00eaff, #00ff88);
-    border: none;
-    padding: 16px;
-    margin-top: 30px;
-    border-radius: 10px;
-    font-weight: 900;
     color: #0f172a;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-    transition: 0.3s;
-    text-transform: uppercase;
 }
 
 .btn-vg-green:hover {
-    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.25);
 }
 
+/* ================= ALERT ================= */
+
 .alert-vg-success {
-    background: rgba(0, 255, 136, 0.1);
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.2);
     color: #00ff88;
-    border: 1px solid rgba(0, 255, 136, 0.3);
-    padding: 15px;
-    border-radius: 8px;
+    padding: 14px;
+    border-radius: 10px;
     margin-bottom: 20px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
 }
+
+/* ================= ADDRESS ================= */
 
 .address-item {
     background: #1e293b;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 18px;
     margin-bottom: 15px;
     border-left: 4px solid #334155;
-    transition: 0.3s;
+    transition: 0.3s ease;
+}
+
+.address-item:hover {
+    transform: translateY(-2px);
 }
 
 .address-item.active {
@@ -152,58 +171,105 @@ textarea.form-control-vg {
     display: inline-block;
     background: #00ff88;
     color: #0f172a;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
-    padding: 4px 10px;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .address-text {
     color: #cbd5e1;
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.6;
     margin-bottom: 8px;
-    line-height: 1.5;
 }
 
 .address-time {
-    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 10px;
     font-size: 12px;
+    color: #64748b;
 }
 
+
+/* ================= AVATAR ================= */
+
 .avatar-box {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .avatar-wrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 18px;
 }
 
 .avatar-img {
-    width: 70px;
-    height: 70px;
+    width: 85px;
+    height: 85px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #00eaff;
+    border: 3px solid #00eaff;
     background: #0f172a;
 }
 
 .avatar-input {
-    color: #cbd5e1;
+    color: #ff8839;
     cursor: pointer;
+    font-size: 13px;
 }
+
+/* ================= DEFAULT BUTTON ================= */
 
 .btn-set-default {
     background: transparent;
     border: 1px solid #00eaff;
     color: #00eaff;
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 11px;
     text-transform: uppercase;
+    transition: 0.25s ease;
+    font-weight: 700;
+}
+
+.btn-set-default:hover {
+    background: #00eaff;
+    color: #0f172a;
+}
+
+/* ================= ERROR ================= */
+
+.text-danger {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.left-profile-column,
+.right-profile-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card {
+        padding: 22px;
+    }
 }

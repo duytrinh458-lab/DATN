@@ -9,27 +9,35 @@ class Address extends Model
 {
     use HasFactory;
 
-    // Tên bảng trong DB (nếu bạn đặt là addresses thì Laravel tự hiểu, nhưng khai báo cho chắc)
     protected $table = 'addresses';
+
+    // Nếu bảng có created_at, updated_at thì bỏ dòng này
     public $timestamps = false;
 
-    // Các cột được phép lưu dữ liệu
     protected $fillable = [
         'user_id',
         'full_name',
         'phone',
         'street',
         'district',
-        'city',
+        'ward',
         'province',
         'is_default'
     ];
 
     /**
-     * Thiết lập liên kết ngược lại với User
+     * Liên kết với User
      */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Liên kết với Order
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'address_id');
     }
 }
