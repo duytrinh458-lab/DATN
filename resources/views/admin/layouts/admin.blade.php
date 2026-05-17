@@ -56,6 +56,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.news.index') }}"
+                   class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
+                    Tin tức mới
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('admin.transactions.index') }}"
                    class="{{ request()->routeIs('admin.transactions.*') ? 'active' : '' }}">
                     Quản Lý Giao Dịch
@@ -75,6 +82,8 @@
                     Hoàn Trả
                 </a>
             </li>
+
+            
 
             <!-- 🔥 LOGOUT -->
             <li>

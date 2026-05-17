@@ -27,6 +27,8 @@
 <li><a href="{{ route('user.categories') }}">DANH MỤC</a></li>
                 <!-- <li><a href="{{ url('/news') }}">TIN TỨC</a></li> -->
                 <li><a href="{{ url('/orders') }}">ĐƠN HÀNG</a></li>
+                <li><a href="{{ route('user.news.index') }}">TIN TỨC</a></li>
+
             </ul>
 
             <div class="auth-group">

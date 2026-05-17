@@ -18,20 +18,30 @@
                 XEM SẢN PHẨM <span class="material-symbols-outlined">arrow_outward</span>
             </a>
         </div>
+
     </div>
 </section>
 
 <section class="stats-matrix">
+
     <div class="stat-card">
-        <div class="stat-value">12,000<span class="unit">+</span></div>
-        <div class="stat-label">CHUYẾN BAY THÀNH CÔNG</div>
+        <div class="stat-value">
+            {{ number_format($productCount) }}
+            <span class="unit">+</span>
+        </div>
+        <div class="stat-label">SẢN PHẨM</div>
         <div class="stat-bar"></div>
     </div>
+
     <div class="stat-card">
-        <div class="stat-value">15.4k<span class="unit">+</span></div>
-        <div class="stat-label">PHI CÔNG TIN TƯỞNG</div>
+        <div class="stat-value">
+            {{ number_format($newsCount) }}
+            <span class="unit">+</span>
+        </div>
+        <div class="stat-label">BÀI VIẾT</div>
         <div class="stat-bar"></div>
     </div>
+
 </section>
 
 <section class="featured-products">

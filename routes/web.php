@@ -3,39 +3,45 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// AUTH
 use App\Http\Controllers\AuthController;
 
-// USER CONTROLLERS
+// USER
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\CheckoutController;
-
-// USER ORDER CONTROLLER
 use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\User\NewsController as UserNewsController;
 
-// ADMIN CONTROLLERS
+// ADMIN
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\InteractionController;
+use App\Http\Controllers\Admin\NewsController;
 
 use App\Http\Middleware\AdminMiddleware;
 
-
-// ================= ROOT =================
+/*
+|--------------------------------------------------------------------------
+| ROOT
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return redirect('/login');
 });
 
-
-// ================= AUTH =================
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
 Route::controller(AuthController::class)->group(function () {
+
     Route::get('/login', 'showLogin')->name('login');
     Route::get('/register', 'showRegister')->name('register');
     Route::get('/forgot', 'showForgot')->name('forgot');
@@ -52,15 +58,21 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
 });
 
-
-// ================= LOGOUT =================
+/*
+|--------------------------------------------------------------------------
+| LOGOUT
+|--------------------------------------------------------------------------
+*/
 Route::post('/logout', function () {
     Auth::logout();
     return redirect()->route('login');
 })->name('logout');
 
-
-// ================= ADMIN =================
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', AdminMiddleware::class])
@@ -68,20 +80,20 @@ Route::prefix('admin')
 
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
-        // QR V-PAY
         Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
         Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
 
-        // Transactions
         Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
         Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
 
-        // Refunds
         Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds.index');
         Route::post('/refunds/{id}/update-status', [AdminController::class, 'updateRefundStatus'])->name('refunds.updateStatus');
 
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('categories', CategoryController::class);
+
+        // NEWS ADMIN
+        Route::resource('news', NewsController::class);
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
@@ -94,8 +106,8 @@ Route::prefix('admin')
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // Interactions
         Route::prefix('interactions')->name('interactions.')->group(function () {
+
             Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
             Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
             Route::post('/comments/reply', [InteractionController::class, 'replyComment'])->name('comments.reply');
@@ -103,11 +115,13 @@ Route::prefix('admin')
             Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
             Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
         });
-
     });
 
-
-// ================= USER =================
+/*
+|--------------------------------------------------------------------------
+| USER
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -117,6 +131,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
     Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | NEWS USER (ĐÃ THÊM - QUAN TRỌNG)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/news', [UserNewsController::class, 'index'])->name('user.news.index');
+    Route::get('/news/{slug}', [UserNewsController::class, 'show'])->name('user.news.show');
 
     Route::prefix('checkout')->name('user.checkout.')->group(function () {
         Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');
@@ -136,16 +158,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
 
-        // Refund
         Route::get('/{id}/refund', [OrderController::class, 'showRefundForm'])->name('refund');
         Route::post('/{id}/refund', [OrderController::class, 'submitRefund'])->name('refund.submit');
     });
 
     Route::prefix('profile')->name('user.profile.')->group(function () {
+
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
 
-        // Address CRUD
         Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
         Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
         Route::get('/address/{id}/edit', [ProfileController::class, 'editAddress'])->name('address.edit');
@@ -154,14 +175,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
+
         Route::get('/', [WalletController::class, 'index'])->name('index');
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
-
-    // ================= COMMENT (USER) =================
-    Route::post('/comment/update/{id}', [InteractionController::class, 'updateComment'])->name('user.comment.update');
-    Route::post('/comment/store/{id}', [InteractionController::class, 'storeComment'])->name('user.comment.store');
-    Route::delete('/comment/delete/{id}', [InteractionController::class, 'deleteComment'])->name('user.comment.delete');
-
 });

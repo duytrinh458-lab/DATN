@@ -4,13 +4,19 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\News;
 
 class HomeController extends Controller
 {
     // Trang chủ
     public function index()
     {
-        return view('User.home');
+        $productCount = Product::count();
+
+        $newsCount = News::where('status', 'published')->count();
+
+        return view('User.home', compact('productCount', 'newsCount'));
     }
 
     // Trang sản phẩm
@@ -22,18 +28,22 @@ class HomeController extends Controller
     // Trang dịch vụ
     public function services()
     {
-        return view('services');
+        return view('User.services');
     }
 
     // Trang tin tức
     public function news()
     {
-        return view('news');
+        $news = News::where('status', 'published')
+            ->latest()
+            ->get();
+
+        return view('User.news', compact('news'));
     }
 
     // Trang liên hệ
     public function contact()
     {
-        return view('contact');
+        return view('User.contact');
     }
 }
