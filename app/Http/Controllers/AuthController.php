@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; // 💡 Đã thêm thư viện Log
 
 class AuthController extends Controller
 {
@@ -28,7 +29,6 @@ class AuthController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
-
         return view('Login.change-password');
     }
 
@@ -52,7 +52,9 @@ class AuthController extends Controller
 
         session(['phone_step1' => $request->phone]);
 
-        return back()->with('success', 'OTP của bạn là: ' . $otp);
+        // 💡 ĐÃ FIX LOGIC SAI: Ghi OTP vào file log (storage/logs/laravel.log) để test, KHÔNG in ra UI
+        Log::info('Mã OTP Đăng ký của SĐT ' . $request->phone . ' là: ' . $otp);
+        return back()->with('success', 'Mã xác thực OTP đã được gửi đến số điện thoại của bạn!');
     }
 
     public function verifyOtpRegister(Request $request)
@@ -128,7 +130,6 @@ class AuthController extends Controller
 
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
-
             $user = Auth::user();
 
             if ($user->is_first_login) {
@@ -155,7 +156,6 @@ class AuthController extends Controller
         ]);
 
         $user = User::find(Auth::id());
-
         $user->password = Hash::make($request->password);
         $user->is_first_login = 0;
         $user->save();
@@ -165,7 +165,7 @@ class AuthController extends Controller
             : redirect()->route('home');
     }
 
-    // ================= FORGOT PASSWORD OTP SEND (🔥 FIX HERE) =================
+    // ================= FORGOT PASSWORD =================
     public function sendOtpForgotPassword(Request $request)
     {
         $request->validate([
@@ -191,10 +191,11 @@ class AuthController extends Controller
 
         session(['forgot_phone' => $request->phone]);
 
-        return back()->with('success', 'OTP của bạn là: ' . $otp);
+        // 💡 ĐÃ FIX LOGIC SAI: Ghi OTP vào file log (storage/logs/laravel.log) để test, KHÔNG in ra UI
+        Log::info('Mã OTP Quên mật khẩu của SĐT ' . $request->phone . ' là: ' . $otp);
+        return back()->with('success', 'Mã xác thực OTP đã được gửi đến điện thoại của bạn!');
     }
 
-    // ================= FORGOT PASSWORD VERIFY =================
     public function verifyOtpForgotPassword(Request $request)
     {
         $request->validate([
@@ -212,7 +213,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return back()->with('error', 'OTP không hợp lệ');
+            return back()->with('error', 'OTP không hợp lệ hoặc đã hết hạn');
         }
 
         $user = User::where('phone', $request->phone)->first();

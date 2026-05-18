@@ -20,7 +20,7 @@ class Address extends Model
         'phone',
         'street',
         'district',
-        'ward',
+        'city', // 💡 ĐÃ FIX: Đổi 'ward' thành 'city' để khớp với CSDL và Controller
         'province',
         'is_default'
     ];

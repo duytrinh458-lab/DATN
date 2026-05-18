@@ -4,30 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; // 💡 THÊM XÓA MỀM (SOFT DELETES)
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; // 💡 KÍCH HOẠT XÓA MỀM
 
-    // 🔥 Cho phép insert/update bằng API
+    protected $table = 'products';
+    
     protected $fillable = [
-        'category_id',
-        'name',
-        'sku',
-        'description',
-        'original_price',
-        'sale_price',
-        'stock',
-        'is_featured',
-        'status',
-        'flight_time',
-        'max_altitude',
-        'camera_mp',
-        'frequency',
-        'weight'
+        'category_id', 'name', 'sku', 'description', 'original_price',
+        'sale_price', 'stock', 'is_featured', 'status', 'flight_time',
+        'max_altitude', 'camera_mp', 'frequency', 'weight'
     ];
 
-    // 🔥 Ép kiểu dữ liệu (rất nên có)
     protected $casts = [
         'original_price' => 'float',
         'sale_price'     => 'float',
@@ -39,16 +29,18 @@ class Product extends Model
         'weight'         => 'float',
     ];
 
-    // 🔥 Quan hệ: 1 sản phẩm có nhiều ảnh
     public function images()
     {
-        return $this->hasMany(ProductImage::class, 'product_id')
-                    ->orderBy('position');
+        return $this->hasMany(ProductImage::class, 'product_id')->orderBy('position');
     }
 
-    // 🔥 Quan hệ: thuộc danh mục
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 }

@@ -59,9 +59,7 @@ class ProductController extends Controller
             // 🔥 FIX TRÙNG ẢNH
             if ($request->hasFile('image1')) {
                 $file = $request->file('image1');
-
                 $fileName = 'uav_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
                 $file->move(public_path('uploads/products'), $fileName);
 
                 ProductImage::create([
@@ -72,7 +70,6 @@ class ProductController extends Controller
             }
 
             DB::commit();
-
             return redirect()->route('admin.products.index')
                 ->with('success', 'Thêm UAV mới thành công!');
         } catch (\Exception $e) {
@@ -117,8 +114,6 @@ class ProductController extends Controller
 
             // 🔥 CẬP NHẬT ẢNH (CHỈ KHI CÓ ẢNH MỚI)
             if ($request->hasFile('image1')) {
-
-                // xóa file cũ
                 $oldImages = ProductImage::where('product_id', $product->id)->get();
                 foreach ($oldImages as $img) {
                     if (File::exists(public_path($img->image_url))) {
@@ -127,11 +122,8 @@ class ProductController extends Controller
                     $img->delete();
                 }
 
-                // upload ảnh mới
                 $file = $request->file('image1');
-
                 $fileName = 'uav_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
                 $file->move(public_path('uploads/products'), $fileName);
 
                 ProductImage::create([
@@ -142,7 +134,6 @@ class ProductController extends Controller
             }
 
             DB::commit();
-
             return redirect()->route('admin.products.index')
                 ->with('success', 'Cập nhật UAV thành công!');
         } catch (\Exception $e) {
@@ -167,7 +158,6 @@ class ProductController extends Controller
             }
 
             $product->delete();
-
             DB::commit();
 
             return redirect()->route('admin.products.index')
@@ -181,10 +171,11 @@ class ProductController extends Controller
     // ================= USER =================
     public function products()
     {
+        // 💡 FIX LỖI XANH: Cập nhật thành paginate(12) để tránh N+1 và load mượt. (Cái with đã có sẵn từ trước)
         $products = Product::with(['images', 'category'])
             ->where('status', 'active')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(12);
 
         return view('User.products', compact('products'));
     }
