@@ -9,22 +9,28 @@ use Illuminate\Support\Facades\Auth;
 
 class AddressApiController extends Controller
 {
+    // 📌 API 33: Lấy danh sách địa chỉ của user (GET /api/addresses)
     public function index()
     {
         $addresses = Address::where('user_id', Auth::id())->get();
-        return response()->json(['status' => true, 'data' => $addresses]);
+
+        return response()->json([
+            'status' => true,
+            'data' => $addresses
+        ]);
     }
 
+    // 📌 API 34: Thêm địa chỉ mới (POST /api/addresses)
     public function store(Request $request)
     {
-        // 🔥 FIX LỖI ĐỎ: Vẫn dùng 'ward' khớp DB
+        // 🔥 ĐÃ FIX: Dùng ward thay vì city
         $request->validate([
             'full_name' => 'required',
-            'phone'    => 'required',
-            'street'   => 'required',
-            'district' => 'required',
-            'ward'     => 'nullable',
-            'province' => 'required',
+            'phone'     => 'required',
+            'street'    => 'required',
+            'district'  => 'required', 
+            'ward'      => 'nullable',
+            'province'  => 'required'  
         ]);
 
         $addressCount = Address::where('user_id', Auth::id())->count();
@@ -42,12 +48,17 @@ class AddressApiController extends Controller
             'district'   => $request->district,
             'ward'       => $request->ward,
             'province'   => $request->province,
-            'is_default' => $isDefault,
+            'is_default' => $isDefault
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Thêm tọa độ nhận hàng thành công', 'data' => $address]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Thêm tọa độ nhận hàng thành công',
+            'data' => $address
+        ]);
     }
 
+    // 📌 API 35: Sửa địa chỉ (PUT /api/addresses/{id})
     public function update(Request $request, $id)
     {
         $address = Address::where('id', $id)->where('user_id', Auth::id())->first();
@@ -60,14 +71,19 @@ class AddressApiController extends Controller
             Address::where('user_id', Auth::id())->update(['is_default' => 0]);
         }
 
-        // 💡 FIX LỖI XANH: Chỉ cập nhật đúng các trường này, tránh bị hacker chèn user_id
+        // 🔥 ĐÃ FIX: Chỉ lấy đúng dữ liệu an toàn
         $address->update($request->only([
             'full_name', 'phone', 'street', 'district', 'ward', 'province', 'is_default'
         ]));
 
-        return response()->json(['status' => true, 'message' => 'Cập nhật địa chỉ thành công', 'data' => $address]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật địa chỉ thành công',
+            'data' => $address
+        ]);
     }
 
+    // 📌 API 36: Xóa địa chỉ (DELETE /api/addresses/{id})
     public function destroy($id)
     {
         $address = Address::where('id', $id)->where('user_id', Auth::id())->first();
@@ -78,9 +94,13 @@ class AddressApiController extends Controller
 
         $address->delete();
 
-        return response()->json(['status' => true, 'message' => 'Đã xóa địa chỉ']);
+        return response()->json([
+            'status' => true,
+            'message' => 'Đã xóa địa chỉ'
+        ]);
     }
 
+    // 📌 API 37: Lấy tọa độ kho hàng (GET /api/shipping/from)
     public function getShipFrom()
     {
         return response()->json([
@@ -93,6 +113,7 @@ class AddressApiController extends Controller
         ]);
     }
 
+    // 📌 API 38: Xem phí Ship (GET /api/shipping/fee?address_id=1)
     public function getShipFee(Request $request)
     {
         $addressId = $request->query('address_id');
