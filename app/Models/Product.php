@@ -4,16 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; // 💡 THÊM XÓA MỀM (SOFT DELETES)
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes; // 💡 KÍCH HOẠT XÓA MỀM
+    use HasFactory;
 
     protected $table = 'products';
     
     protected $fillable = [
-        'category_id', 'name', 'sku', 'description', 'original_price',
+        'category_id', 'brand_id', 'name', 'sku', 'description', 'original_price',
         'sale_price', 'stock', 'is_featured', 'status', 'flight_time',
         'max_altitude', 'camera_mp', 'frequency', 'weight'
     ];
@@ -36,7 +35,7 @@ class Product extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
     
     public function brand()

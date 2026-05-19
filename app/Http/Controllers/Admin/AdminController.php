@@ -11,12 +11,16 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    // ==========================================
+    // 1. TRANG TỔNG QUAN (DASHBOARD)
+    // ==========================================
     public function dashboard()
     {
         $productCount = Product::count();
         $orderCount   = Order::count();
         $userCount    = User::count();
-        $revenue      = Order::where('status', 'delivered')->sum('total');
+
+        $revenue = Order::where('status', 'delivered')->sum('total');
 
         $bestProduct = DB::table('order_items')
             ->join('products', 'order_items.product_id', '=', 'products.id')
@@ -30,6 +34,9 @@ class AdminController extends Controller
         return view('Admin.dashboard', compact('productCount', 'orderCount', 'userCount', 'revenue', 'bestProduct', 'commentCount'));
     }
 
+    // ==========================================
+    // 2. QUẢN LÝ CẤU HÌNH QR V-PAY
+    // ==========================================
     public function showQRSettings()
     {
         return view('Admin.settings.qr');
@@ -47,9 +54,13 @@ class AdminController extends Controller
             $image->move(public_path('images'), $fileName);
             return redirect()->back()->with('success', 'Đã cập nhật mã QR ngân hàng mới thành công!');
         }
+
         return redirect()->back()->with('error', 'Có lỗi xảy ra khi tải ảnh lên.');
     }
 
+    // ==========================================
+    // 3. QUẢN LÝ GIAO DỊCH VÍ V-PAY
+    // ==========================================
     public function transactions()
     {
         $transactions = DB::table('wallet_transactions')
@@ -67,61 +78,74 @@ class AdminController extends Controller
         $newStatus = $request->status;
         $transaction = DB::table('wallet_transactions')->where('id', $id)->first();
 
-        if (!$transaction) return back()->with('error', 'Giao dịch không tồn tại!');
-        if ($transaction->status == $newStatus) return back()->with('success', 'Trạng thái không thay đổi.');
+        if (!$transaction) {
+            return back()->with('error', 'Giao dịch không tồn tại!');
+        }
+
+        $oldStatus = $transaction->status;
+
+        if ($oldStatus == $newStatus) {
+            return back()->with('success', 'Trạng thái không thay đổi.');
+        }
 
         try {
-            // 💡 ĐÃ FIX LOGIC SAI: Bọc trong DB::transaction để không bao giờ bị mất tiền
             DB::beginTransaction();
 
             if ($transaction->type == 'deposit') {
-                if ($transaction->status == 'pending' && $newStatus == 'success') {
+                if ($oldStatus == 'pending' && $newStatus == 'success') {
                     DB::table('wallets')->where('id', $transaction->wallet_id)->increment('balance', $transaction->amount);
                 } 
-                elseif ($transaction->status == 'success' && ($newStatus == 'pending' || $newStatus == 'failed')) {
+                elseif ($oldStatus == 'success' && ($newStatus == 'pending' || $newStatus == 'failed')) {
                     DB::table('wallets')->where('id', $transaction->wallet_id)->decrement('balance', $transaction->amount);
                 }
             } 
             elseif ($transaction->type == 'withdraw') {
-                if ($transaction->status == 'pending' && $newStatus == 'failed') {
+                if ($oldStatus == 'pending' && $newStatus == 'failed') {
                     DB::table('wallets')->where('id', $transaction->wallet_id)->increment('balance', $transaction->amount);
                 }
-                elseif ($transaction->status == 'failed' && $newStatus == 'pending') {
+                elseif ($oldStatus == 'failed' && $newStatus == 'pending') {
                     DB::table('wallets')->where('id', $transaction->wallet_id)->decrement('balance', $transaction->amount);
                 }
             }
             elseif ($transaction->type == 'payment') {
-                if ($transaction->status == 'pending' && $newStatus == 'success') {
+                if ($oldStatus == 'pending' && $newStatus == 'success') {
                     $wallet = DB::table('wallets')->where('id', $transaction->wallet_id)->first();
                     if ($wallet->balance >= $transaction->amount) {
                         DB::table('wallets')->where('id', $transaction->wallet_id)->decrement('balance', $transaction->amount);
+                        
                         DB::table('payments')->where('order_id', function($q) use ($transaction) {
                             $q->select('id')->from('orders')->where('order_code', $transaction->reference_code)->limit(1);
                         })->update(['status' => 'paid', 'paid_at' => now()]);
                     } else {
                         DB::rollBack();
-                        return back()->with('error', 'Khách hàng không đủ số dư!');
+                        return back()->with('error', 'Khách hàng không còn đủ tiền trong ví để thực hiện thanh toán này!');
                     }
                 }
-                elseif ($transaction->status == 'success' && ($newStatus == 'pending' || $newStatus == 'failed')) {
+                elseif ($oldStatus == 'success' && ($newStatus == 'pending' || $newStatus == 'failed')) {
                     DB::table('wallets')->where('id', $transaction->wallet_id)->increment('balance', $transaction->amount);
+                    
                     DB::table('payments')->where('order_id', function($q) use ($transaction) {
                         $q->select('id')->from('orders')->where('order_code', $transaction->reference_code)->limit(1);
                     })->update(['status' => 'pending', 'paid_at' => null]);
                 }
             }
 
-            DB::table('wallet_transactions')->where('id', $id)->update(['status' => $newStatus]);
-            
+            DB::table('wallet_transactions')->where('id', $id)->update([
+                'status' => $newStatus
+            ]);
+
             DB::commit();
-            return back()->with('success', 'Đã cập nhật trạng thái và điều chỉnh số dư!');
-            
+            return back()->with('success', 'Hệ thống đã cập nhật trạng thái và điều chỉnh số dư ví!');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Lỗi hệ thống: ' . $e->getMessage());
+            return back()->with('error', 'Đã xảy ra lỗi: ' . $e->getMessage());
         }
     }
 
+    // ==========================================
+    // 4. QUẢN LÝ HOÀN HÀNG / BẢO HÀNH
+    // ==========================================
     public function refunds()
     {
         $refunds = DB::table('refunds')
@@ -139,27 +163,49 @@ class AdminController extends Controller
         $newStatus = $request->status; 
         $refund = DB::table('refunds')->where('id', $id)->first();
 
-        if (!$refund) return back()->with('error', 'Không tìm thấy yêu cầu hoàn trả này!');
-        if ($refund->status != 'pending') return back()->with('error', 'Yêu cầu này đã được xử lý trước đó!');
-
-        if ($newStatus == 'approved') {
-            $order = DB::table('orders')->where('id', $refund->order_id)->first();
-            $wallet = DB::table('wallets')->where('user_id', $refund->user_id)->first();
-
-            if ($wallet && $order) {
-                DB::table('wallets')->where('id', $wallet->id)->increment('balance', $order->total);
-                DB::table('wallet_transactions')->insert([
-                    'wallet_id' => $wallet->id,
-                    'type'      => 'refund',
-                    'amount'    => $order->total,
-                    'status'    => 'success',
-                    'created_at'=> now()
-                ]);
-                DB::table('orders')->where('id', $refund->order_id)->update(['status' => 'refunded']);
-            }
+        if (!$refund) {
+            return back()->with('error', 'Không tìm thấy yêu cầu hoàn trả này!');
         }
 
-        DB::table('refunds')->where('id', $id)->update(['status' => $newStatus]);
-        return back()->with('success', 'Đã xử lý yêu cầu hoàn trả!');
+        if ($refund->status != 'pending') {
+            return back()->with('error', 'Yêu cầu này đã được xử lý trước đó, không thể thay đổi lại!');
+        }
+
+        // 💡 ĐÃ FIX LOGIC: Bọc toàn bộ các lệnh cập nhật tiền, lịch sử ví và đơn hàng vào DB Transaction
+        try {
+            DB::beginTransaction();
+
+            if ($newStatus == 'approved') {
+                $order = DB::table('orders')->where('id', $refund->order_id)->first();
+                $wallet = DB::table('wallets')->where('user_id', $refund->user_id)->first();
+
+                if ($wallet && $order) {
+                    DB::table('wallets')->where('id', $wallet->id)->increment('balance', $order->total);
+
+                    DB::table('wallet_transactions')->insert([
+                        'wallet_id' => $wallet->id,
+                        'type'      => 'refund',
+                        'amount'    => $order->total,
+                        'status'    => 'success',
+                        'created_at'=> now()
+                    ]);
+
+                    DB::table('orders')->where('id', $refund->order_id)->update([
+                        'status' => 'refunded'
+                    ]);
+                }
+            }
+
+            DB::table('refunds')->where('id', $id)->update([
+                'status' => $newStatus
+            ]);
+
+            DB::commit();
+            return back()->with('success', 'Đã xử lý yêu cầu hoàn trả và cập nhật trạng thái chiến dịch thành công!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Lỗi hệ thống khi xử lý hoàn hàng: ' . $e->getMessage());
+        }
     }
 }

@@ -21,7 +21,6 @@ class AuthApiController extends Controller
             'phone' => 'required|unique:users'
         ]);
 
-        // Tự động tạo username từ phần đầu của email (để khớp Database)
         $username = explode('@', $request->email)[0] . rand(100, 999);
 
         $user = User::create([
@@ -47,8 +46,7 @@ class AuthApiController extends Controller
             'status' => true,
             'message' => 'Đăng ký thành công! Mã OTP đã được gửi.',
             'data' => [
-                'token' => $user->createToken('VanguardToken')->plainTextToken,
-                'otp_test' => $otp 
+                'token' => $user->createToken('VanguardToken')->plainTextToken
             ]
         ], 201);
     }
@@ -56,7 +54,6 @@ class AuthApiController extends Controller
     // 📌 2. ĐĂNG NHẬP (LOGIN)
     public function login(Request $request)
     {
-        // Sử dụng email thay vì username
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -101,7 +98,7 @@ class AuthApiController extends Controller
             'phone' => $request->phone, 'otp_code' => $otp, 'type' => 'register', 'expires_at' => now()->addMinutes(15)
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Đã gửi lại OTP', 'data' => ['otp_test' => $otp]]);
+        return response()->json(['status' => true, 'message' => 'Đã gửi lại OTP']);
     }
 
     // 📌 5. XÁC THỰC OTP (VERIFY OTP)
@@ -140,7 +137,7 @@ class AuthApiController extends Controller
             'phone' => $user->phone, 'otp_code' => $otp, 'type' => 'forgot_password', 'expires_at' => now()->addMinutes(15)
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Đã tạo mã khôi phục', 'data' => ['otp_test' => $otp]]);
+        return response()->json(['status' => true, 'message' => 'Đã tạo mã khôi phục']);
     }
 
     // 📌 7. KIỂM TRA MÃ KHÔI PHỤC
@@ -166,6 +163,15 @@ class AuthApiController extends Controller
     {
         $request->validate(['email' => 'required|email', 'new_password' => 'required|min:6']);
         $user = User::where('email', $request->email)->first();
+        
+        // 💡 ĐÃ FIX LOGIC: Kiểm tra user có tồn tại không trước khi gán dữ liệu để né lỗi sập hệ thống 500
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Email không tồn tại trong dữ liệu hệ thống!'
+            ], 404);
+        }
+
         $user->password = Hash::make($request->new_password);
         $user->save();
 
@@ -176,7 +182,7 @@ class AuthApiController extends Controller
     // 📌 9. ĐỔI MẬT KHẨU KHI ĐANG ĐĂNG NHẬP
     public function changePassword(Request $request)
     {
-        $request->validate(['old_password' => 'required', 'new_password' => 'required|min:6']);
+        $request->validate(['old_password' => 'required', 'new_password' => 'required|min:6|confirmed']);
         $user = $request->user();
 
         if (!Hash::check($request->old_password, $user->password)) {

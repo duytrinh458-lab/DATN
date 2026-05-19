@@ -3,21 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; // 💡 THÊM XÓA MỀM (SOFT DELETES)
 
 class Order extends Model
 {
-    use SoftDeletes; // 💡 KÍCH HOẠT XÓA MỀM
-
+    // Báo cho Laravel biết cột ngày tạo tên là ordered_at
     const CREATED_AT = 'ordered_at';
     
-    // 🔥 FIX LỖI ĐỎ: Vẫn giữ nguyên tắt updated_at
+    // 🔥 ĐÃ FIX: Tắt hẳn updated_at để Admin cập nhật trạng thái không bị lỗi SQL
     const UPDATED_AT = null; 
 
     protected $fillable = [
         'order_code', 'user_id', 'address_id', 'subtotal', 
         'shipping_fee', 'discount', 'total', 'status'
     ];
+
+    // ================= RELATIONSHIPS =================
 
     public function orderItems()
     {
