@@ -127,7 +127,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/products', [ProductController::class, 'products'])->name('user.products');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('user.products.detail');
+    
+
+Route::get('/products/{id}', [ProductController::class, 'show'])
+    ->name('user.products.detail');
+
+// COMMENT
+Route::post('/products/{id}/comment', [ProductController::class, 'storeComment'])
+    ->name('user.comment.store');
+
+Route::post('/comment/update/{id}', [ProductController::class, 'updateComment'])
+    ->name('user.comment.update');
+
+Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])
+    ->name('user.comment.delete');
 
     Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
     Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');

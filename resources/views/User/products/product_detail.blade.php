@@ -79,7 +79,8 @@
 
             <textarea name="comment"
                       class="comment-textarea"
-                      placeholder="Viết bình luận..."></textarea>
+                      placeholder="Viết bình luận..."
+                      required></textarea>
 
             <button type="submit" class="submit-comment-btn">
                 Gửi
@@ -93,11 +94,11 @@
 
     <div class="comment-list">
 
-        @forelse($reviews->where('parent_id', null) as $cmt)
+        @forelse($reviews as $cmt)
 
             <div class="comment-item">
 
-                <!-- TOP -->
+                <!-- HEADER -->
                 <div class="comment-header">
 
                     <div class="comment-user">
@@ -109,13 +110,15 @@
                             class="comment-avatar">
 
                         <div>
+
                             <div class="comment-username">
                                 {{ $cmt->user->full_name ?? 'User' }}
                             </div>
 
                             <div class="comment-rating">
-                                ⭐ {{ $cmt->rating ?? 0 }}/5
+                                ⭐ {{ $cmt->rating ?? 5 }}/5
                             </div>
+
                         </div>
 
                     </div>
@@ -128,53 +131,62 @@
                     {{ $cmt->comment }}
                 </div>
 
-                <!-- EDIT AREA -->
+                <!-- EDIT -->
                 <textarea
                     class="edit-comment-textarea"
                     id="textarea-{{ $cmt->id }}"
                     style="display:none;"
                 >{{ $cmt->comment }}</textarea>
 
-                <!-- ACTION -->
-                <div class="comment-actions">
+                @auth
+                    @if(auth()->id() == $cmt->user_id)
 
-                    <button type="button"
-                            class="btn-comment-edit"
-                            id="edit-btn-{{ $cmt->id }}"
-                            onclick="editComment({{ $cmt->id }})">
-                        Sửa
-                    </button>
+                        <div class="comment-actions">
 
-                    <button type="button"
-                            class="btn-comment-save"
-                            id="save-btn-{{ $cmt->id }}"
-                            style="display:none;"
-                            onclick="saveComment({{ $cmt->id }})">
-                        Lưu
-                    </button>
+                            <!-- EDIT -->
+                            <button type="button"
+                                    class="btn-comment-edit"
+                                    id="edit-btn-{{ $cmt->id }}"
+                                    onclick="editComment({{ $cmt->id }})">
+                                Sửa
+                            </button>
 
-                    <button type="button"
-                            class="btn-comment-cancel"
-                            id="cancel-btn-{{ $cmt->id }}"
-                            style="display:none;"
-                            onclick="cancelEdit({{ $cmt->id }})">
-                        Hủy
-                    </button>
+                            <!-- SAVE -->
+                            <button type="button"
+                                    class="btn-comment-save"
+                                    id="save-btn-{{ $cmt->id }}"
+                                    style="display:none;"
+                                    onclick="saveComment({{ $cmt->id }})">
+                                Lưu
+                            </button>
 
-                    <form action="{{ route('user.comment.delete', $cmt->id) }}"
-                          method="POST"
-                          onsubmit="return confirm('Xóa bình luận?')"
-                          style="display:inline;">
-                        @csrf
-                        @method('DELETE')
+                            <!-- CANCEL -->
+                            <button type="button"
+                                    class="btn-comment-cancel"
+                                    id="cancel-btn-{{ $cmt->id }}"
+                                    style="display:none;"
+                                    onclick="cancelEdit({{ $cmt->id }})">
+                                Hủy
+                            </button>
 
-                        <button type="submit"
-                                class="btn-comment-delete">
-                            Xóa
-                        </button>
-                    </form>
+                            <!-- DELETE -->
+                            <form action="{{ route('user.comment.delete', $cmt->id) }}"
+                                  method="POST"
+                                  onsubmit="return confirm('Xóa bình luận?')"
+                                  style="display:inline;">
+                                @csrf
+                                @method('DELETE')
 
-                </div>
+                                <button type="submit"
+                                        class="btn-comment-delete">
+                                    Xóa
+                                </button>
+                            </form>
+
+                        </div>
+
+                    @endif
+                @endauth
 
             </div>
 
@@ -190,8 +202,7 @@
 
 </div>
 
-</div>
-
+        </div>
 <!-- RIGHT -->
 <div class="control-panel-col">
 
@@ -345,7 +356,7 @@ function saveComment(id)
 {
     let newValue = document.getElementById('textarea-' + id).value;
 
-    fetch("{{ url('/comment/update') }}/" + id, {
+    fetch("/comment/update/" + id, {
 
         method: "POST",
 
@@ -378,7 +389,9 @@ function saveComment(id)
     })
 
     .catch(err => {
+
         console.log(err);
+
         alert("Có lỗi xảy ra");
     });
 }
