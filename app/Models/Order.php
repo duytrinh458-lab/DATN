@@ -3,34 +3,100 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    // Báo cho Laravel biết cột ngày tạo tên là ordered_at
-    const CREATED_AT = 'ordered_at';
-    
-    // 🔥 ĐÃ FIX: Tắt hẳn updated_at để Admin cập nhật trạng thái không bị lỗi SQL
-    const UPDATED_AT = null; 
+    use SoftDeletes;
 
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOM TIMESTAMPS
+    |--------------------------------------------------------------------------
+    */
+    const CREATED_AT = 'ordered_at';
+
+    // Không dùng updated_at
+    const UPDATED_AT = null;
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILLABLE
+    |--------------------------------------------------------------------------
+    */
     protected $fillable = [
-        'order_code', 'user_id', 'address_id', 'subtotal', 
-        'shipping_fee', 'discount', 'total', 'status'
+
+        'order_code',
+
+        'user_id',
+
+        'address_id',
+
+        'subtotal',
+
+        'shipping_fee',
+
+        'discount',
+
+        'total',
+
+        'status',
+
+        /*
+        |--------------------------------------------------------------------------
+        | SNAPSHOT SHIPPING
+        |--------------------------------------------------------------------------
+        */
+        'shipping_full_name',
+
+        'shipping_phone',
+
+        'shipping_province',
+
+        'shipping_district',
+
+        'shipping_ward',
+
+        'shipping_street',
     ];
 
-    // ================= RELATIONSHIPS =================
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
 
     public function orderItems()
     {
-        return $this->hasMany(OrderItem::class, 'order_id');
+        return $this->hasMany(
+            OrderItem::class,
+            'order_id'
+        );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ADDRESS
+    |--------------------------------------------------------------------------
+    */
     public function address()
     {
-        return $this->belongsTo(Address::class, 'address_id');
+        return $this->belongsTo(
+            Address::class,
+            'address_id'
+        )->withTrashed();
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | USER
+    |--------------------------------------------------------------------------
+    */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(
+            User::class,
+            'user_id'
+        );
     }
 }

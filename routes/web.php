@@ -127,7 +127,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/products', [ProductController::class, 'products'])->name('user.products');
-    
+
 
 Route::get('/products/{id}', [ProductController::class, 'show'])
     ->name('user.products.detail');
@@ -177,15 +177,36 @@ Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])
 
     Route::prefix('profile')->name('user.profile.')->group(function () {
 
-        Route::get('/', [ProfileController::class, 'index'])->name('index');
-        Route::post('/update', [ProfileController::class, 'update'])->name('update');
+    Route::get('/', [ProfileController::class, 'index'])->name('index');
 
-        Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
-        Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
-        Route::get('/address/{id}/edit', [ProfileController::class, 'editAddress'])->name('address.edit');
-        Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])->name('address.update');
-        Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])->name('address.destroy');
-    });
+    Route::post('/update', [ProfileController::class, 'update'])->name('update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADDRESS
+    |--------------------------------------------------------------------------
+    */
+
+    // Thêm địa chỉ
+    Route::post('/address/store', [ProfileController::class, 'storeAddress'])
+        ->name('address.store');
+
+    // Lấy dữ liệu JSON để sửa bằng AJAX
+    Route::get('/address/{id}/json', [ProfileController::class, 'getAddressJson'])
+        ->name('address.json');
+
+    // Update địa chỉ
+    Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])
+        ->name('address.update');
+
+    // Xóa địa chỉ
+    Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])
+        ->name('address.destroy');
+
+    // Đặt mặc định
+    Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])
+        ->name('address.setDefault');
+});
 
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
 
