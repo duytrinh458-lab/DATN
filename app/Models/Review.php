@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Product;
 
 class Review extends Model
 {
@@ -21,18 +23,35 @@ class Review extends Model
         'is_approved'
     ];
 
-    // 🔥 SỬA LỖI 500: Tắt timestamps vì DB không có cột updated_at
-    public $timestamps = false;
+    /*
+    |-------------------------------------------------
+    | FIX TIMESTAMPS (DB không có updated_at)
+    |-------------------------------------------------
+    */
+    const UPDATED_AT = null;
 
-    // user comment
+    /*
+    |-------------------------------------------------
+    | RELATION: USER
+    |-------------------------------------------------
+    */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // product
+    /*
+    |-------------------------------------------------
+    | RELATION: PRODUCT
+    |-------------------------------------------------
+    */
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function replies()
+{
+    return $this->hasMany(self::class, 'parent_id');
+}
 }

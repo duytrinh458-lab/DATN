@@ -39,13 +39,23 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order', 'items'));
     }
 
-    // 🔄 Cập nhật trạng thái (FIX AN TOÀN)
+    // 🔄 Cập nhật trạng thái (ĐÃ VÁ LỖI LOGIC: Chặn lùi trạng thái đơn hàng)
     public function update(Request $request, $id)
     {
-        // ✅ CHẶN SAI STATUS TRƯỚC KHI UPDATE
         $request->validate([
-            'status' => 'required|in:pending,processing,shipping,delivered'
+            'status' => 'required|in:pending,processing,shipping,delivered,cancelled'
         ]);
+
+        $order = DB::table('orders')->where('id', $id)->first();
+        
+        if (!$order) {
+            return back()->with('error', 'Đơn hàng không tồn tại!');
+        }
+
+        // 💡 CHỐT CHẶN AN TOÀN: Không cho phép đổi trạng thái nếu đơn đã Giao hoặc Đã hủy
+        if (in_array($order->status, ['delivered', 'cancelled'])) {
+            return back()->with('error', 'CẢNH BÁO: Không thể thay đổi trạng thái của đơn hàng đã Giao thành công hoặc Đã hủy!');
+        }
 
         DB::table('orders')
             ->where('id', $id)
@@ -54,6 +64,6 @@ class OrderController extends Controller
                 'updated_at' => now()
             ]);
 
-        return back()->with('success', 'Cập nhật trạng thái thành công');
+        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công');
     }
 }

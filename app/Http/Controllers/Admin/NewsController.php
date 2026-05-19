@@ -24,28 +24,92 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATE
+        |--------------------------------------------------------------------------
+        */
         $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
-            'status' => 'required|in:draft,published,hidden',
-            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'published_at' => 'nullable|date',
+
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'content' => [
+                'required',
+                'string',
+            ],
+
+            'status' => [
+                'required',
+                'in:draft,published,hidden',
+            ],
+
+            'thumbnail' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+
+            'published_at' => [
+                'nullable',
+                'date',
+            ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO CREATE UNIQUE SLUG
+        |--------------------------------------------------------------------------
+        */
+        $baseSlug = Str::slug($request->title);
+
+        $slug = $baseSlug;
+
+        $count = 1;
+
+        while (
+            News::where('slug', $slug)->exists()
+        ) {
+
+            $slug = $baseSlug . '-' . $count;
+
+            $count++;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | UPLOAD THUMBNAIL
+        |--------------------------------------------------------------------------
+        */
         $thumbnail = null;
 
         if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail')->store('news', 'public');
+
+            $thumbnail = $request->file('thumbnail')
+                ->store('news', 'public');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE NEWS
+        |--------------------------------------------------------------------------
+        */
         News::create([
+
             'title' => $request->title,
-            'slug' => Str::slug($request->title),
+
+            'slug' => $slug,
+
             'thumbnail' => $thumbnail,
+
             'content' => $request->content,
+
             'status' => $request->status ?? 'draft',
 
-            // FIX: lưu đúng format DB
             'published_at' => $request->published_at
                 ? Carbon::parse($request->published_at)
                 : null,
@@ -53,7 +117,10 @@ class NewsController extends Controller
 
         return redirect()
             ->route('admin.news.index')
-            ->with('success', 'Thêm tin tức thành công');
+            ->with(
+                'success',
+                'Thêm tin tức thành công'
+            );
     }
 
     public function show($id)
@@ -74,28 +141,94 @@ class NewsController extends Controller
     {
         $news = News::findOrFail($id);
 
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDATE
+        |--------------------------------------------------------------------------
+        */
         $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
-            'status' => 'required|in:draft,published,hidden',
-            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'published_at' => 'nullable|date',
+
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'content' => [
+                'required',
+                'string',
+            ],
+
+            'status' => [
+                'required',
+                'in:draft,published,hidden',
+            ],
+
+            'thumbnail' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
+
+            'published_at' => [
+                'nullable',
+                'date',
+            ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | AUTO CREATE UNIQUE SLUG
+        |--------------------------------------------------------------------------
+        */
+        $baseSlug = Str::slug($request->title);
+
+        $slug = $baseSlug;
+
+        $count = 1;
+
+        while (
+            News::where('slug', $slug)
+                ->where('id', '!=', $news->id)
+                ->exists()
+        ) {
+
+            $slug = $baseSlug . '-' . $count;
+
+            $count++;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | THUMBNAIL
+        |--------------------------------------------------------------------------
+        */
         $thumbnail = $news->thumbnail;
 
         if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail')->store('news', 'public');
+
+            $thumbnail = $request->file('thumbnail')
+                ->store('news', 'public');
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | UPDATE NEWS
+        |--------------------------------------------------------------------------
+        */
         $news->update([
+
             'title' => $request->title,
-            'slug' => Str::slug($request->title),
+
+            'slug' => $slug,
+
             'thumbnail' => $thumbnail,
+
             'content' => $request->content,
+
             'status' => $request->status,
 
-            // FIX quan trọng
             'published_at' => $request->published_at
                 ? Carbon::parse($request->published_at)
                 : null,
@@ -103,7 +236,10 @@ class NewsController extends Controller
 
         return redirect()
             ->route('admin.news.index')
-            ->with('success', 'Cập nhật thành công');
+            ->with(
+                'success',
+                'Cập nhật thành công'
+            );
     }
 
     public function destroy($id)
@@ -114,6 +250,9 @@ class NewsController extends Controller
 
         return redirect()
             ->route('admin.news.index')
-            ->with('success', 'Xóa thành công');
+            ->with(
+                'success',
+                'Xóa thành công'
+            );
     }
 }

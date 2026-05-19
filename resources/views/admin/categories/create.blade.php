@@ -3,45 +3,69 @@
 @section('title', 'Thêm danh mục')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/categories/index.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/categories/categorieslist.css') }}">
 @endpush
 
 @section('content')
 
 <div class="category-page">
 
-    <!-- HEADER -->
+    {{-- HEADER --}}
     <div class="admin-header">
-        <h1>Thêm danh mục</h1>
 
-        <a href="{{ route('admin.categories.index') }}" class="btn-add">
-            ← Quay lại
-        </a>
+        <div class="header-left">
+            <h1>Thêm danh mục</h1>
+            <p>Tạo danh mục sản phẩm mới</p>
+        </div>
+
+        <div class="header-right">
+            <a href="{{ route('admin.categories.index') }}"
+               class="btn-back">
+                ← Quay lại
+            </a>
+        </div>
+
     </div>
 
-    <!-- CARD -->
-    <div class="card">
-        <form method="POST" action="{{ route('admin.categories.store') }}">
+    {{-- CARD --}}
+    <div class="category-card">
+
+        <form method="POST"
+              action="{{ route('admin.categories.store') }}"
+              class="category-form">
+
             @csrf
 
-            <!-- INPUT -->
+            {{-- INPUT --}}
             <div class="form-group">
-                <label>Tên danh mục</label>
-                <input type="text" name="name" value="{{ old('name') }}" placeholder="Nhập tên danh mục...">
 
-                {{-- lỗi validate --}}
+                <label>Tên danh mục</label>
+
+                <input type="text"
+                       name="name"
+                       value="{{ old('name') }}"
+                       placeholder="Nhập tên danh mục...">
+
                 @error('name')
-                    <p style="color:red; margin-top:5px;">{{ $message }}</p>
+                    <p class="form-error">
+                        {{ $message }}
+                    </p>
                 @enderror
+
             </div>
 
-            <!-- BUTTON -->
+            {{-- FOOTER --}}
             <div class="form-footer">
-                <button type="submit" class="btn-submit">
+
+                <button type="submit"
+                        class="btn-submit">
                     + Thêm danh mục
                 </button>
+
             </div>
+
         </form>
+
     </div>
 
 </div>

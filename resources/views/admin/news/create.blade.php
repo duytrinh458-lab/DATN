@@ -18,10 +18,16 @@
         </a>
     </div>
 
-
     <div class="news-card">
 
-        {{-- 🔥 VALIDATION ERROR --}}
+        {{-- SUCCESS --}}
+        @if(session('success'))
+            <div class="alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- VALIDATION ERROR --}}
         @if ($errors->any())
             <div class="alert-error">
                 <ul>
@@ -32,77 +38,150 @@
             </div>
         @endif
 
-
         <form action="{{ route('admin.news.store') }}"
               method="POST"
               enctype="multipart/form-data">
 
             @csrf
 
-
             {{-- TITLE --}}
             <div class="form-group">
-                <label>Tiêu đề</label>
+
+                <label>
+                    Tiêu đề
+                </label>
+
                 <input type="text"
                        name="title"
-                       class="form-control"
+                       class="form-control @error('title') is-invalid @enderror"
                        value="{{ old('title') }}"
+                       placeholder="Nhập tiêu đề bài viết..."
                        required>
+
+                @error('title')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
             </div>
 
+            {{-- SLUG --}}
+            <!-- <div class="form-group">
+
+                <label>
+                    Slug (không bắt buộc)
+                </label>
+
+                <input type="text"
+                       name="slug"
+                       class="form-control @error('slug') is-invalid @enderror"
+                       value="{{ old('slug') }}"
+                       placeholder="vd: drone-military-v2">
+
+                @error('slug')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
+            </div> -->
 
             {{-- CONTENT --}}
             <div class="form-group">
-                <label>Nội dung</label>
-                <textarea name="content"
-                          class="form-control"
-                          rows="6"
-                          required>{{ old('content') }}</textarea>
-            </div>
 
+                <label>
+                    Nội dung
+                </label>
+
+                <textarea name="content"
+                          class="form-control @error('content') is-invalid @enderror"
+                          rows="8"
+                          placeholder="Nhập nội dung bài viết..."
+                          required>{{ old('content') }}</textarea>
+
+                @error('content')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
+            </div>
 
             {{-- THUMBNAIL --}}
             <div class="form-group">
-                <label>Ảnh</label>
+
+                <label>
+                    Ảnh thumbnail
+                </label>
+
                 <input type="file"
                        name="thumbnail"
-                       class="form-control">
-            </div>
+                       class="form-control @error('thumbnail') is-invalid @enderror"
+                       accept=".jpg,.jpeg,.png,.webp">
 
+                @error('thumbnail')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
+            </div>
 
             {{-- STATUS --}}
             <div class="form-group">
-                <label>Trạng thái</label>
 
-                <select name="status" class="form-control">
+                <label>
+                    Trạng thái
+                </label>
 
-                    <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>
+                <select name="status"
+                        class="form-control @error('status') is-invalid @enderror">
+
+                    <option value="draft"
+                        {{ old('status') == 'draft' ? 'selected' : '' }}>
                         Nháp
                     </option>
 
-                    <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>
+                    <option value="published"
+                        {{ old('status') == 'published' ? 'selected' : '' }}>
                         Xuất bản
                     </option>
 
-                    <option value="hidden" {{ old('status') == 'hidden' ? 'selected' : '' }}>
+                    <option value="hidden"
+                        {{ old('status') == 'hidden' ? 'selected' : '' }}>
                         Ẩn
                     </option>
 
                 </select>
 
-            </div>
+                @error('status')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
 
+            </div>
 
             {{-- PUBLISHED DATE --}}
             <div class="form-group">
-                <label>Ngày đăng</label>
+
+                <label>
+                    Ngày đăng
+                </label>
 
                 <input type="datetime-local"
-       name="published_at"
-       class="form-control"
-       value="{{ old('published_at') ? str_replace(' ', 'T', old('published_at')) : '' }}">
-            </div>
+                       name="published_at"
+                       class="form-control @error('published_at') is-invalid @enderror"
+                       value="{{ old('published_at') ? str_replace(' ', 'T', old('published_at')) : '' }}">
 
+                @error('published_at')
+                    <small class="text-danger">
+                        {{ $message }}
+                    </small>
+                @enderror
+
+            </div>
 
             {{-- BUTTON --}}
             <button type="submit" class="btn-add">

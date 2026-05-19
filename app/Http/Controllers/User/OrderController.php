@@ -104,7 +104,7 @@ class OrderController extends Controller
             return redirect()->route('user.orders.index')->with('error', 'Yêu cầu hoàn trả cho đơn hàng này đã tồn tại và đang chờ xử lý.');
         }
 
-        // Lưu thông  vào bảng refunds 
+        // Lưu thông tin vào bảng refunds 
         DB::table('refunds')->insert([
             'order_id'    => $order->id,
             'user_id'     => Auth::id(),

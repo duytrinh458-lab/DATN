@@ -37,6 +37,7 @@
                     <th>ID</th>
                     <th>Ảnh</th>
                     <th>Tiêu đề</th>
+                    <th>Slug</th>
                     <th>Nội dung</th>
                     <th>Trạng thái</th>
                     <th>Ngày đăng</th>
@@ -73,23 +74,35 @@
                         </td>
 
 
+                        {{-- SLUG --}}
+                        <td class="news-slug">
+                            {{ $item->slug }}
+                        </td>
+
+
                         {{-- CONTENT --}}
                         <td>
                             {{ \Illuminate\Support\Str::limit($item->content, 50) }}
                         </td>
 
 
-                        {{-- STATUS (FIX THEO DB) --}}
+                        {{-- STATUS --}}
                         <td>
 
                             @if($item->status == 'published')
-                                <span class="status active">Đã đăng</span>
+                                <span class="status active">
+                                    Đã đăng
+                                </span>
 
                             @elseif($item->status == 'draft')
-                                <span class="status inactive">Nháp</span>
+                                <span class="status inactive">
+                                    Nháp
+                                </span>
 
                             @else
-                                <span class="status inactive">Ẩn</span>
+                                <span class="status inactive">
+                                    Ẩn
+                                </span>
                             @endif
 
                         </td>
@@ -144,7 +157,7 @@
                 @empty
 
                     <tr>
-                        <td colspan="7" class="empty-data">
+                        <td colspan="8" class="empty-data">
                             Không có dữ liệu
                         </td>
                     </tr>

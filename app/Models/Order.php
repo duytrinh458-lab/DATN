@@ -9,6 +9,7 @@ class Order extends Model
 {
     use SoftDeletes;
 
+
     /*
     |--------------------------------------------------------------------------
     | CUSTOM TIMESTAMPS
@@ -87,16 +88,17 @@ class Order extends Model
         )->withTrashed();
     }
 
+
     /*
     |--------------------------------------------------------------------------
     | USER
     |--------------------------------------------------------------------------
     */
+
+    // 💡 Lưu ý: Cần thêm withTrashed() để khi tìm đơn hàng cũ, vẫn lấy được thông tin User kể cả khi User đó đã bị Admin xóa
     public function user()
     {
-        return $this->belongsTo(
-            User::class,
-            'user_id'
-        );
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
+
     }
 }
