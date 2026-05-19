@@ -50,10 +50,13 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         
-        // 🔥 GIỮ NGUYÊN CODE CỦA ÔNG (Dùng cho web)
+        // 🔥 GIỮ NGUYÊN CODE CỦA BẠN (Dùng bảo vệ route admin trên Web)
         'admin' => \App\Http\Middleware\AdminMiddleware::class, 
         
-        // 💡 ĐÃ FIX LOGIC API ADMIN: Thêm bí danh này để khớp 100% với file routes/api.php
-        'check.admin' => \App\Http\Middleware\AdminMiddleware::class, 
+        // 💡 BẢO VỆ API ADMIN: Chặn User thường gọi API của Admin
+        'check.admin' => \App\Http\Middleware\CheckAdminRole::class,
+
+        // 💡 ĐÃ THÊM MỚI: Đăng ký Middleware bắt buộc đổi mật khẩu lần đầu
+        'check.first.login' => \App\Http\Middleware\CheckFirstLogin::class,
     ];
 }

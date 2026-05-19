@@ -22,14 +22,16 @@ class ReviewController extends Controller
 
         $userId = Auth::id();
 
+        // 💡 ĐÃ VÁ: Thêm điều kiện đơn hàng bắt buộc phải ở trạng thái 'delivered'
         $hasBought = DB::table('orders')
             ->join('order_items', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.user_id', $userId)
             ->where('order_items.product_id', $id)
+            ->where('orders.status', 'delivered') 
             ->exists();
 
         if (!$hasBought) {
-            return back()->with('error', 'Bạn phải mua thiết bị này trước khi đánh giá');
+            return back()->with('error', 'Bạn phải mua và nhận thiết bị này thành công trước khi đánh giá');
         }
 
         $existing = DB::table('reviews')
@@ -48,6 +50,7 @@ class ReviewController extends Controller
                 ->join('order_items', 'orders.id', '=', 'order_items.order_id')
                 ->where('orders.user_id', $userId)
                 ->where('order_items.product_id', $id)
+                ->where('orders.status', 'delivered')
                 ->orderBy('orders.id', 'desc')
                 ->value('orders.id'),
             'rating'     => $request->rating ?? 5,
@@ -86,7 +89,7 @@ class ReviewController extends Controller
         if (request()->expectsJson()) {
             return response()->json([
                 'success' => $deleted ? true : false,
-            ]);
+            ]); 
         }
 
         return back()->with('success', 'Đã xóa đánh giá của bạn');

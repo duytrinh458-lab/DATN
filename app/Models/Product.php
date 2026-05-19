@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; // 💡 Đã thêm thư viện
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes; // 💡 Đã kích hoạt Xóa mềm
 
     protected $table = 'products';
     

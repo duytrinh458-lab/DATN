@@ -8,34 +8,44 @@ use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Cache; // 💡 Đã thêm thư viện Cache
 
 class AdminController extends Controller
 {
     // ==========================================
-    // 1. TRANG TỔNG QUAN (DASHBOARD)
+    // 1. TRANG TỔNG QUAN (DASHBOARD) - 💡 ĐÃ TỐI ƯU CACHE TỐC ĐỘ CAO
     // ==========================================
     public function dashboard()
     {
-        $productCount = Product::count();
-        $orderCount   = Order::count();
-        $userCount    = User::count();
+        // Lưu dữ liệu thống kê trong 5 phút (300 giây) để tránh sập Database khi F5 nhiều
+        $stats = Cache::remember('admin_dashboard_stats', 300, function () {
+            return [
+                'productCount' => Product::count(),
+                'orderCount'   => Order::count(),
+                'userCount'    => User::count(),
+                'revenue'      => Order::where('status', 'delivered')->sum('total'),
+                'commentCount' => DB::table('reviews')->count(),
+                'bestProduct'  => DB::table('order_items')
+                    ->join('products', 'order_items.product_id', '=', 'products.id')
+                    ->select('products.name', DB::raw('SUM(order_items.quantity) as total_sold'))
+                    ->groupBy('products.id', 'products.name')
+                    ->orderByDesc('total_sold')
+                    ->first()
+            ];
+        });
 
-        $revenue = Order::where('status', 'delivered')->sum('total');
-
-        $bestProduct = DB::table('order_items')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->select('products.name', DB::raw('SUM(order_items.quantity) as total_sold'))
-            ->groupBy('products.id', 'products.name')
-            ->orderByDesc('total_sold')
-            ->first();
-
-        $commentCount = DB::table('reviews')->count();
-
-        return view('Admin.dashboard', compact('productCount', 'orderCount', 'userCount', 'revenue', 'bestProduct', 'commentCount'));
+        return view('Admin.dashboard', [
+            'productCount' => $stats['productCount'],
+            'orderCount'   => $stats['orderCount'],
+            'userCount'    => $stats['userCount'],
+            'revenue'      => $stats['revenue'],
+            'bestProduct'  => $stats['bestProduct'],
+            'commentCount' => $stats['commentCount']
+        ]);
     }
 
     // ==========================================
-    // 2. QUẢN LÝ CẤU HÌNH QR V-PAY
+    // 2. QUẢN LÝ CẤU HÌNH QR V-PAY (Giữ nguyên của bạn)
     // ==========================================
     public function showQRSettings()
     {
@@ -59,7 +69,7 @@ class AdminController extends Controller
     }
 
     // ==========================================
-    // 3. QUẢN LÝ GIAO DỊCH VÍ V-PAY
+    // 3. QUẢN LÝ GIAO DỊCH VÍ V-PAY (Giữ nguyên của bạn)
     // ==========================================
     public function transactions()
     {
@@ -144,7 +154,7 @@ class AdminController extends Controller
     }
 
     // ==========================================
-    // 4. QUẢN LÝ HOÀN HÀNG / BẢO HÀNH
+    // 4. QUẢN LÝ HOÀN HÀNG / BẢO HÀNH (Giữ nguyên của bạn)
     // ==========================================
     public function refunds()
     {

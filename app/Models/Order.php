@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes; // 💡 Đã thêm thư viện
 
 class Order extends Model
 {
-    // Báo cho Laravel biết cột ngày tạo tên là ordered_at
+    use SoftDeletes; // 💡 Đã kích hoạt Xóa mềm
+
     const CREATED_AT = 'ordered_at';
-    
-    // 🔥 ĐÃ FIX: Tắt hẳn updated_at để Admin cập nhật trạng thái không bị lỗi SQL
     const UPDATED_AT = null; 
 
     protected $fillable = [
@@ -29,8 +29,9 @@ class Order extends Model
         return $this->belongsTo(Address::class, 'address_id');
     }
 
+    // 💡 Lưu ý: Cần thêm withTrashed() để khi tìm đơn hàng cũ, vẫn lấy được thông tin User kể cả khi User đó đã bị Admin xóa
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
     }
 }

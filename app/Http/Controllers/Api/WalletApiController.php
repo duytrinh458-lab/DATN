@@ -70,7 +70,7 @@ class WalletApiController extends Controller
         ]);
     }
 
-    // 📌 API 50: Nạp tiền
+    // 📌 API 50: Nạp tiền (ĐÃ VÁ: Chống hack tiền ảo, chuyển sang chờ Admin duyệt)
     public function deposit(Request $request)
     {
         $request->validate([
@@ -85,23 +85,23 @@ class WalletApiController extends Controller
             ['balance' => 0]
         );
 
+        // 💡 Chỉ tạo yêu cầu nạp tiền với trạng thái 'pending'
         DB::table('wallet_transactions')->insert([
             'wallet_id' => $wallet->id,
             'type' => 'deposit',
             'amount' => $request->amount,
             'reference_code' => 'DEP-' . time(),
-            'status' => 'success',
+            'status' => 'pending', 
             'created_at' => now()
         ]);
 
-        $wallet->balance += $request->amount;
-        $wallet->save();
+        // 💡 ĐÃ XÓA logic tự động cộng tiền tại đây để đảm bảo an toàn hệ thống
 
         return response()->json([
             'status' => true,
-            'message' => 'Nạp tiền thành công',
+            'message' => 'Yêu cầu nạp tiền đã được ghi nhận. Vui lòng chờ Admin phê duyệt!',
             'data' => [
-                'balance' => $wallet->balance
+                'balance' => $wallet->balance // Số dư giữ nguyên cho đến khi được duyệt
             ]
         ]);
     }
