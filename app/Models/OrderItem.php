@@ -18,7 +18,8 @@ class OrderItem extends Model
     // Chi tiết đơn hàng thuộc về một sản phẩm cụ thể
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        // 💡 ĐÃ SỬA: Thêm ->withTrashed() để hiển thị được tên UAV kể cả khi Admin đã xóa mềm
+        return $this->belongsTo(Product::class, 'product_id')->withTrashed();
     }
 
     // Chi tiết đơn hàng thuộc về một đơn hàng tổng

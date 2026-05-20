@@ -54,7 +54,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/forgot-password/send-otp', 'sendOtpForgotPassword');
     Route::post('/forgot-password/verify-otp', 'verifyOtpForgotPassword');
 
-    Route::get('/change-password', 'showChangePasswordForm')->name('password.change.form');
+    Route::get('/change-password', 'showChangePasswordForm')->name('password.change');
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
 });
 

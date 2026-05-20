@@ -35,7 +35,8 @@ class CheckoutController extends Controller
                     'name'       => $product->name,
                     'price'      => $product->sale_price,
                     'quantity'   => $request->quantity ?? 1,
-                    'image'      => $product->images->first()->image_url ?? 'default.jpg'
+                    // 💡 ĐÃ SỬA: Dùng toán tử ?-> để không bị sập trang nếu UAV chưa có ảnh
+                    'image'      => $product->images->first()?->image_url ?? 'default.jpg'
                 ]
             ]
         ]);
@@ -89,6 +90,11 @@ class CheckoutController extends Controller
 
             foreach ($cartItems as $cItem) {
 
+                // 💡 ĐÃ THÊM: Nếu sản phẩm trong giỏ hàng đã bị Admin xóa mềm, tự động bỏ qua để tránh lỗi
+                if (!$cItem->product) {
+                    continue;
+                }
+
                 $checkoutItems[] = [
 
                     'is_cart'      => true,
@@ -103,10 +109,10 @@ class CheckoutController extends Controller
 
                     'quantity'     => $cItem->quantity,
 
+                    // 💡 ĐÃ SỬA: Dùng ?-> để an toàn tuyệt đối khi lấy ảnh sản phẩm
                     'image'        => $cItem->product
                         ->images
-                        ->first()
-                        ->image_url ?? 'default.jpg'
+                        ->first()?->image_url ?? 'default.jpg'
                 ];
             }
 

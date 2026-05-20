@@ -2,115 +2,78 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đổi mật khẩu</title>
-
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #e0f7fa;
-        }
-
-        .container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 16px;
-            width: 400px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-        }
-
-        h2 {
-            text-align: center;
-            color: #00bcd4;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 95%;
-            padding: 10px;
-            margin-bottom: 12px;
-            border: none;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #00bcd4;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #00e5ff;
-        }
-
-        .error {
-            color: #ff8a80;
-            margin-bottom: 10px;
-        }
-
-        .success {
-            color: #00e5ff;
-            margin-bottom: 10px;
-        }
-
-        .forgot-link {
-    display: block;
-    margin-top: 20px;
-    text-align: center;
-    color: #28a745;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.forgot-link:hover {
-    color: #006eff;
-    text-decoration: underline;
-}
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đổi mật khẩu — UAV Store</title>
+    <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
 <body>
 
-<div class="container">
+<div class="auth-wrapper">
 
-    <h2>Đổi mật khẩu lần đầu</h2>
-
-    {{-- HIỂN THỊ LỖI --}}
-    @if ($errors->any())
-        <div class="error">
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
+    {{-- CỘT TRÁI --}}
+    <div class="auth-brand">
+        <div>
+            <div class="brand-logo">UAV<span>Store</span></div>
+            <div class="brand-tagline">Unmanned Aerial Vehicle Platform</div>
         </div>
-    @endif
 
-    {{-- SUCCESS --}}
-    @if(session('success'))
-        <div class="success">{{ session('success') }}</div>
-    @endif
+        <div class="brand-center">
+            <h1 class="brand-title">Thiết lập<br><em>mật khẩu</em></h1>
+            <p class="brand-desc">
+                Đây là lần đăng nhập đầu tiên của bạn.
+                Vui lòng đặt mật khẩu riêng để bảo mật tài khoản.
+            </p>
+        </div>
 
-    <form method="POST" action="{{ route('password.change.update') }}">
-        @csrf
+        <div class="brand-footer">© 2026 UAV Store. All rights reserved.</div>
+    </div>
 
-        <input type="password" name="password" placeholder="Mật khẩu mới" required>
+    {{-- CỘT PHẢI --}}
+    <div class="auth-form-panel">
+        <div class="auth-box">
 
-        <input type="password" name="password_confirmation" placeholder="Nhập lại mật khẩu" required>
+            <h2>Đổi mật khẩu lần đầu</h2>
+            <p class="subtitle">Bắt buộc để kích hoạt tài khoản</p>
 
-        <button type="submit">Đổi mật khẩu</button>
-       <a href="{{ url('/forgot') }}" class="forgot-link">Quên mật khẩu?</a>
-    </form>
+            {{-- ALERTS --}}
+            @if($errors->any())
+                <div class="alert alert-error">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('password.change.update') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" name="password"
+                           placeholder="Tối thiểu 6 ký tự" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nhập lại mật khẩu</label>
+                    <input type="password" name="password_confirmation"
+                           placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Xác nhận đổi mật khẩu</button>
+            </form>
+
+            <div class="auth-links">
+                <a href="{{ url('/forgot') }}">Quên mật khẩu?</a>
+            </div>
+
+        </div>
+    </div>
 
 </div>
 

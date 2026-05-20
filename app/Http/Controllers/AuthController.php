@@ -133,7 +133,7 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if ($user->is_first_login) {
-                return redirect()->route('password.change.form');
+                return redirect()->route('password.change');
             }
 
             return $user->role === 'admin'

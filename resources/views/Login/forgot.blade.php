@@ -2,128 +2,114 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Quên mật khẩu</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 40px;
-            color: #e0f7fa;
-        }
-
-        a {
-    color: #33ff81; /* xanh nhạt */
-    text-decoration: none;
-}
-
-a:hover {
-    color: #b2ebf2; /* sáng hơn khi hover */
-    text-decoration: underline;
-}
-
-
-        .container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            width: 420px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        h2 {
-            text-align: center;
-            color: #00bcd4;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-        h3 {
-            color: #4dd0e1;
-            margin-top: 20px;
-        }
-        input {
-            width: 94%;
-            padding: 12px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #00bcd4;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-        }
-        .alert-success {
-            background: #2e7d32;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .alert-error {
-            background: #c62828;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quên mật khẩu — UAV Store</title>
+    <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
 <body>
 
-<div class="container">
-    <h2>Quên mật khẩu</h2>
+<div class="auth-wrapper">
 
-    {{-- SUCCESS --}}
-    @if(session('success'))
-        <div class="alert-success">
-            {{ session('success') }}
+    {{-- CỘT TRÁI --}}
+    <div class="auth-brand">
+        <div>
+            <div class="brand-logo">UAV<span>Store</span></div>
+            <div class="brand-tagline">Unmanned Aerial Vehicle Platform</div>
         </div>
-    @endif
 
-    {{-- ERROR --}}
-    @if(session('error'))
-        <div class="alert-error">
-            {{ session('error') }}
+        <div class="brand-center">
+            <h1 class="brand-title">Khôi phục<br><em>tài khoản</em></h1>
+            <p class="brand-desc">
+                Nhập số điện thoại để nhận mã OTP.
+                Mã có hiệu lực trong 5 phút.
+            </p>
         </div>
-    @endif
 
-    {{-- VALIDATE ERROR --}}
-    @if ($errors->any())
-        <div class="alert-error">
-            @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
-            @endforeach
+        <div class="brand-footer">© 2026 UAV Store. All rights reserved.</div>
+    </div>
+
+    {{-- CỘT PHẢI --}}
+    <div class="auth-form-panel">
+        <div class="auth-box">
+
+            <h2>Quên mật khẩu?</h2>
+            <p class="subtitle">Khôi phục qua số điện thoại đã đăng ký</p>
+
+            {{-- STEP INDICATOR --}}
+            <div class="step-indicator">
+                <div class="step active">
+                    <span class="step-num">1</span>
+                    <span>Nhập SĐT</span>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <span>OTP + Mật khẩu mới</span>
+                </div>
+            </div>
+
+            {{-- ALERTS --}}
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-error">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            {{-- BƯỚC 1: GỬI OTP --}}
+            <form method="POST" action="{{ url('/forgot-password/send-otp') }}">
+                @csrf
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" name="phone" placeholder="09xxxxxxxx" required>
+                </div>
+                <button type="submit" class="btn-secondary">Gửi mã OTP →</button>
+            </form>
+
+            <div class="divider">Đã có mã OTP?</div>
+
+            {{-- BƯỚC 2: ĐỔI MẬT KHẨU --}}
+            <form method="POST" action="{{ url('/forgot-password/verify-otp') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" name="phone" placeholder="09xxxxxxxx" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mã OTP (6 số)</label>
+                    <input type="text" name="otp_code" placeholder="• • • • • •"
+                           maxlength="6" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" name="new_password"
+                           placeholder="Tối thiểu 6 ký tự" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Đặt lại mật khẩu</button>
+            </form>
+
+            <div class="auth-links">
+                <a href="{{ url('/login') }}">← Quay lại đăng nhập</a>
+            </div>
+
         </div>
-    @endif
+    </div>
 
-    {{-- ================= STEP 1 ================= --}}
-    <h3>1. Nhập số điện thoại</h3>
-    <form method="POST" action="{{ url('/forgot-password/send-otp') }}">
-        @csrf
-        <input type="text" name="phone" placeholder="Số điện thoại" required>
-        <button type="submit">Gửi OTP</button>
-    </form>
-
-    {{-- ================= STEP 2 ================= --}}
-    <h3>2. Nhập OTP & mật khẩu mới</h3>
-    <form method="POST" action="{{ url('/forgot-password/verify-otp') }}">
-        @csrf
-
-        <input type="text" name="phone" placeholder="Số điện thoại" required>
-
-        <input type="text" name="otp_code" placeholder="Nhập OTP" required>
-
-        <input type="password" name="new_password" placeholder="Mật khẩu mới" required>
-
-        <button type="submit">Đổi mật khẩu</button>
-    </form>
-
-    <p style="text-align:center; margin-top:10px;">
-        <a href="{{ url('/login') }}">Quay lại đăng nhập</a>
-    </p>
 </div>
 
 </body>

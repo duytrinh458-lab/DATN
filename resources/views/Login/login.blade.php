@@ -2,115 +2,86 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng nhập</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #e0f7fa;
-        }
-        .container {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            width: 380px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        h2 {
-            text-align: center;
-            color: #00bcd4;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        label {
-            font-weight: bold;
-            margin: 8px 0 4px;
-            display: block;
-        }
-        input {
-            width: 93%;
-            padding: 12px;
-            border: 1px solid #00bcd4;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        input::placeholder {
-            color: #b2ebf2;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #00bcd4;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-        button:hover {
-            background: #0097a7;
-            box-shadow: 0 0 15px #00bcd4;
-        }
-        .link {
-            text-align: center;
-            margin-top: 12px;
-        }
-        .link a {
-            color: #4dd0e1;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .link a:hover {
-            color: #00e5ff;
-            text-shadow: 0 0 5px #00e5ff;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập — UAV Store</title>
+    <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
 <body>
 
-<div class="container">
+<div class="auth-wrapper">
 
-    <h2>Đăng nhập</h2>
+    {{-- CỘT TRÁI: BRAND --}}
+    <div class="auth-brand">
+        <div>
+            <div class="brand-logo">UAV<span>Store</span></div>
+            <div class="brand-tagline">Unmanned Aerial Vehicle Platform</div>
+        </div>
 
-    <form method="POST" action="{{ url('/login') }}">
-        @csrf
+        <div class="brand-center">
+            <h1 class="brand-title">Công nghệ<br><em>không giới hạn</em></h1>
+            <p class="brand-desc">
+                Nền tảng thương mại điện tử chuyên biệt cho máy bay không người lái.
+                Hiệu suất, độ chính xác, đẳng cấp.
+            </p>
+        </div>
 
-        <label>Email:</label>
-        <input type="email" name="email" placeholder="example@email.com" required>
-
-        <label>Mật khẩu:</label>
-        <input type="password" name="password" placeholder="••••••••" required>
-        
-    <!-- thông báo đăng nhập sai -->
-    @if (session('error'))
-    <div style="color: #ff8a80; text-align: center; margin-bottom: 10px;">
-        {{ session('error') }}
-    </div>
-@endif
-
-        <button type="submit">Đăng nhập</button>
-    </form>
-
-    <!-- Đăng ký -->
-    <div class="link">
-        Chưa có tài khoản? <a href="{{ url('/register') }}">Đăng ký ngay</a>
+        <div class="brand-footer">© 2026 UAV Store. All rights reserved.</div>
     </div>
 
-    <!-- Quên mật khẩu -->
-    <div class="link">
-        <a href="{{ url('/forgot') }}">Quên mật khẩu?</a>
+    {{-- CỘT PHẢI: FORM --}}
+    <div class="auth-form-panel">
+        <div class="auth-box">
+
+            <h2>Chào mừng trở lại</h2>
+            <p class="subtitle">Đăng nhập để tiếp tục khám phá</p>
+
+            {{-- ALERT LỖI --}}
+            @if(session('error'))
+                <div class="alert alert-error">{{ session('error') }}</div>
+            @endif
+
+            @if ($errors->any())
+                <div class="alert alert-error">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            <form method="POST" action="{{ url('/login') }}">
+                @csrf
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="example@email.com"
+                           value="{{ old('email') }}" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Đăng nhập</button>
+            </form>
+
+            <div class="auth-links" style="margin-top: 14px;">
+                <a href="{{ url('/forgot') }}">Quên mật khẩu?</a>
+            </div>
+
+            <div class="divider">hoặc</div>
+
+            <div class="auth-links">
+                Chưa có tài khoản? <a href="{{ url('/register') }}">Đăng ký ngay</a>
+            </div>
+
+        </div>
     </div>
 
 </div>
