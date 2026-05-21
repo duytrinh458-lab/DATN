@@ -1,90 +1,137 @@
 @extends('Admin.layouts.admin')
 
-@section('title', 'Thêm người dùng mới - Vanguard UAV')
+@section('title', 'Thêm người dùng')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/adduser.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/user.css') }}">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endpush
 
 @section('content')
 
-<div class="user-form-page">
+<div class="user-detail-page">
 
-    <header class="admin-header">
+    {{-- HEADER --}}
+    <div class="admin-header">
+
         <div class="header-info">
-            <h1>Thêm thành viên mới</h1>
-            <p>Khởi tạo tài khoản cho nhân viên hoặc khách hàng</p>
+
+            <h1>Thêm người dùng</h1>
+
+            <p>Tạo tài khoản mới cho hệ thống</p>
+
         </div>
 
         <div class="header-actions">
-            <a href="{{ route('admin.users.index') }}" class="btn-back">
-                ← Quay lại
+
+            <a href="{{ route('admin.users.index') }}"
+               class="btn-back-text">
+
+                <i class="fas fa-arrow-left"></i>
+
+                Quay lại
+
             </a>
+
         </div>
-    </header>
 
-    {{-- ERROR --}}
-    @if ($errors->any())
-        <div class="alert error-alert">
-            <div class="alert-title">
-                ⚠ Đã có lỗi xảy ra:
-            </div>
+    </div>
 
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="card">
+    {{-- FORM CARD --}}
+    <div class="card shadow-premium action-card">
 
         <div class="card-header">
-            <h2 class="card-title">Thông tin tài khoản</h2>
+
+            <h3 class="card-title">
+                Thông tin tài khoản
+            </h3>
+
         </div>
 
-        <form method="POST" action="{{ route('admin.users.store') }}" class="uav-form">
+        <form action="{{ route('admin.users.store') }}"
+              method="POST"
+              class="uav-form">
+
             @csrf
 
-            <div class="form-grid">
+            {{-- FULL NAME --}}
+            <div class="form-group">
 
-                {{-- ❗ KHÔNG CẦN username (controller tự tạo) --}}
-                
-                <div class="form-group">
-                    <label>Họ và Tên</label>
-                    <input type="text" name="full_name">
-                </div>
+                <label>Họ và tên</label>
 
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" name="phone" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" name="password" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Vai trò</label>
-                    <select name="role" required>
-                        <option value="customer">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
+                <input type="text"
+                       name="full_name"
+                       value="{{ old('full_name') }}"
+                       required>
 
             </div>
 
+            {{-- EMAIL --}}
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input type="email"
+                       name="email"
+                       value="{{ old('email') }}">
+
+            </div>
+
+            {{-- PHONE --}}
+            <div class="form-group">
+
+                <label>Số điện thoại</label>
+
+                <input type="text"
+                       name="phone"
+                       value="{{ old('phone') }}"
+                       required>
+
+            </div>
+
+            {{-- PASSWORD --}}
+            <div class="form-group">
+
+                <label>Mật khẩu</label>
+
+                <input type="password"
+                       name="password"
+                       required>
+
+            </div>
+
+            {{-- ROLE --}}
+            <div class="form-group">
+
+                <label>Vai trò</label>
+
+                <select name="role">
+
+                    <option value="customer">
+                        Người dùng
+                    </option>
+
+                    <option value="admin">
+                        Quản trị viên
+                    </option>
+
+                </select>
+
+            </div>
+
+            {{-- BUTTON --}}
             <div class="form-footer">
-                <button type="submit" class="btn-submit">
-                    💾 Thêm người dùng
+
+                <button type="submit"
+                        class="btn-update">
+
+                    <i class="fas fa-save"></i>
+
+                    Tạo tài khoản
+
                 </button>
+
             </div>
 
         </form>

@@ -3,7 +3,7 @@
 @section('title', 'Quản lý danh mục - Vanguard UAV')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/categories/categorieslist.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/categories/admin-cate.css') }}">
 @endpush
 
 

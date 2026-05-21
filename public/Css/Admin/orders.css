@@ -1,507 +1,558 @@
-/* =========================================================
-   ORDER DETAIL PAGE
-========================================================= */
+/* =========================================
+   UAV ADMIN - ORDERS INDEX + SHOW
+   MODERN LIGHT UI
+========================================= */
 
-.order-detail-page {
-    max-width: 1200px;
-    margin: 0 auto;
+:root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+
+    --text:#0f172a;
+    --text-soft:#475569;
+    --text-light:#64748b;
+
+    --primary:#2563eb;
+    --primary-soft:#dbeafe;
+
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+
+    --border:#e2e8f0;
+
+    --radius:20px;
+    --shadow:0 8px 24px rgba(15,23,42,.06);
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* =========================================
+   GLOBAL
+========================================= */
 
-.admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 30px;
+body{
+    background:var(--bg) !important;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
 }
 
-.header-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+.admin-content,
+.main-content,
+.content-wrapper{
+    padding:30px;
 }
 
-.header-info h1 {
-    font-size: 28px;
-    font-weight: 800;
-    color: #f8fafc;
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.page-header,
+.admin-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:28px;
+    gap:20px;
+    flex-wrap:wrap;
 }
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
+.page-title h1,
+.header-info h1{
+    font-size:34px;
+    font-weight:900;
+    color:var(--text) !important;
+    margin-bottom:8px;
+    letter-spacing:-1px;
 }
 
-.user-id {
-    font-family: 'Monaco', monospace;
-    font-weight: 700;
-    color: #94a3b8;
+.page-title p,
+.header-info p{
+    color:var(--text-light);
+    font-size:15px;
 }
 
-/* =========================================================
-   GRID
-========================================================= */
+/* =========================================
+   CARD
+========================================= */
 
-.detail-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
+.card,
+.table-card,
+.info-card,
+.order-card{
+    background:var(--card);
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    overflow:hidden;
 }
 
-/* =========================================================
-   CARD BASE
-========================================================= */
+/* =========================================
+   TABLE CARD
+========================================= */
 
-.status-card,
-.shipping-card,
-.items-card {
-    border-radius: 22px;
-    overflow: hidden;
-    position: relative;
-    backdrop-filter: blur(10px);
+.table-card{
+    padding:10px 0;
 }
 
-/* =========================================================
-   STATUS CARD
-========================================================= */
-
-.status-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(37, 99, 235, 0.18),
-            rgba(15, 23, 42, 0.95)
-        );
-
-    border: 1px solid rgba(59, 130, 246, 0.25);
-
-    box-shadow:
-        0 15px 40px rgba(37, 99, 235, 0.18);
-}
-
-/* =========================================================
-   SHIPPING CARD
-========================================================= */
-
-.shipping-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(16, 185, 129, 0.15),
-            rgba(15, 23, 42, 0.95)
-        );
-
-    border: 1px solid rgba(16, 185, 129, 0.25);
-
-    box-shadow:
-        0 15px 40px rgba(16, 185, 129, 0.12);
-}
-
-/* =========================================================
-   ITEMS CARD
-========================================================= */
-
-.items-card {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(168, 85, 247, 0.12),
-            rgba(15, 23, 42, 0.95)
-        );
-
-    border: 1px solid rgba(168, 85, 247, 0.25);
-
-    box-shadow:
-        0 15px 40px rgba(168, 85, 247, 0.12);
-}
-
-/* =========================================================
-   CARD HEADER
-========================================================= */
-
-.card-header {
-    padding: 22px 26px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.card-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: #f8fafc;
-    letter-spacing: 0.4px;
-}
-
-/* =========================================================
-   CURRENT STATUS BOX
-========================================================= */
-
-.current-status-box {
-    margin: 25px;
-    padding: 18px 22px;
-
-    border-radius: 16px;
-
-    background:
-        rgba(15, 23, 42, 0.65);
-
-    border: 1px solid rgba(255,255,255,0.05);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    font-weight: 700;
-    color: #e2e8f0;
-}
-
-/* =========================================================
-   STATUS BADGES
-========================================================= */
-
-.order-status {
-    padding: 8px 16px;
-    border-radius: 999px;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-width: 110px;
-
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-}
-
-/* pending */
-.status-pending {
-    background: rgba(245, 158, 11, 0.15);
-    color: #F59E0B;
-    border: 1px solid rgba(245, 158, 11, 0.25);
-}
-
-/* processing */
-.status-processing {
-    background: rgba(6, 182, 212, 0.15);
-    color: #22D3EE;
-    border: 1px solid rgba(6, 182, 212, 0.25);
-}
-
-/* shipping */
-.status-shipping {
-    background: rgba(59, 130, 246, 0.15);
-    color: #60A5FA;
-    border: 1px solid rgba(59, 130, 246, 0.25);
-}
-
-/* delivered */
-.status-delivered {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34D399;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-
-    box-shadow:
-        0 0 18px rgba(16, 185, 129, 0.15);
-}
-
-/* cancelled */
-.status-cancelled {
-    background: rgba(239, 68, 68, 0.15);
-    color: #F87171;
-    border: 1px solid rgba(239, 68, 68, 0.25);
-}
-
-/* =========================================================
-   FORM UPDATE
-========================================================= */
-
-.uav-form-inline {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-
-    padding:
-        0 25px
-        25px;
-}
-
-.uav-form-inline .form-group {
-    flex: 1;
-}
-
-.uav-form-inline select {
-    width: 100%;
-
-    padding: 14px 16px;
-
-    border-radius: 14px;
-
-    border: 1px solid rgba(255,255,255,0.08);
-
-    background: rgba(15, 23, 42, 0.9);
-
-    color: #f8fafc;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    outline: none;
-
-    transition: 0.25s ease;
-}
-
-.uav-form-inline select:focus {
-    border-color: #3B82F6;
-
-    box-shadow:
-        0 0 0 4px rgba(59,130,246,0.15);
-}
-
-/* =========================================================
-   BUTTON UPDATE
-========================================================= */
-
-.btn-update {
-    padding: 14px 26px;
-
-    border: none;
-    border-radius: 14px;
-
-    font-weight: 800;
-    font-size: 14px;
-
-    color: #fff;
-
-    cursor: pointer;
-
-    background:
-        linear-gradient(
-            135deg,
-            #3B82F6,
-            #2563EB
-        );
-
-    box-shadow:
-        0 10px 25px rgba(37, 99, 235, 0.35);
-
-    transition: all 0.25s ease;
-
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-update:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 15px 35px rgba(37, 99, 235, 0.45);
-}
-
-.btn-update:active {
-    transform: scale(0.98);
-}
-
-/* =========================================================
-   SHIPPING INFO
-========================================================= */
-
-.shipping-info {
-    padding: 25px;
-
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    gap: 25px;
-
-    padding-bottom: 16px;
-
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.info-row:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.info-row .label {
-    color: #94a3b8;
-    font-weight: 700;
-    min-width: 140px;
-}
-
-.info-row .value {
-    color: #f8fafc;
-    font-weight: 600;
-
-    text-align: right;
-
-    line-height: 1.6;
-}
-
-/* =========================================================
+/* =========================================
    TABLE
-========================================================= */
+========================================= */
 
-.table-responsive {
-    overflow-x: auto;
-    padding: 0 20px 20px;
+.uav-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
 }
 
-.uav-table {
-    width: 100%;
-    border-collapse: collapse;
+.uav-table thead th{
+    background:#f8fafc;
+    color:var(--text);
+    font-size:14px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
 }
 
-.uav-table thead th {
-    padding: 18px 14px;
-
-    text-align: left;
-
-    font-size: 13px;
-    font-weight: 800;
-
-    color: #cbd5e1;
-
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+.uav-table tbody td{
+    padding:20px;
+    color:var(--text-soft);
+    font-weight:600;
+    border-bottom:1px solid #eef2f7;
+    vertical-align:middle;
 }
 
-.uav-table tbody td {
-    padding: 18px 14px;
-
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-
-    color: #f8fafc;
-    font-size: 14px;
+.uav-table tbody tr{
+    transition:.2s ease;
 }
 
-.uav-table tbody tr:hover {
-    background: rgba(255,255,255,0.03);
+.uav-table tbody tr:hover{
+    background:#f8fbff;
+    transform:scale(1.002);
 }
 
-.uav-table .center {
-    text-align: center;
+/* =========================================
+   USER INFO
+========================================= */
+
+.user-box{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
 }
 
-.uav-table .right {
-    text-align: right;
+.user-name{
+    color:var(--text) !important;
+    font-weight:800;
+    font-size:15px;
 }
 
-.user-name {
-    font-weight: 700;
-    color: #f8fafc;
+.user-id{
+    color:var(--text-light);
+    font-size:13px;
 }
 
-/* =========================================================
+/* =========================================
    PRICE
-========================================================= */
+========================================= */
 
-.order-price {
-    color: #60A5FA;
-    font-weight: 800;
-    font-size: 15px;
+.order-price{
+    font-size:18px;
+    font-weight:900;
+    color:var(--primary) !important;
 }
 
-/* =========================================================
-   BACK BUTTON
-========================================================= */
+/* =========================================
+   STATUS BADGE
+========================================= */
 
-.header-actions .btn-back-text {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+.status-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+}
 
-    text-decoration: none;
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
 
-    font-weight: 700;
-    font-size: 14px;
+.status-processing{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
 
-    color: #fff;
+.status-delivered{
+    background:#dcfce7;
+    color:#166534;
+}
 
-    padding: 12px 18px;
+.status-cancelled{
+    background:#fee2e2;
+    color:#991b1b;
+}
 
-    border-radius: 14px;
+/* =========================================
+   ACTION BUTTON
+========================================= */
 
-    background:
-        linear-gradient(
-            135deg,
-            #475569,
-            #334155
-        );
+.btn,
+.action-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px 18px;
+    border-radius:12px;
+    border:none;
+    background:var(--primary);
+    color:#fff !important;
+    font-size:14px;
+    font-weight:700;
+    text-decoration:none;
+    transition:.2s ease;
+    cursor:pointer;
+}
+
+.btn:hover,
+.action-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(37,99,235,.2);
+}
+
+/* =========================================
+   SHOW PAGE LAYOUT
+========================================= */
+
+.order-show-grid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:24px;
+    margin-top:25px;
+}
+
+@media(max-width:1100px){
+    .order-show-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* =========================================
+   INFO CARD
+========================================= */
+
+.info-card{
+    padding:24px;
+}
+
+.card-title{
+    font-size:20px;
+    font-weight:900;
+    color:var(--text);
+    margin-bottom:24px;
+    padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+}
+
+/* =========================================
+   INFO ROW
+========================================= */
+
+.info-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:14px 0;
+    border-bottom:1px dashed #e5e7eb;
+}
+
+.info-row:last-child{
+    border-bottom:none;
+}
+
+.info-row .label{
+    color:var(--text-light);
+    font-weight:700;
+}
+
+.info-row .value{
+    color:var(--text);
+    font-weight:800;
+    text-align:right;
+}
+
+/* =========================================
+   ORDER PRODUCTS
+========================================= */
+
+.order-product{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:16px 0;
+    border-bottom:1px solid #eef2f7;
+}
+
+.order-product:last-child{
+    border-bottom:none;
+}
+
+.order-product img{
+    width:72px;
+    height:72px;
+    object-fit:cover;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+}
+
+.product-info{
+    flex:1;
+}
+
+.product-name{
+    font-size:15px;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:6px;
+}
+
+.product-meta{
+    font-size:13px;
+    color:var(--text-light);
+}
+
+/* =========================================
+   TOTAL BOX
+========================================= */
+
+.total-box{
+    margin-top:24px;
+    padding:22px;
+    background:linear-gradient(135deg,#eff6ff,#ffffff);
+    border-radius:18px;
+    border:1px solid #bfdbfe;
+}
+
+.total-box .label{
+    color:var(--text-light);
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.total-box .value{
+    font-size:32px;
+    font-weight:900;
+    color:var(--primary);
+}
+
+/* =========================================
+   FORM ELEMENTS
+========================================= */
+
+select,
+input,
+textarea{
+    width:100%;
+    border:1px solid #dbe3ee;
+    background:#fff;
+    border-radius:14px;
+    padding:12px 14px;
+    font-size:14px;
+    color:var(--text);
+    transition:.2s;
+}
+
+select:focus,
+input:focus,
+textarea:focus{
+    border-color:#93c5fd;
+    outline:none;
+    box-shadow:0 0 0 4px rgba(37,99,235,.08);
+}
+
+/* =========================================
+   REMOVE ALL MỜ EFFECT
+========================================= */
+
+*{
+    opacity:1 !important;
+    filter:none !important;
+    backdrop-filter:none !important;
+}
+
+/* =========================================
+   BUTTON SYSTEM
+========================================= */
+
+.btn-group{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+/* =========================================
+   BASE BUTTON
+========================================= */
+
+.btn,
+.action-btn,
+button{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    padding:12px 22px;
+
+    border:none;
+    border-radius:14px;
+
+    font-size:14px;
+    font-weight:800;
+
+    text-decoration:none;
+    cursor:pointer;
+
+    transition:all .25s ease;
+}
+
+/* =========================================
+   PRIMARY BUTTON
+   (CẬP NHẬT)
+========================================= */
+
+.btn-update,
+.btn-primary,
+button[type="submit"]{
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    color:#fff !important;
 
     box-shadow:
-        0 10px 25px rgba(15,23,42,0.35);
-
-    transition: all 0.25s ease;
+        0 10px 20px rgba(37,99,235,.18),
+        inset 0 1px 0 rgba(255,255,255,.2);
 }
 
-.header-actions .btn-back-text:hover {
-    transform: translateY(-2px);
+.btn-update:hover,
+.btn-primary:hover,
+button[type="submit"]:hover{
+    transform:translateY(-3px);
 
-    background:
-        linear-gradient(
-            135deg,
-            #64748B,
-            #475569
-        );
+    box-shadow:
+        0 16px 28px rgba(37,99,235,.28),
+        inset 0 1px 0 rgba(255,255,255,.2);
 }
 
-.header-actions .btn-back-text i {
-    transition: 0.25s ease;
+/* =========================================
+   bacK BUTTON
+========================================= */
+.btn-back-text{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+
+    padding:12px 22px;
+
+    background:#ff7e7e;
+    color:#0f172a !important;
+
+    border:1px solid #dbe3ee;
+    border-radius:14px;
+
+    font-size:14px;
+    font-weight:800;
+
+    text-decoration:none;
+
+    box-shadow:0 4px 12px rgba(15,23,42,.05);
+
+    transition:all .25s ease;
 }
 
-.header-actions .btn-back-text:hover i {
-    transform: translateX(-3px);
+.btn-back-text:hover{
+    background:#ff0000;
+    color:#ffffff !important;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 20px rgba(15,23,42,.08);
 }
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+.btn-back-text i{
+    font-size:13px;
+}
 
-@media (max-width: 768px) {
+/* =========================================
+   DANGER BUTTON
+========================================= */
 
-    .admin-header {
-        flex-direction: column;
-        align-items: flex-start;
+.btn-danger{
+    background:linear-gradient(135deg,#ef4444,#f87171);
+    color:#fff !important;
+
+    box-shadow:0 10px 20px rgba(239,68,68,.18);
+}
+
+.btn-danger:hover{
+    transform:translateY(-3px);
+
+    box-shadow:0 16px 28px rgba(239,68,68,.28);
+}
+
+/* =========================================
+   SUCCESS BUTTON
+========================================= */
+
+.btn-success{
+    background:linear-gradient(135deg,#10b981,#34d399);
+    color:#fff !important;
+
+    box-shadow:0 10px 20px rgba(16,185,129,.18);
+}
+
+.btn-success:hover{
+    transform:translateY(-3px);
+
+    box-shadow:0 16px 28px rgba(16,185,129,.28);
+}
+
+/* =========================================
+   ICON BUTTON
+========================================= */
+
+.btn i,
+button i{
+    font-size:14px;
+}
+
+/* =========================================
+   DISABLED
+========================================= */
+
+.btn:disabled,
+button:disabled{
+    opacity:.6 !important;
+    cursor:not-allowed;
+    transform:none !important;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:768px){
+
+    .btn,
+    button{
+        width:100%;
     }
 
-    .uav-form-inline {
-        flex-direction: column;
+    .btn-group{
+        flex-direction:column;
     }
 
-    .uav-form-inline button {
-        width: 100%;
-    }
-
-    .info-row {
-        flex-direction: column;
-    }
-
-    .info-row .value {
-        text-align: left;
-    }
-
-    .current-status-box {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
 }

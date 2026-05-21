@@ -1,0 +1,502 @@
+/* =========================================
+   REFUND PAGE
+========================================= */
+
+.refund-page{
+    max-width:1600px;
+    margin:0 auto;
+    padding:10px 10px 40px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.refund-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+}
+
+.header-left h1{
+    font-size:34px;
+    font-weight:900;
+    color:#0f172a;
+    margin-bottom:10px;
+    letter-spacing:-1px;
+}
+
+.header-left p{
+    font-size:15px;
+    color:#64748b;
+}
+
+.stat-card{
+    min-width:110px;
+
+    padding:14px 18px;
+
+    border-radius:18px;
+
+    background:linear-gradient(
+        135deg,
+        #62ffa3,
+        #c4f63b
+    );
+
+    box-shadow:
+        0 10px 24px rgba(37,99,235,.20);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    gap:4px;
+}
+
+.stat-number{
+    font-size:24px;
+    font-weight:900;
+
+    line-height:1;
+
+    color:#000000;
+}
+
+.stat-label{
+    font-size:12px;
+    font-weight:700;
+
+    color:rgba(0, 0, 0, 0.88);
+
+    text-align:center;
+}
+
+/* =========================================
+   ALERT
+========================================= */
+
+.alert-box{
+    padding:16px 20px;
+    border-radius:18px;
+    margin-bottom:20px;
+    font-size:14px;
+    font-weight:700;
+}
+
+.success-box{
+    background:#ecfdf5;
+    border:1px solid #bbf7d0;
+    color:#166534;
+}
+
+.error-box{
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    color:#991b1b;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.refund-card{
+    background:#fff;
+    border-radius:28px;
+    overflow:hidden;
+
+    border:1px solid #e2e8f0;
+
+    box-shadow:
+        0 14px 40px rgba(15,23,42,.06);
+}
+
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:26px 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #ffffff
+        );
+
+    border-bottom:1px solid #eef2f7;
+}
+
+.card-top h3{
+    font-size:22px;
+    font-weight:900;
+    color:#0f172a;
+    margin-bottom:6px;
+}
+
+.card-top p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
+}
+
+.refund-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.refund-table thead{
+    background:#f8fafc;
+}
+
+.refund-table thead th{
+    padding:20px 24px;
+
+    font-size:12px;
+    font-weight:900;
+
+    text-transform:uppercase;
+    letter-spacing:.7px;
+
+    color:#64748b;
+
+    border-bottom:1px solid #e5e7eb;
+
+    white-space:nowrap;
+}
+
+.refund-table tbody td{
+    padding:24px;
+
+    border-bottom:1px solid #f1f5f9;
+
+    vertical-align:middle;
+
+    font-size:14px;
+    color:#334155;
+    font-weight:600;
+}
+
+.refund-table tbody tr{
+    transition:.25s ease;
+}
+
+.refund-table tbody tr:hover{
+    background:#f8fbff;
+}
+
+/* =========================================
+   DATE
+========================================= */
+
+.date-box{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.date-time{
+    font-size:16px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+.date-day{
+    font-size:13px;
+    color:#94a3b8;
+}
+
+/* =========================================
+   USER
+========================================= */
+
+.user-box{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.avatar{
+    width:46px;
+    height:46px;
+
+    border-radius:50%;
+
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#fff;
+    font-size:18px;
+    font-weight:900;
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,.25);
+}
+
+.user-name{
+    font-size:15px;
+    font-weight:800;
+    color:#111827;
+}
+
+.user-role{
+    font-size:13px;
+    color:#94a3b8;
+    margin-top:4px;
+}
+
+/* =========================================
+   ORDER
+========================================= */
+
+.order-code{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:#eff6ff;
+    color:#2563eb;
+
+    font-size:12px;
+    font-weight:900;
+
+    margin-bottom:10px;
+}
+
+.refund-price{
+    font-size:20px;
+    font-weight:900;
+    color:#dc2626;
+}
+
+/* =========================================
+   REASON
+========================================= */
+
+.refund-reason{
+    font-size:15px;
+    font-weight:800;
+    color:#0f172a;
+
+    margin-bottom:8px;
+
+    line-height:1.5;
+}
+
+.refund-desc{
+    max-width:360px;
+
+    font-size:13px;
+    line-height:1.7;
+
+    color:#64748b;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:10px 16px;
+
+    border-radius:999px;
+
+    font-size:12px;
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+.status-pending{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-approved{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-rejected{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* =========================================
+   ACTION
+========================================= */
+
+.action-group{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn-action{
+    border:none;
+    border-radius:14px;
+
+    padding:11px 16px;
+
+    font-size:13px;
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:all .25s ease;
+}
+
+.btn-action:hover{
+    transform:translateY(-2px);
+}
+
+.btn-approve{
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:#fff;
+
+    box-shadow:
+        0 12px 22px rgba(34,197,94,.24);
+}
+
+.btn-approve:hover{
+    box-shadow:
+        0 18px 30px rgba(34,197,94,.34);
+}
+
+.btn-reject{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff;
+
+    box-shadow:
+        0 12px 22px rgba(239,68,68,.22);
+}
+
+.btn-reject:hover{
+    box-shadow:
+        0 18px 30px rgba(239,68,68,.32);
+}
+
+.done-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:10px 16px;
+
+    border-radius:999px;
+
+    background:#f1f5f9;
+    color:#64748b;
+
+    font-size:12px;
+    font-weight:800;
+}
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.empty-state{
+    padding:80px 20px;
+    text-align:center;
+}
+
+.empty-icon{
+    font-size:52px;
+    margin-bottom:14px;
+}
+
+.empty-title{
+    font-size:20px;
+    font-weight:900;
+    color:#0f172a;
+    margin-bottom:10px;
+}
+
+.empty-desc{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+/* =========================================
+   PAGINATION
+========================================= */
+
+.pagination-box{
+    display:flex;
+    justify-content:center;
+
+    padding:28px;
+    border-top:1px solid #eef2f7;
+}
+
+/* luôn hiện pagination đẹp */
+.pagination-box nav{
+    display:flex;
+    justify-content:center;
+    width:100%;
+}
+
+.pagination-box svg{
+    width:18px;
+    height:18px;
+}
+
+/* =========================================
+   UTIL
+========================================= */
+
+.text-center{
+    text-align:center;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:1200px){
+
+    .refund-table{
+        min-width:1200px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .refund-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .header-left h1{
+        font-size:28px;
+    }
+
+}
