@@ -7,21 +7,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log; // 💡 Đã thêm thư viện Log
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     // ================= VIEW =================
-    public function showLogin() { 
-        return view('Login.login'); 
+    public function showLogin() {
+        return view('Login.login');
     }
 
-    public function showRegister() { 
-        return view('Login.register'); 
+    public function showRegister() {
+        return view('Login.register');
     }
 
-    public function showForgot() { 
-        return view('Login.forgot'); 
+    public function showForgot() {
+        return view('Login.forgot');
     }
 
     public function showChangePasswordForm()
@@ -29,6 +29,7 @@ class AuthController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
+
         return view('Login.change-password');
     }
 
@@ -37,6 +38,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'phone' => 'required|numeric|digits_between:10,11|unique:users,phone'
+        ],[
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'phone.numeric' => 'Số điện thoại chỉ được chứa chữ số.',
+            'phone.digits_between' => 'Số điện thoại phải từ 10 đến 11 số.',
+            'phone.unique' => 'Số điện thoại này đã được đăng ký.',
         ]);
 
         $otp = rand(100000, 999999);
@@ -52,9 +58,12 @@ class AuthController extends Controller
 
         session(['phone_step1' => $request->phone]);
 
-        // 💡 ĐÃ FIX LOGIC SAI: Ghi OTP vào file log (storage/logs/laravel.log) để test, KHÔNG in ra UI
         Log::info('Mã OTP Đăng ký của SĐT ' . $request->phone . ' là: ' . $otp);
-        return back()->with('success', 'Mã xác thực OTP đã được gửi đến số điện thoại của bạn!');
+
+        return back()->with(
+            'success',
+            'Mã xác thực OTP đã được gửi đến số điện thoại của bạn.'
+        );
     }
 
     public function verifyOtpRegister(Request $request)
@@ -62,7 +71,10 @@ class AuthController extends Controller
         $phone = session('phone_step1');
 
         if (!$phone) {
-            return redirect('/register')->with('error', 'Thiếu số điện thoại');
+            return redirect('/register')->with(
+                'error',
+                'Phiên đăng ký đã hết hạn. Vui lòng thử lại.'
+            );
         }
 
         $request->validate([
@@ -70,6 +82,19 @@ class AuthController extends Controller
             'full_name' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
+        ],[
+            'otp_code.required' => 'Vui lòng nhập mã OTP.',
+            'otp_code.digits' => 'Mã OTP phải gồm đúng 6 số.',
+
+            'full_name.string' => 'Họ và tên không hợp lệ.',
+            'full_name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
+
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.unique' => 'Email này đã tồn tại.',
+
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
         ]);
 
         $otp = DB::table('otp_verifications')
@@ -81,12 +106,16 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return back()->with('error', 'OTP sai hoặc hết hạn');
+            return back()->with(
+                'error',
+                'Mã OTP không chính xác hoặc đã hết hạn.'
+            );
         }
 
         DB::beginTransaction();
 
         try {
+
             $user = User::create([
                 'username' => explode('@', $request->email)[0],
                 'full_name' => $request->full_name ?? 'User',
@@ -113,10 +142,19 @@ class AuthController extends Controller
 
             session()->forget('phone_step1');
 
-            return redirect('/login')->with('success', 'Đăng ký thành công!');
+            return redirect('/login')->with(
+                'success',
+                'Tài khoản của bạn đã được tạo thành công.'
+            );
+
         } catch (\Exception $e) {
+
             DB::rollBack();
-            return back()->with('error', $e->getMessage());
+
+            return back()->with(
+                'error',
+                'Đã xảy ra lỗi hệ thống. Vui lòng thử lại.'
+            );
         }
     }
 
@@ -126,10 +164,18 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
+        ],[
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không đúng định dạng.',
+
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
+
             $request->session()->regenerate();
+
             $user = Auth::user();
 
             if ($user->is_first_login) {
@@ -141,7 +187,10 @@ class AuthController extends Controller
                 : redirect()->route('home');
         }
 
-        return back()->with('error', 'Sai email hoặc mật khẩu');
+        return back()->with(
+            'error',
+            'Email hoặc mật khẩu không chính xác.'
+        );
     }
 
     // ================= CHANGE PASSWORD =================
@@ -153,11 +202,17 @@ class AuthController extends Controller
 
         $request->validate([
             'password' => 'required|min:6|confirmed'
+        ],[
+            'password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
         ]);
 
         $user = User::find(Auth::id());
+
         $user->password = Hash::make($request->password);
         $user->is_first_login = 0;
+
         $user->save();
 
         return $user->role === 'admin'
@@ -170,12 +225,19 @@ class AuthController extends Controller
     {
         $request->validate([
             'phone' => 'required|numeric|digits_between:10,11'
+        ],[
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'phone.numeric' => 'Số điện thoại chỉ được chứa chữ số.',
+            'phone.digits_between' => 'Số điện thoại phải từ 10 đến 11 số.',
         ]);
 
         $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
-            return back()->with('error', 'Không tìm thấy tài khoản');
+            return back()->with(
+                'error',
+                'Không tìm thấy tài khoản với số điện thoại này.'
+            );
         }
 
         $otp = rand(100000, 999999);
@@ -191,9 +253,12 @@ class AuthController extends Controller
 
         session(['forgot_phone' => $request->phone]);
 
-        // 💡 ĐÃ FIX LOGIC SAI: Ghi OTP vào file log (storage/logs/laravel.log) để test, KHÔNG in ra UI
         Log::info('Mã OTP Quên mật khẩu của SĐT ' . $request->phone . ' là: ' . $otp);
-        return back()->with('success', 'Mã xác thực OTP đã được gửi đến điện thoại của bạn!');
+
+        return back()->with(
+            'success',
+            'Mã xác thực OTP đã được gửi đến số điện thoại của bạn.'
+        );
     }
 
     public function verifyOtpForgotPassword(Request $request)
@@ -202,6 +267,14 @@ class AuthController extends Controller
             'phone' => 'required',
             'otp_code' => 'required|digits:6',
             'new_password' => 'required|min:6'
+        ],[
+            'phone.required' => 'Thiếu số điện thoại.',
+
+            'otp_code.required' => 'Vui lòng nhập mã OTP.',
+            'otp_code.digits' => 'Mã OTP phải gồm đúng 6 số.',
+
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có ít nhất 6 ký tự.',
         ]);
 
         $otp = DB::table('otp_verifications')
@@ -213,30 +286,42 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
-            return back()->with('error', 'OTP không hợp lệ hoặc đã hết hạn');
+            return back()->with(
+                'error',
+                'Mã OTP không chính xác hoặc đã hết hạn.'
+            );
         }
 
         $user = User::where('phone', $request->phone)->first();
 
         if (!$user) {
-            return back()->with('error', 'Không tìm thấy tài khoản');
+            return back()->with(
+                'error',
+                'Không tìm thấy tài khoản với số điện thoại này.'
+            );
         }
 
         $user->password = Hash::make($request->new_password);
+
         $user->save();
 
         DB::table('otp_verifications')
             ->where('id', $otp->id)
             ->update(['is_used' => 1]);
 
-        return redirect('/login')->with('success', 'Đổi mật khẩu thành công');
+        return redirect('/login')->with(
+            'success',
+            'Mật khẩu đã được cập nhật thành công.'
+        );
     }
 
     // ================= LOGOUT =================
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
+
         $request->session()->regenerateToken();
 
         return redirect('/login');

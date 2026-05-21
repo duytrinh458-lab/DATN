@@ -4,69 +4,65 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/products.css') }}">
-    <!-- .product-link {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-</style> -->
 @endpush
 
 @section('content')
+
 <div class="product-container-vanguard">
 
     {{-- SIDEBAR --}}
-    <aside class="filter-sidebar">
-        <h3 class="vanguard-label">Tìm kiếm</h3>
-        <div class="search-box">
-            <form action="{{ route('user.products') }}" method="GET">
-                <input type="text" name="search" placeholder="SCANNING_SERIAL..." value="{{ request('search') }}">
-            </form>
+<aside class="filter-sidebar">
+
+    <div class="search-row">
+        <label class="search-title">Tìm kiếm</label>
+
+        <form action="{{ route('user.products') }}" method="GET" class="search-form">
+            <input type="text"
+                   name="search"
+                   placeholder="SCANNING_SERIAL..."
+                   value="{{ request('search') }}">
+        </form>
+
         </div>
 
-        <h3 class="vanguard-label">Danh mục</h3>
-        <ul class="vanguard-list">
-            <li><a href="#">Drone Camera</a></li>
-            <li><a href="#">Mini Series</a></li>
-            <li><a href="#">Pro Experience</a></li>
-        </ul>
-
-        <div class="support-box" style="margin-top: 50px;">
-            <h3 class="vanguard-label">Hỗ trợ</h3>
-            <button class="btn-cart" style="width: 100%;">Liên hệ ngay</button>
-        </div>
     </aside>
 
     {{-- GRID SẢN PHẨM --}}
     <section class="product-grid">
+
         @isset($products)
+
             @foreach($products as $product)
+
                 <div class="product-card-v4">
-                    
-                    <!-- BẮT ĐẦU SỬA: Bọc thẻ <a> quanh ảnh và tên sản phẩm -->
+
                     <a href="{{ route('user.products.detail', $product->id) }}" class="product-link">
+
                         <div class="img-wrapper">
-                            <img src="{{ $product->images && $product->images->first() 
-                                ? asset($product->images->first()->image_url) 
-                                : asset('images/uav1.jpg') }}" 
+                            <img src="{{ $product->images && $product->images->first()
+                                ? asset($product->images->first()->image_url)
+                                : asset('images/uav1.jpg') }}"
                             alt="{{ $product->name }}">
                         </div>
 
                         <div class="card-body">
+
                             <h3>{{ $product->name }}</h3>
+
                             <p>{{ Str::limit($product->description, 50) }}</p>
 
                             <div class="price">
                                 {{ number_format($product->sale_price, 0, ',', '.') }}₫
                             </div>
-                        </div>
-                    </a>
-                    <!-- KẾT THÚC SỬA -->
 
-                    <!-- Khu vực nút bấm giữ nguyên và tách biệt khỏi thẻ <a> để click không bị loạn -->
-                    <div class="card-body" style="padding-top: 0;"> 
+                        </div>
+
+                    </a>
+
+                    <div class="card-body" style="padding-top: 0;">
+
                         <div class="product-actions">
-                            <!-- ĐÃ SỬA: Sửa lại route của nút Mua ngay thành route checkout.buyNow -->
+
                             <form action="{{ route('user.checkout.buyNow') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -80,15 +76,23 @@
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn-cart">Thêm giỏ</button>
                             </form>
+
                         </div>
+
                     </div>
 
                 </div>
+
             @endforeach
+
         @else
+
             <p class="no-product">>> NO_DATA_FOUND: 0 PRODUCTS AVAILABLE.</p>
+
         @endisset
+
     </section>
 
 </div>
+
 @endsection

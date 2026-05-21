@@ -56,6 +56,21 @@ Route::controller(AuthController::class)->group(function () {
 
     Route::get('/change-password', 'showChangePasswordForm')->name('password.change');
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
+    Route::get('/register/reset-phone', function () {
+
+    session()->forget('phone_step1');
+
+    return redirect('/register');
+
+});
+
+Route::get('/forgot-password/reset-session', function () {
+
+    session()->forget('forgot_phone');
+
+    return redirect('/forgot');
+
+});
 });
 
 /*

@@ -1,359 +1,631 @@
-/* ================================================
-   AUTH.CSS — Dùng chung cho login/register/forgot
-   Theme: Dark UAV / Military Tech
-================================================ */
+/* =========================================================
+   UAV STORE — PREMIUM AUTH UI
+========================================================= */
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
-
-:root {
-    --bg-deep:    #0a0e1a;
-    --bg-panel:   #0f1628;
-    --bg-card:    #141c30;
-    --accent:     #00d4ff;
-    --accent-dim: rgba(0,212,255,0.15);
-    --accent-glow:rgba(0,212,255,0.4);
-    --success:    #00e676;
-    --danger:     #ff5252;
-    --text-main:  #e8edf5;
-    --text-muted: #7a8aa0;
-    --border:     rgba(0,212,255,0.2);
-    --radius:     12px;
-    --font-head:  'Syne', sans-serif;
-    --font-body:  'DM Sans', sans-serif;
+*,
+*::before,
+*::after{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-html, body {
-    height: 100%;
-    font-family: var(--font-body);
-    background: var(--bg-deep);
-    color: var(--text-main);
+:root{
+
+    --bg:#0f1724;
+
+    --bg-2:#182334;
+
+    --panel:rgba(20,30,48,0.72);
+
+    --primary:#46dfff;
+
+    --primary-soft:rgba(70,223,255,0.14);
+
+    --success:#00e676;
+
+    --danger:#ff6b81;
+
+    --text:#f8fafc;
+
+    --muted:#9fb0c3;
+
+    --border:rgba(255,255,255,0.08);
+
+    --shadow:
+        0 25px 60px rgba(0,0,0,0.38);
+
+    --font-main:"Times New Roman", Times, serif;
 }
 
-/* ====== LAYOUT 2 CỘT ====== */
-.auth-wrapper {
-    display: flex;
-    min-height: 100vh;
+/* =========================================================
+   BODY
+========================================================= */
+
+html,
+body{
+
+    min-height:100%;
+
+    font-family:var(--font-main);
+
+    color:var(--text);
+
+    background:
+        radial-gradient(circle at top left,#23456d 0%,transparent 28%),
+        radial-gradient(circle at bottom right,#12324d 0%,transparent 22%),
+        linear-gradient(180deg,#0f1724 0%,#182334 100%);
 }
 
-/* Cột trái — Brand panel */
-.auth-brand {
-    flex: 0 0 420px;
-    background: linear-gradient(160deg, #0d1f3c 0%, #0a0e1a 60%, #001a2e 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 48px 40px;
-    position: relative;
-    overflow: hidden;
-    border-right: 1px solid var(--border);
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.auth-wrapper{
+
+    display:flex;
+
+    min-height:100vh;
 }
 
-.auth-brand::before {
-    content: '';
-    position: absolute;
-    top: -80px; left: -80px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
-    pointer-events: none;
+/* =========================================================
+   LEFT PANEL
+========================================================= */
+
+.auth-brand{
+
+    width:470px;
+
+    padding:60px 54px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    border-right:1px solid rgba(255,255,255,0.06);
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(70,223,255,0.08),
+            rgba(255,255,255,0.02)
+        );
+
+    backdrop-filter:blur(20px);
 }
 
-.auth-brand::after {
-    content: '';
-    position: absolute;
-    bottom: -60px; right: -60px;
-    width: 250px; height: 250px;
-    background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
-    pointer-events: none;
+.auth-brand::before{
+
+    content:'';
+
+    position:absolute;
+
+    top:-120px;
+    left:-120px;
+
+    width:340px;
+    height:340px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(70,223,255,0.16),
+            transparent 70%
+        );
 }
 
-.brand-logo {
-    font-family: var(--font-head);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-transform: uppercase;
+.auth-brand::after{
+
+    content:'';
+
+    position:absolute;
+
+    right:-120px;
+    bottom:-120px;
+
+    width:320px;
+    height:320px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,255,170,0.08),
+            transparent 70%
+        );
 }
 
-.brand-logo span {
-    color: var(--text-main);
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand-logo{
+
+    position:relative;
+
+    z-index:2;
+
+    font-size:34px;
+
+    font-weight:800;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+    color:var(--primary);
 }
 
-.brand-tagline {
-    font-size: 13px;
-    color: var(--text-muted);
-    letter-spacing: 2px;
-    margin-top: 6px;
-    text-transform: uppercase;
+.brand-logo span{
+
+    color:white;
 }
 
-.brand-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
+.brand-tagline{
+
+    margin-top:10px;
+
+    font-size:12px;
+
+    color:#8da3ba;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
 }
 
-.brand-title {
-    font-family: var(--font-head);
-    font-size: 38px;
-    font-weight: 800;
-    line-height: 1.2;
-    color: var(--text-main);
+.brand-center{
+
+    position:relative;
+
+    z-index:2;
 }
 
-.brand-title em {
-    font-style: normal;
-    color: var(--accent);
+.brand-title{
+
+    font-size:58px;
+
+    line-height:1.12;
+
+    font-weight:800;
+
+    margin-bottom:24px;
 }
 
-.brand-desc {
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    max-width: 300px;
+.brand-title em{
+
+    font-style:italic;
+
+    color:var(--primary);
 }
 
-.brand-stats {
-    display: flex;
-    gap: 24px;
-    margin-top: 8px;
+.brand-desc{
+
+    max-width:350px;
+
+    font-size:17px;
+
+    line-height:1.9;
+
+    color:var(--muted);
 }
 
-.stat-item { text-align: center; }
-.stat-num {
-    font-family: var(--font-head);
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--accent);
-}
-.stat-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 2px;
+.brand-footer{
+
+    position:relative;
+
+    z-index:2;
+
+    color:#8ea1b4;
+
+    font-size:13px;
+
+    letter-spacing:0.3px;
 }
 
-.brand-footer {
-    font-size: 12px;
-    color: var(--text-muted);
+/* =========================================================
+   RIGHT PANEL
+========================================================= */
+
+.auth-form-panel{
+
+    flex:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:50px;
 }
 
-/* Cột phải — Form panel */
-.auth-form-panel {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-    background: var(--bg-panel);
+/* =========================================================
+   AUTH BOX
+========================================================= */
+
+.auth-box{
+
+    width:100%;
+
+    max-width:470px;
+
+    padding:46px;
+
+    border-radius:30px;
+
+    background:
+        rgba(255,255,255,0.04);
+
+    border:
+        1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(24px);
+
+    box-shadow:var(--shadow);
 }
 
-.auth-box {
-    width: 100%;
-    max-width: 420px;
+.auth-box h2{
+
+    font-size:40px;
+
+    font-weight:800;
+
+    margin-bottom:12px;
+
+    letter-spacing:0.4px;
 }
 
-.auth-box h2 {
-    font-family: var(--font-head);
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 6px;
+.subtitle{
+
+    color:var(--muted);
+
+    font-size:16px;
+
+    line-height:1.7;
+
+    margin-bottom:34px;
 }
 
-.auth-box .subtitle {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 28px;
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group{
+
+    margin-bottom:24px;
 }
 
-/* ====== FORM ELEMENTS ====== */
-.form-group {
-    margin-bottom: 18px;
-}
+.form-group label{
 
-.form-group label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 7px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    color:#dce7f2;
 }
 
 .form-group input,
-.form-group select {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-main);
-    font-family: var(--font-body);
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+.form-group select{
+
+    width:100%;
+
+    height:58px;
+
+    padding:0 20px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:
+        rgba(255,255,255,0.05);
+
+    color:white;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:0.25s;
+
+    border:1px solid rgba(255,255,255,0.06);
 }
 
-.form-group input::placeholder { color: #3d4f65; }
+.form-group input::placeholder{
 
-.form-group input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-dim);
+    color:#8191a5;
 }
 
-/* ====== BUTTONS ====== */
-.btn-primary {
-    width: 100%;
-    padding: 13px;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: var(--radius);
-    font-family: var(--font-head);
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+.form-group input:focus,
+.form-group select:focus{
+
+    border-color:
+        rgba(70,223,255,0.45);
+
+    background:
+        rgba(255,255,255,0.07);
+
+    box-shadow:
+        0 0 0 4px rgba(70,223,255,0.10);
 }
 
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px var(--accent-glow);
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn-primary{
+
+    width:100%;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #46dfff,
+            #52f3c7
+        );
+
+    color:#07111f;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    letter-spacing:1px;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:
+        0 12px 30px rgba(70,223,255,0.24);
 }
 
-.btn-secondary {
-    width: 100%;
-    padding: 12px;
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    margin-top: 10px;
+.btn-primary:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 18px 40px rgba(70,223,255,0.32);
 }
 
-.btn-secondary:hover {
-    background: var(--accent-dim);
-    border-color: var(--accent);
+.btn-secondary{
+
+    width:100%;
+
+    height:56px;
+
+    border-radius:18px;
+
+    border:1px solid rgba(70,223,255,0.20);
+
+    background:
+        rgba(255,255,255,0.04);
+
+    color:var(--primary);
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.25s;
 }
 
-/* ====== ALERTS ====== */
-.alert {
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+.btn-secondary:hover{
+
+    background:
+        rgba(70,223,255,0.10);
+
+    border-color:
+        rgba(70,223,255,0.35);
 }
 
-.alert-success {
-    background: rgba(0,230,118,0.1);
-    border: 1px solid rgba(0,230,118,0.3);
-    color: var(--success);
+/* =========================================================
+   STEP
+========================================================= */
+
+.step-indicator{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:34px;
 }
 
-.alert-error {
-    background: rgba(255,82,82,0.1);
-    border: 1px solid rgba(255,82,82,0.3);
-    color: var(--danger);
+.step{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:#8ea1b4;
+
+    font-size:14px;
+
+    font-weight:600;
 }
 
-.alert ul { padding-left: 16px; margin-top: 4px; }
-.alert ul li { font-size: 13px; }
+.step-num{
 
-/* ====== STEP INDICATOR ====== */
-.step-indicator {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 24px;
+    width:30px;
+    height:30px;
+
+    border-radius:50%;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:13px;
+
+    font-weight:700;
 }
 
-.step {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-muted);
+.step.active{
+
+    color:white;
 }
 
-.step-num {
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: var(--font-head);
+.step.active .step-num{
+
+    background:var(--primary);
+
+    color:#07111f;
+
+    border:none;
 }
 
-.step.active .step-num {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #000;
+.step-divider{
+
+    flex:1;
+
+    height:1px;
+
+    background:rgba(255,255,255,0.08);
 }
 
-.step.active { color: var(--text-main); }
+/* =========================================================
+   LINKS
+========================================================= */
 
-.step-divider {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+.auth-links{
+
+    margin-top:28px;
+
+    text-align:center;
+
+    color:#93a6ba;
+
+    font-size:15px;
+
+    line-height:1.7;
 }
 
-/* ====== LINKS ====== */
-.auth-links {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: var(--text-muted);
+.auth-links a{
+
+    color:var(--primary);
+
+    text-decoration:none;
+
+    font-weight:700;
 }
 
-.auth-links a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
+.auth-links a:hover{
+
+    text-decoration:underline;
 }
 
-.auth-links a:hover { opacity: 0.8; text-decoration: underline; }
+.divider{
 
-.divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 20px 0;
-    color: var(--text-muted);
-    font-size: 12px;
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin:30px 0;
+
+    color:#8fa3b7;
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
 }
 
-.divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+.divider::before,
+.divider::after{
+
+    content:'';
+
+    flex:1;
+
+    height:1px;
+
+    background:rgba(255,255,255,0.08);
 }
 
-/* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
-    .auth-brand { display: none; }
-    .auth-form-panel { padding: 32px 20px; }
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+    .auth-brand{
+        display:none;
+    }
+
+    .auth-form-panel{
+        padding:26px;
+    }
+
+    .auth-box{
+
+        padding:34px 28px;
+
+        border-radius:26px;
+    }
+
+    .auth-box h2{
+
+        font-size:32px;
+    }
+}
+.back-step{
+
+    margin-bottom:22px;
+}
+
+.back-step a{
+
+    color:#46dfff;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:0.25s;
+}
+
+.back-step a:hover{
+
+    opacity:0.8;
+
+    text-decoration:underline;
 }
