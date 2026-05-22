@@ -60,7 +60,7 @@
                 <span class="material-symbols-outlined">account_balance_wallet</span>
 
                 <span class="wallet-amount">
-                    {{ number_format($walletBalance ?? 0, 0, ',', '.') }}₫
+                    {{ number_format($walletBalance ?? 0, 0, ',', '.') }}VND
                 </span>
 
             </a>
@@ -113,8 +113,8 @@
 
             <h4>Hỗ trợ</h4>
 
-            <p>Hotline: 1900 1508</p>
-            <p>Email: support@uavstore.vn</p>
+            <p>Hotline: 0342626836</p>
+            <p>Email: trinhduy@gmail.com</p>
 
         </div>
 

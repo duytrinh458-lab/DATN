@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Review;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,7 +21,8 @@ class ProductController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->latest()->get();
+        // ĐÃ SỬA: Phân trang 10 SP/trang
+        $products = $query->latest()->paginate(10);
 
         return view('User.products.products', compact('products'));
     }
@@ -53,7 +54,6 @@ class ProductController extends Controller
 
         $userId = Auth::id();
 
-        // LẤY ORDER HỢP LỆ
         $order = DB::table('orders')
             ->join('order_items', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.user_id', $userId)
@@ -67,7 +67,6 @@ class ProductController extends Controller
             return back()->with('error', 'Bạn phải mua và nhận hàng trước khi đánh giá!');
         }
 
-        // CHỐNG REVIEW TRÙNG
         $exists = Review::where('user_id', $userId)
             ->where('product_id', $id)
             ->where('order_id', $order->id)
@@ -77,7 +76,6 @@ class ProductController extends Controller
             return back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi!');
         }
 
-        // INSERT REVIEW
         Review::create([
             'user_id'     => $userId,
             'product_id'  => $id,
@@ -90,44 +88,25 @@ class ProductController extends Controller
         return back()->with('success', 'Đã gửi bình luận');
     }
 
-    // ================= UPDATE COMMENT (FIX AJAX) =================
     public function updateComment(Request $request, $id)
     {
-        $request->validate([
-            'comment' => 'required|string|max:1000',
-        ]);
-
-        $review = Review::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->first();
+        $request->validate(['comment' => 'required|string|max:1000']);
+        $review = Review::where('id', $id)->where('user_id', Auth::id())->first();
 
         if (!$review) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy bình luận'
-            ]);
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy bình luận']);
         }
 
         $review->comment = $request->input('comment');
         $review->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật thành công'
-        ]);
+        return response()->json(['success' => true, 'message' => 'Cập nhật thành công']);
     }
 
-    // ================= DELETE COMMENT =================
     public function deleteComment($id)
     {
-        $review = Review::where('id', $id)
-            ->where('user_id', Auth::id())
-            ->first();
-
-        if ($review) {
-            $review->delete();
-        }
-
+        $review = Review::where('id', $id)->where('user_id', Auth::id())->first();
+        if ($review) { $review->delete(); }
         return back()->with('success', 'Đã xóa bình luận');
     }
 
@@ -135,7 +114,6 @@ class ProductController extends Controller
     public function categories()
     {
         $categories = Category::orderBy('id', 'desc')->get();
-
         return view('User.categories.index', compact('categories'));
     }
 
@@ -143,15 +121,13 @@ class ProductController extends Controller
     {
         $category = Category::findOrFail($id);
 
+        // ĐÃ SỬA: Phân trang 10 SP/trang cho danh mục
         $products = Product::with('images')
             ->where('category_id', $id)
             ->where('status', 'active')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
-        return view('User.categories.show', compact(
-            'category',
-            'products'
-        ));
+        return view('User.categories.show', compact('category', 'products'));
     }
 }

@@ -1,6 +1,6 @@
 @extends('User.layouts.app')
 
-@section('title', 'Danh mục')
+@section('title', 'Danh mục UAV')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/categories.css') }}">
@@ -8,24 +8,43 @@
 
 @section('content')
 <div class="categories-viewport">
-    <div class="categories-container">
 
-        <h1 class="categories-title">DANH MỤC UAV</h1>
-        <div class="categories-subtitle">CATEGORY_DATABASE_V1.0</div>
+    <h1 class="categories-title">
+        <span class="material-symbols-outlined">grid_view</span>
+        DATABASE CATEGORY MODULE
+    </h1>
 
-        <div class="categories-grid">
-            @forelse($categories as $cat)
-                <a href="{{ url('/categories/'.$cat->id) }}" class="category-card category-link">
-    
-    <div class="category-name">{{ $cat->name }}</div>
+    <div class="categories-subtitle">
+        SYSTEM_STATUS: ONLINE | CATEGORY_ENGINE_V2.0
+    </div>
 
-    <div class="category-slug">{{ $cat->slug }}</div>
+    <div class="categories-grid">
 
-</a>
-            @empty
-                <div class="empty-state">KHÔNG CÓ DỮ LIỆU</div>
-            @endforelse
-        </div>
+        @forelse($categories as $cat)
+            <a href="{{ route('user.categories.show', $cat->id) }}" class="category-card">
+
+                <div class="category-icon">
+                    <span class="material-symbols-outlined">precision_manufacturing</span>
+                </div>
+
+                <div class="category-name">
+                    {{ $cat->name }}
+                </div>
+
+                <div class="category-count">
+                    {{ $cat->products->count() }} DEVICES CONNECTED
+                </div>
+
+                <div class="access-indicator">
+                    >> ACCESS NODE
+                </div>
+
+            </a>
+        @empty
+            <div class="empty-state">
+                >> SYSTEM ALERT: NO CATEGORY DATA FOUND
+            </div>
+        @endforelse
 
     </div>
 </div>

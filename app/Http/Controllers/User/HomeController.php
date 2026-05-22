@@ -6,38 +6,37 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\News;
-use Illuminate\Support\Facades\Cache; // 💡 Thêm thư viện Cache
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
-    /**
-     * Hiển thị trang chủ phía khách hàng (Đã cải tiến tối ưu Cache)
-     */
     public function index()
-    {
-        // 💡 Áp dụng Cache lưu trữ trong 10 phút để tăng tốc độ phản hồi trang chủ
-        $data = Cache::remember('home_page_data', 600, function () {
-            return [
-                'productCount' => Product::count(),
-                'newsCount'    => News::where('status', 'published')->count(),
-                // Tự động lấy thêm 8 thiết bị UAV mới kích hoạt để hiển thị động ra trang chủ
-                'featuredProducts' => Product::with('images')
-                                            ->where('status', 'active')
-                                            ->orderBy('id', 'desc')
-                                            ->limit(8)
-                                            ->get(),
-                'latestNews'   => News::where('status', 'published')
-                                        ->latest()
-                                        ->limit(3)
-                                        ->get()
-            ];
-        });
+{
+    // BƯỚC 1: Xóa cache cũ để nó update dữ liệu mới
+    \Illuminate\Support\Facades\Cache::forget('home_page_data');
 
-        return view('User.home', [
-            'productCount'     => $data['productCount'],
-            'newsCount'        => $data['newsCount'],
-            'featuredProducts' => $data['featuredProducts'],
-            'latestNews'       => $data['latestNews']
-        ]);
-    }
+    $data = Cache::remember('home_page_data', 600, function () {
+        return [
+            'productCount' => Product::count(),
+            'newsCount'    => class_exists(News::class) ? News::count() : 0,
+            
+            // BƯỚC 2: Sửa điều kiện where ở đây
+            // Chuyển sang lọc theo 'is_featured' = 1
+            'featuredProducts' => Product::with('images')
+                                        ->where('is_featured', 1) 
+                                        ->orderBy('id', 'desc')
+                                        ->limit(4)
+                                        ->get(),
+
+            'latestNews'   => class_exists(News::class) ? News::latest()->limit(3)->get() : collect()
+        ];
+    });
+
+    return view('User.home', [
+        'productCount'     => $data['productCount'],
+        'newsCount'        => $data['newsCount'],
+        'featuredProducts' => $data['featuredProducts'],
+        'latestNews'       => $data['latestNews']
+    ]);
+}
 }
