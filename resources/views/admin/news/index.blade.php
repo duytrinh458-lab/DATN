@@ -3,16 +3,27 @@
 @section('title', 'Quản lý tin tức')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/admin-news.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/news.css') }}">
 @endpush
 
 @section('content')
 
 <div class="news-container">
 
+    {{-- HEADER --}}
     <div class="news-header">
 
-        <h2>Quản lý tin tức</h2>
+        <div>
+
+            <h2>Quản lý tin tức</h2>
+
+            {{-- TOTAL NEWS --}}
+            <div class="news-total">
+                Tổng bài viết:
+                <span><strong>{{ $news->total() }}</strong></span>
+            </div>
+
+        </div>
 
         <a href="{{ route('admin.news.create') }}" class="btn-add">
             + Thêm tin tức
@@ -21,6 +32,7 @@
     </div>
 
 
+    {{-- ALERT SUCCESS --}}
     @if(session('success'))
         <div class="alert-success">
             {{ session('success') }}
@@ -28,6 +40,7 @@
     @endif
 
 
+    {{-- CARD --}}
     <div class="news-card">
 
         <table class="news-table">
@@ -59,10 +72,16 @@
                         <td>
 
                             @if($item->thumbnail)
+
                                 <img src="{{ asset('storage/' . $item->thumbnail) }}"
                                      class="news-image">
+
                             @else
-                                <span class="empty-image">Không có ảnh</span>
+
+                                <span class="empty-image">
+                                    Không có ảnh
+                                </span>
+
                             @endif
 
                         </td>
@@ -90,19 +109,23 @@
                         <td>
 
                             @if($item->status == 'published')
+
                                 <span class="status active">
                                     Đã đăng
                                 </span>
 
                             @elseif($item->status == 'draft')
+
                                 <span class="status inactive">
                                     Nháp
                                 </span>
 
                             @else
+
                                 <span class="status inactive">
                                     Ẩn
                                 </span>
+
                             @endif
 
                         </td>
@@ -112,9 +135,13 @@
                         <td>
 
                             @if($item->published_at)
+
                                 {{ \Carbon\Carbon::parse($item->published_at)->format('d/m/Y H:i') }}
+
                             @else
+
                                 {{ $item->created_at->format('d/m/Y') }}
+
                             @endif
 
                         </td>
@@ -125,16 +152,19 @@
 
                             <div class="action-group">
 
+                                {{-- VIEW --}}
                                 <a href="{{ route('admin.news.show', $item->id) }}"
                                    class="btn-view">
                                     Xem
                                 </a>
 
+                                {{-- EDIT --}}
                                 <a href="{{ route('admin.news.edit', $item->id) }}"
                                    class="btn-edit">
                                     Sửa
                                 </a>
 
+                                {{-- DELETE --}}
                                 <form action="{{ route('admin.news.destroy', $item->id) }}"
                                       method="POST"
                                       onsubmit="return confirm('Bạn có chắc muốn xóa?')">
@@ -142,8 +172,11 @@
                                     @csrf
                                     @method('DELETE')
 
-                                    <button type="submit" class="btn-delete">
+                                    <button type="submit"
+                                            class="btn-delete">
+
                                         Xóa
+
                                     </button>
 
                                 </form>
@@ -173,7 +206,21 @@
 
     {{-- PAGINATION --}}
     <div class="pagination-wrapper">
-        {{ $news->links() }}
+
+        @if ($news->lastPage() > 1)
+
+            {{ $news->onEachSide(1)->links() }}
+
+        @else
+
+            <ul>
+                <li class="active">
+                    <span>1</span>
+                </li>
+            </ul>
+
+        @endif
+
     </div>
 
 </div>

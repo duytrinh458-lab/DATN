@@ -3,7 +3,7 @@
 @section('title', 'Chi tiết tin tức')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/admin-news.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/news.css') }}">
 @endpush
 
 @section('content')

@@ -25,9 +25,12 @@ class ProductController extends Controller
                 'brand'
             ])
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(5); // 🔥 FIX PHÂN TRANG
 
-        return view('Admin.products.index', compact('products'));
+        return view(
+            'Admin.products.index',
+            compact('products')
+        );
     }
 
     // ================= CREATE =================
@@ -394,20 +397,20 @@ class ProductController extends Controller
 
     // ================= USER PRODUCTS =================
 
-    public function products()
-    {
-        $products = Product::with([
-                'images',
-                'category',
-                'brand'
-            ])
-            ->where('status', 'active')
-            ->orderBy('id', 'desc')
-            ->paginate(12);
+    // public function products()
+    // {
+    //     $products = Product::with([
+    //             'images',
+    //             'category',
+    //             'brand'
+    //         ])
+    //         ->where('status', 'active')
+    //         ->orderBy('id', 'desc')
+    //         ->paginate(3);
 
-        return view(
-            'User.products',
-            compact('products')
-        );
-    }
+    //     return view(
+    //         'User.products',
+    //         compact('products')
+    //     );
+    // }
 }

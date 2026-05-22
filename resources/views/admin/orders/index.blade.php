@@ -3,7 +3,7 @@
 @section('title', 'Quản lý đơn hàng - Vanguard UAV')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/orders.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/admin-orders.css') }}">
 @endpush
 
 @section('content')
@@ -11,28 +11,44 @@
 <header class="admin-header">
 
     <div class="header-info">
+
         <h1>Quản lý đơn hàng</h1>
 
         <p>
             Theo dõi và xử lý các giao dịch hệ thống
         </p>
+
+        {{-- TOTAL ORDERS --}}
+        <div class="total-orders">
+            Tổng đơn hàng:
+            <span>{{ $orders->total() }}</span>
+        </div>
+
     </div>
 
 </header>
 
 @if(session('success'))
+
     <div class="alert success-alert">
+
         <i class="fas fa-check-circle"></i>
+
         {{ session('success') }}
+
     </div>
+
 @endif
+
 
 <div class="table-container shadow-premium">
 
     <div class="table-header-box">
+
         <h2 class="card-title">
             Danh sách vận đơn
         </h2>
+
     </div>
 
     <div class="table-responsive">
@@ -40,6 +56,7 @@
         <table class="uav-table">
 
             <thead>
+
                 <tr>
                     <th width="90">ID</th>
                     <th>Khách hàng</th>
@@ -49,6 +66,7 @@
                     <th>Ngày tạo</th>
                     <th class="center">Hành động</th>
                 </tr>
+
             </thead>
 
             <tbody>
@@ -59,12 +77,15 @@
 
                     {{-- ID --}}
                     <td>
+
                         <span class="user-id">
                             #{{ $order->id }}
                         </span>
+
                     </td>
 
-                    {{-- KHÁCH HÀNG --}}
+
+                    {{-- CUSTOMER --}}
                     <td>
 
                         <div class="user-box">
@@ -77,6 +98,7 @@
 
                     </td>
 
+
                     {{-- PHONE --}}
                     <td>
 
@@ -86,6 +108,7 @@
 
                     </td>
 
+
                     {{-- TOTAL --}}
                     <td>
 
@@ -94,6 +117,7 @@
                         </span>
 
                     </td>
+
 
                     {{-- STATUS --}}
                     <td class="center">
@@ -105,6 +129,7 @@
                         </span>
 
                     </td>
+
 
                     {{-- DATE --}}
                     <td>
@@ -118,6 +143,7 @@
                         </span>
 
                     </td>
+
 
                     {{-- ACTION --}}
                     <td class="center">
@@ -162,6 +188,26 @@
         </table>
 
     </div>
+
+</div>
+
+
+{{-- PAGINATION --}}
+<div class="pagination-wrapper">
+
+    @if ($orders->lastPage() > 1)
+
+        {{ $orders->onEachSide(1)->links() }}
+
+    @else
+
+        <ul>
+            <li class="active">
+                <span>1</span>
+            </li>
+        </ul>
+
+    @endif
 
 </div>
 

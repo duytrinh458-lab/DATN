@@ -3,7 +3,7 @@
 @section('title', 'Chi tiết đơn hàng #' . $order->id)
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/orders.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/admin-orders.css') }}">
 @endpush
 
 @section('content')

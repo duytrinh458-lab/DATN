@@ -1,0 +1,542 @@
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#f6f8fc;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#111827;
+}
+
+
+/* =========================
+   COMMON CONTAINER
+========================= */
+
+.product-list,
+.product-create,
+.product-edit{
+    width:100%;
+    padding:25px;
+}
+
+
+/* =========================
+   PAGE HEADER
+========================= */
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:15px;
+    margin-bottom:22px;
+    flex-wrap:wrap;
+}
+
+.page-header h1{
+    font-size:28px;
+    font-weight:700;
+    color:#111827;
+    margin-bottom:6px;
+}
+
+.page-header p{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.product-total{
+    margin-top:6px;
+    font-size:14px;
+    color:#64748b;
+}
+
+.product-total span{
+    color:#2563eb;
+    font-weight:700;
+}
+
+
+/* =========================
+   HEADER ACTIONS
+========================= */
+
+.header-actions,
+.actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn-add,
+.btn-back,
+.btn-primary,
+.btn-secondary,
+.btn-edit,
+.btn-delete{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    padding:10px 16px;
+
+    border:none;
+    border-radius:8px;
+
+    font-size:14px;
+    font-weight:600;
+
+    text-decoration:none;
+    cursor:pointer;
+
+    transition:all .25s ease;
+}
+
+/* add */
+.btn-add,
+.btn-primary{
+    background:#2563eb;
+    color:#fff;
+}
+
+.btn-add:hover,
+.btn-primary:hover{
+    background:#1d4ed8;
+}
+
+/* back */
+.btn-back,
+.btn-secondary{
+    background:#e5e7eb;
+    color:#111827;
+}
+
+.btn-back:hover,
+.btn-secondary:hover{
+    background:#d1d5db;
+}
+
+/* edit */
+.btn-edit{
+    background:#f59e0b;
+    color:#fff;
+}
+
+.btn-edit:hover{
+    background:#d97706;
+}
+
+/* delete */
+.btn-delete{
+    background:#ef4444;
+    color:#fff;
+}
+
+.btn-delete:hover{
+    background:#dc2626;
+}
+
+
+/* =========================
+   CARD / FORM CONTAINER
+========================= */
+
+.form-container,
+.table-wrapper,
+.product-card{
+    background:#fff;
+    border-radius:14px;
+    padding:22px;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+
+/* =========================
+   FORM GRID
+========================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:18px;
+}
+
+.full-width{
+    grid-column:span 2;
+}
+
+
+/* =========================
+   FORM GROUP
+========================= */
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:14px;
+    font-weight:600;
+    color:#374151;
+    margin-bottom:7px;
+}
+
+
+/* =========================
+   INPUT GROUP
+========================= */
+
+.input-group{
+    position:relative;
+    width:100%;
+}
+
+.input-group i{
+    position:absolute;
+    top:50%;
+    left:12px;
+    transform:translateY(-50%);
+    color:#9ca3af;
+    font-size:13px;
+}
+
+
+/* =========================
+   FORM CONTROL
+========================= */
+
+.form-control{
+    width:100%;
+    padding:11px 12px 11px 38px;
+
+    border:1px solid #d1d5db;
+    border-radius:8px;
+
+    font-size:14px;
+    outline:none;
+
+    transition:.2s ease;
+}
+
+.form-control:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+textarea.form-control{
+    min-height:120px;
+    resize:vertical;
+    padding-left:12px;
+}
+
+
+/* =========================
+   FILE UPLOAD
+========================= */
+
+.file-upload{
+    position:relative;
+    border:2px dashed #d1d5db;
+    border-radius:10px;
+    padding:22px;
+    background:#fafafa;
+    text-align:center;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.file-upload:hover{
+    border-color:#2563eb;
+    background:#eff6ff;
+}
+
+.file-upload input{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    opacity:0;
+    cursor:pointer;
+}
+
+.file-preview{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.file-preview i{
+    display:block;
+    margin-bottom:8px;
+    font-size:26px;
+}
+
+
+/* =========================
+   FORM ACTIONS
+========================= */
+
+.form-actions{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+    flex-wrap:wrap;
+}
+
+
+/* =========================
+   ALERT
+========================= */
+
+.alert-success{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #bbf7d0;
+    padding:14px 16px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.alert-error{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+    padding:14px 16px;
+    border-radius:8px;
+    margin-bottom:20px;
+}
+
+.alert-error ul{
+    margin-left:18px;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrapper{
+    overflow-x:auto;
+}
+
+.product-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+}
+
+.product-table thead{
+    background:#111827;
+}
+
+.product-table thead th{
+    color:#fff;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+.product-table tbody td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+    vertical-align:middle;
+}
+
+.product-table tbody tr:hover{
+    background:#f9fafb;
+}
+
+
+/* =========================
+   PRODUCT IMAGE
+========================= */
+
+.product-image{
+    width:65px;
+    height:65px;
+    object-fit:cover;
+    border-radius:8px;
+    border:1px solid #ddd;
+}
+
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.action-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+
+/* =========================
+   PAGINATION
+========================= */
+
+.pagination-wrapper{
+    display:flex;
+    justify-content:center;
+    margin-top:35px;
+}
+
+.pagination-wrapper nav{
+    width:100%;
+    display:flex;
+    justify-content:center;
+}
+
+.pagination-wrapper .pagination{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    list-style:none;
+    padding:0;
+    margin:0;
+
+    flex-wrap:wrap;
+}
+
+.pagination-wrapper .page-item{
+    list-style:none;
+}
+
+.pagination-wrapper .page-link{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#1f2937;
+    border:1px solid #2b3545;
+
+    border-radius:6px;
+
+    color:#e5e7eb;
+    text-decoration:none;
+
+    font-size:14px;
+    font-weight:600;
+
+    transition:all .2s ease;
+}
+
+/* hover */
+.pagination-wrapper .page-link:hover{
+    background:#374151;
+    border-color:#4b5563;
+    color:#fff;
+}
+
+/* active */
+.pagination-wrapper .active .page-link{
+    background:#dc2626;
+    border-color:#dc2626;
+    color:#fff;
+}
+
+/* disabled */
+.pagination-wrapper .disabled .page-link{
+    background:#1f2937;
+    border-color:#2b3545;
+    color:#6b7280;
+
+    opacity:1;
+    cursor:not-allowed;
+}
+
+/* hide previous & next */
+.pagination-wrapper .page-item:first-child,
+.pagination-wrapper .page-item:last-child{
+    display:none;
+}
+
+/* hide showing text */
+.pagination-wrapper p,
+.pagination-wrapper .text-sm{
+    display:none !important;
+}
+
+
+/* =========================
+   EMPTY TABLE
+========================= */
+
+.empty-table{
+    text-align:center;
+    padding:30px !important;
+    color:#6b7280;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+    .product-list,
+    .product-create,
+    .product-edit{
+        padding:18px;
+    }
+
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .page-header h1{
+        font-size:24px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full-width{
+        grid-column:span 1;
+    }
+
+    .table-wrapper{
+        overflow-x:auto;
+    }
+
+    .product-table{
+        min-width:800px;
+    }
+
+    .pagination-wrapper{
+        margin-top:28px;
+    }
+
+    .pagination-wrapper .pagination{
+        gap:6px;
+    }
+
+    .pagination-wrapper .page-link{
+        width:36px;
+        height:36px;
+        font-size:13px;
+    }
+
+}
