@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+
+use App\Models\Order;
+use App\Models\Refund;
+use App\Models\Transaction;
 
 use App\Http\Controllers\AuthController;
 
@@ -28,6 +34,31 @@ use App\Http\Middleware\AdminMiddleware;
 
 /*
 |--------------------------------------------------------------------------
+| GLOBAL BADGE (ADMIN + USER)
+|--------------------------------------------------------------------------
+*/
+View::composer('*', function ($view) {
+
+    $user = Auth::user();
+
+    if (!$user) {
+        $view->with([
+            'orderPendingCount' => 0,
+            'refundPendingCount' => 0,
+            'transactionPendingCount' => 0,
+        ]);
+        return;
+    }
+
+    $view->with([
+        'orderPendingCount' => Order::where('status', 'pending')->count(),
+        'refundPendingCount' => Refund::where('status', 'pending')->count(),
+        'transactionPendingCount' => Transaction::where('status', 'pending')->count(),
+    ]);
+});
+
+/*
+|--------------------------------------------------------------------------
 | ROOT
 |--------------------------------------------------------------------------
 */
@@ -47,30 +78,23 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/forgot', 'showForgot')->name('forgot');
 
     Route::post('/login', 'login');
-
     Route::post('/send-otp-register', 'sendOtpRegister');
     Route::post('/verify-otp-register', 'verifyOtpRegister');
-
     Route::post('/forgot-password/send-otp', 'sendOtpForgotPassword');
     Route::post('/forgot-password/verify-otp', 'verifyOtpForgotPassword');
 
     Route::get('/change-password', 'showChangePasswordForm')->name('password.change');
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
+
     Route::get('/register/reset-phone', function () {
+        session()->forget('phone_step1');
+        return redirect('/register');
+    });
 
-    session()->forget('phone_step1');
-
-    return redirect('/register');
-
-});
-
-Route::get('/forgot-password/reset-session', function () {
-
-    session()->forget('forgot_phone');
-
-    return redirect('/forgot');
-
-});
+    Route::get('/forgot-password/reset-session', function () {
+        session()->forget('forgot_phone');
+        return redirect('/forgot');
+    });
 });
 
 /*
@@ -106,8 +130,6 @@ Route::prefix('admin')
 
         Route::resource('products', AdminProductController::class)->except(['show']);
         Route::resource('categories', CategoryController::class);
-
-        // NEWS ADMIN
         Route::resource('news', NewsController::class);
 
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
@@ -126,10 +148,11 @@ Route::prefix('admin')
             Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
             Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
             Route::post('/comments/reply', [InteractionController::class, 'replyComment'])->name('comments.reply');
-
             Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
             Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
+
         });
+
     });
 
 /*
@@ -142,29 +165,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     Route::get('/products', [ProductController::class, 'products'])->name('user.products');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('user.products.detail');
 
-
-Route::get('/products/{id}', [ProductController::class, 'show'])
-    ->name('user.products.detail');
-
-// COMMENT
-Route::post('/products/{id}/comment', [ProductController::class, 'storeComment'])
-    ->name('user.comment.store');
-
-Route::post('/comment/update/{id}', [ProductController::class, 'updateComment'])
-    ->name('user.comment.update');
-
-Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])
-    ->name('user.comment.delete');
+    Route::post('/products/{id}/comment', [ProductController::class, 'storeComment'])->name('user.comment.store');
+    Route::post('/comment/update/{id}', [ProductController::class, 'updateComment'])->name('user.comment.update');
+    Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])->name('user.comment.delete');
 
     Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
     Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
 
-    /*
-    |--------------------------------------------------------------------------
-    | NEWS USER (ĐÃ THÊM - QUAN TRỌNG)
-    |--------------------------------------------------------------------------
-    */
     Route::get('/news', [UserNewsController::class, 'index'])->name('user.news.index');
     Route::get('/news/{slug}', [UserNewsController::class, 'show'])->name('user.news.show');
 
@@ -185,48 +194,19 @@ Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{id}', [OrderController::class, 'show'])->name('show');
         Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
-
         Route::get('/{id}/refund', [OrderController::class, 'showRefundForm'])->name('refund');
         Route::post('/{id}/refund', [OrderController::class, 'submitRefund'])->name('refund.submit');
     });
 
     Route::prefix('profile')->name('user.profile.')->group(function () {
-
-    Route::get('/', [ProfileController::class, 'index'])->name('index');
-
-    Route::post('/update', [ProfileController::class, 'update'])->name('update');
-
-    /*
-    |--------------------------------------------------------------------------
-    | ADDRESS
-    |--------------------------------------------------------------------------
-    */
-
-    // Thêm địa chỉ
-    Route::post('/address/store', [ProfileController::class, 'storeAddress'])
-        ->name('address.store');
-
-    // Lấy dữ liệu JSON để sửa bằng AJAX
-    Route::get('/address/{id}/json', [ProfileController::class, 'getAddressJson'])
-        ->name('address.json');
-
-    // Update địa chỉ
-    Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])
-        ->name('address.update');
-
-    // Xóa địa chỉ
-    Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])
-        ->name('address.destroy');
-
-    // Đặt mặc định
-    Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])
-        ->name('address.setDefault');
-});
+        Route::get('/', [ProfileController::class, 'index'])->name('index');
+        Route::post('/update', [ProfileController::class, 'update'])->name('update');
+    });
 
     Route::prefix('wallet')->name('user.wallet.')->group(function () {
-
         Route::get('/', [WalletController::class, 'index'])->name('index');
         Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
         Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
     });
+
 });

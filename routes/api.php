@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\ProductApiController;
@@ -26,7 +27,7 @@ Route::post('/login', [AuthApiController::class, 'login']);
 Route::post('/forgot-password', [AuthApiController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthApiController::class, 'resetPassword']);
 
-// Lấy dữ liệu công khai (Sản phẩm, Danh mục, Tin tức)
+// Lấy dữ liệu công khai
 Route::get('/get_list_products', [ProductApiController::class, 'index']);
 Route::get('/get_list_categories', [ProductApiController::class, 'categories']);
 Route::get('/get_list_brands', [ProductApiController::class, 'brands']);
@@ -37,70 +38,71 @@ Route::get('/get_list_news', [NewsApiController::class, 'index']);
 Route::get('/news_detail/{id}', [NewsApiController::class, 'show']);
 
 // ==========================================
-// USER ROUTES (Cần đăng nhập)
+// USER ROUTES (CẦN ĐĂNG NHẬP)
 // ==========================================
 Route::middleware('auth:sanctum')->group(function () {
-    // Đăng xuất & Đổi mật khẩu
+
+    // Logout & đổi mật khẩu
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::post('/change-password', [AuthApiController::class, 'changePassword']);
 
-    // Hồ sơ cá nhân
+    // Profile
     Route::get('/profile', [ProfileApiController::class, 'show']);
     Route::post('/profile/update', [ProfileApiController::class, 'update']);
     Route::post('/profile/update-avatar', [ProfileApiController::class, 'updateAvatar']);
     Route::post('/profile/notification-settings', [ProfileApiController::class, 'updateNotificationSettings']);
 
-    // Quản lý địa chỉ
+    // Address
     Route::get('/addresses', [AddressApiController::class, 'index']);
     Route::post('/addresses', [AddressApiController::class, 'store']);
     Route::put('/addresses/{id}', [AddressApiController::class, 'update']);
     Route::delete('/addresses/{id}', [AddressApiController::class, 'destroy']);
     Route::post('/shipping-fee', [AddressApiController::class, 'calculateShippingFee']);
 
-    // Ví V-Pay
+    // Wallet
     Route::get('/wallet/balance', [WalletApiController::class, 'balance']);
     Route::get('/wallet/history', [WalletApiController::class, 'history']);
     Route::post('/wallet/deposit', [WalletApiController::class, 'deposit']);
 
-    // Giỏ hàng
+    // Cart
     Route::get('/cart', [CartApiController::class, 'index']);
     Route::post('/cart/add', [CartApiController::class, 'add']);
     Route::put('/cart/update/{id}', [CartApiController::class, 'update']);
     Route::delete('/cart/remove/{id}', [CartApiController::class, 'remove']);
     Route::post('/cart/clear', [CartApiController::class, 'clear']);
 
-    // Đơn hàng
+    // Orders
     Route::get('/orders', [OrderApiController::class, 'index']);
     Route::get('/orders/{id}', [OrderApiController::class, 'show']);
     Route::post('/orders/place', [OrderApiController::class, 'placeOrder']);
     Route::post('/orders/{id}/cancel', [OrderApiController::class, 'cancelOrder']);
     Route::post('/orders/{id}/refund', [OrderApiController::class, 'requestRefund']);
 
-    // Thông báo (Notifications)
+    // Notifications
     Route::get('/notifications', [NotificationApiController::class, 'index']);
     Route::post('/notifications/read', [NotificationApiController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [NotificationApiController::class, 'markAllAsRead']);
 });
 
 // ==========================================
-// ADMIN ROUTES (ĐÃ VÁ LỖI: Cần check quyền Admin)
+// ADMIN ROUTES (CẦN QUYỀN ADMIN)
 // ==========================================
 Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
-    // Thống kê
+
     Route::get('/admin/dashboard', [AdminDashboardApiController::class, 'dashboard']);
 
-    // Quản lý User
+    // Users
     Route::get('/admin/users', [UserApiController::class, 'index']);
     Route::get('/admin/users/{id}', [UserApiController::class, 'show']);
     Route::post('/admin/users', [UserApiController::class, 'store']);
     Route::put('/admin/users/{id}', [UserApiController::class, 'update']);
     Route::delete('/admin/users/{id}', [UserApiController::class, 'destroy']);
 
-    // Quản lý Sản phẩm (Thêm/Sửa/Xóa)
+    // Products
     Route::post('/add_products', [ProductApiController::class, 'store']);
     Route::put('/edit_products/{id}', [ProductApiController::class, 'update']);
     Route::delete('/del_products/{id}', [ProductApiController::class, 'destroy']);
 
-    // Quản lý Đơn hàng
+    // Orders
     Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'updateStatus']);
 });

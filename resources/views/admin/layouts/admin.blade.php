@@ -5,94 +5,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin — UAV Store')</title>
 
-    {{-- CSS --}}
-    <link rel="stylesheet" href="{{ asset('Css/Admin/admin-layout.css') }}">
-    <!-- <link rel="stylesheet" href="{{ asset('Css/Admin/admin.css') }}"> -->
+    <link rel="stylesheet" href="{{ asset('Css/Admin/test-layout.css') }}">
 
-    {{-- Font Awesome --}}
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     @stack('styles')
 </head>
+
 <body>
 
 <aside class="admin-sidebar">
 
-    {{-- LOGO --}}
     <div class="sidebar-brand">
         <div class="logo-text">UAV ADMIN</div>
         <div class="logo-sub">Control Panel</div>
     </div>
 
-    {{-- MENU --}}
     <div class="sidebar-menu">
 
-        {{-- TỔNG QUAN --}}
+        {{-- DASHBOARD --}}
         <div class="sidebar-dropdown">
-
             <button class="dropdown-toggle active">
-                <span>
-                    <i class="fa-solid fa-chart-line"></i>
-                    Tổng quan
-                </span>
-
+                <span><i class="fa-solid fa-chart-line"></i> Tổng quan</span>
                 <i class="fa-solid fa-chevron-down dropdown-icon"></i>
             </button>
 
             <div class="dropdown-menu show">
-
                 <a href="{{ route('admin.dashboard') }}"
                    class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-gauge-high"></i>
-                    Dashboard
+                    <div class="menu-left">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Dashboard</span>
+                    </div>
                 </a>
-
             </div>
         </div>
 
         {{-- QUẢN LÝ --}}
         <div class="sidebar-dropdown">
-
             <button class="dropdown-toggle">
-                <span>
-                    <i class="fa-solid fa-layer-group"></i>
-                    Quản lý
-                </span>
-
+                <span><i class="fa-solid fa-layer-group"></i> Quản lý</span>
                 <i class="fa-solid fa-chevron-down dropdown-icon"></i>
             </button>
 
             <div class="dropdown-menu">
 
-                <a href="{{ route('admin.products.index') }}"
-                   class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-drone"></i>
-                    Sản phẩm
+                <a href="{{ route('admin.products.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-box-open"></i>
+                        <span>Sản phẩm</span>
+                    </div>
                 </a>
 
-                <a href="{{ route('admin.categories.index') }}"
-                   class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-folder-tree"></i>
-                    Danh mục
+                <a href="{{ route('admin.orders.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-box"></i>
+                        <span>Đơn hàng</span>
+                    </div>
+
+                    <span class="menu-badge" id="badge-orders"></span>
                 </a>
 
-                <a href="{{ route('admin.orders.index') }}"
-                   class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-box"></i>
-                    Đơn hàng
+                <a href="{{ route('admin.refunds.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Đơn hoàn trả</span>
+                    </div>
+
+                    <span class="menu-badge" id="badge-refunds"></span>
                 </a>
 
-                <a href="{{ route('admin.refunds.index') }}"
-                   class="{{ request()->routeIs('admin.refunds.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Đơn đã hoàn
-                </a>
-
-                <a href="{{ route('admin.users.index') }}"
-                   class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-users"></i>
-                    Người dùng
+                <a href="{{ route('admin.users.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Người dùng</span>
+                    </div>
                 </a>
 
             </div>
@@ -100,28 +88,28 @@
 
         {{-- NỘI DUNG --}}
         <div class="sidebar-dropdown">
-
             <button class="dropdown-toggle">
-                <span>
-                    <i class="fa-solid fa-newspaper"></i>
-                    Nội dung
-                </span>
-
-                <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                <span><i class="fa-solid fa-newspaper"></i> Nội dung</span>
             </button>
 
             <div class="dropdown-menu">
 
-                <a href="{{ route('admin.news.index') }}"
-                   class="{{ request()->routeIs('admin.news.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-newspaper"></i>
-                    Tin tức
+                <a href="{{ route('admin.news.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-newspaper"></i>
+                        <span>Tin tức</span>
+                    </div>
+
+                    <span class="menu-badge" id="badge-news"></span>
                 </a>
 
-                <a href="{{ route('admin.interactions.comments') }}"
-                   class="{{ request()->routeIs('admin.interactions.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-comments"></i>
-                    Bình luận
+                <a href="{{ route('admin.interactions.comments') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-comments"></i>
+                        <span>Bình luận</span>
+                    </div>
+
+                    <span class="menu-badge" id="badge-comments"></span>
                 </a>
 
             </div>
@@ -129,113 +117,132 @@
 
         {{-- TÀI CHÍNH --}}
         <div class="sidebar-dropdown">
-
             <button class="dropdown-toggle">
-                <span>
-                    <i class="fa-solid fa-wallet"></i>
-                    Tài chính
-                </span>
-
-                <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+                <span><i class="fa-solid fa-wallet"></i> Tài chính</span>
             </button>
 
             <div class="dropdown-menu">
 
-                <a href="{{ route('admin.transactions.index') }}"
-                   class="{{ request()->routeIs('admin.transactions.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-wallet"></i>
-                    Giao dịch V-Pay
-                </a>
+                <a href="{{ route('admin.transactions.index') }}">
+                    <div class="menu-left">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>Giao dịch V-Pay</span>
+                    </div>
 
-                <a href="{{ route('admin.qr.index') }}"
-                   class="{{ request()->routeIs('admin.qr.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-qrcode"></i>
-                    Cài QR Bank
+                    <span class="menu-badge" id="badge-transactions"></span>
                 </a>
 
             </div>
         </div>
-
-    </div>
-
-    {{-- FOOTER --}}
-    <div class="sidebar-footer">
-
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-
-            <button type="submit" class="sidebar-btn">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Đăng xuất
-            </button>
-        </form>
 
     </div>
 
 </aside>
 
-{{-- ============ MAIN CONTENT ============ --}}
 <div class="admin-body">
 
-    {{-- TOPBAR --}}
     <header class="admin-topbar">
-
-        <div class="topbar-title">
-            @yield('title', 'Dashboard')
-        </div>
+        <div class="topbar-title">@yield('title','Dashboard')</div>
 
         <div class="topbar-right">
-
-            <div class="admin-name">
-                {{ auth()->user()->full_name ?? 'Admin' }}
-            </div>
-
-            <div class="admin-avatar">
-                {{ strtoupper(substr(auth()->user()->full_name ?? 'A', 0, 1)) }}
-            </div>
-
+            <div>{{ auth()->user()->full_name ?? 'Admin' }}</div>
         </div>
-
     </header>
 
-    {{-- CONTENT --}}
     <main class="admin-main">
         @yield('content')
     </main>
 
 </div>
 
-@stack('scripts')
-
-</body>
-
 <script>
-document.querySelectorAll('.sidebar-dropdown').forEach(dropdown => {
 
-    const toggle = dropdown.querySelector('.dropdown-toggle');
-    const menu = dropdown.querySelector('.dropdown-menu');
+/* =========================================
+   DROPDOWN SIDEBAR
+========================================= */
+document.addEventListener('DOMContentLoaded', function () {
 
-    // CLICK DROPDOWN
-    toggle.addEventListener('click', () => {
+    const dropdowns = document.querySelectorAll('.sidebar-dropdown');
 
-        toggle.classList.toggle('active');
+    dropdowns.forEach(dropdown => {
 
-        menu.classList.toggle('show');
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+
+        if (!toggle || !menu) return;
+
+        toggle.addEventListener('click', function () {
+
+            // toggle active state
+            toggle.classList.toggle('active');
+
+            // toggle menu show/hide
+            menu.classList.toggle('show');
+
+        });
 
     });
 
-    // AUTO ACTIVE IF CHILD ACTIVE
-    const activeChild = menu.querySelector('a.active');
+});
 
-    if (activeChild) {
 
-        toggle.classList.add('active');
+/* =========================================
+   BADGE UPDATE UI
+========================================= */
+function updateBadge(id, value)
+{
+    const el = document.getElementById(id);
+    if (!el) return;
 
-        menu.classList.add('show');
-
+    if (value > 0) {
+        el.style.display = 'inline-flex';
+        el.innerText = value > 9 ? '9+' : value;
+    } else {
+        el.style.display = 'none';
     }
+}
+
+
+/* =========================================
+   LOAD BADGES FROM API
+========================================= */
+function loadBadges()
+{
+    fetch("{{ url('/admin/badges') }}", {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        updateBadge('badge-orders', data.pendingOrders ?? 0);
+        updateBadge('badge-refunds', data.pendingRefunds ?? 0);
+        updateBadge('badge-comments', data.pendingComments ?? 0);
+        updateBadge('badge-transactions', data.pendingTransactions ?? 0);
+        updateBadge('badge-news', data.draftNews ?? 0);
+
+    })
+    .catch(error => {
+        console.log('Badge load error:', error);
+    });
+}
+
+
+/* =========================================
+   INIT
+========================================= */
+document.addEventListener('DOMContentLoaded', function () {
+
+    loadBadges();
+
+    // refresh mỗi 5 giây
+    setInterval(loadBadges, 5000);
 
 });
+
 </script>
 
+</body>
 </html>
