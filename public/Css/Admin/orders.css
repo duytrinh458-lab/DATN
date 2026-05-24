@@ -401,7 +401,7 @@ textarea:focus{
 
 .btn,
 .action-btn,
-button{
+.order-action-btn{
     display:inline-flex;
     align-items:center;
     justify-content:center;
@@ -428,7 +428,7 @@ button{
 
 .btn-update,
 .btn-primary,
-button[type="submit"]{
+.order-submit-btn{
     background:linear-gradient(135deg,#2563eb,#3b82f6);
     color:#fff !important;
 
@@ -439,7 +439,7 @@ button[type="submit"]{
 
 .btn-update:hover,
 .btn-primary:hover,
-button[type="submit"]:hover{
+.order-submit-btn:hover{
     transform:translateY(-3px);
 
     box-shadow:
@@ -525,7 +525,8 @@ button[type="submit"]:hover{
 ========================================= */
 
 .btn i,
-button i{
+.action-btn i,
+.order-action-btn i{
     font-size:14px;
 }
 
@@ -534,7 +535,8 @@ button i{
 ========================================= */
 
 .btn:disabled,
-button:disabled{
+.action-btn:disabled,
+.order-action-btn:disabled{
     opacity:.6 !important;
     cursor:not-allowed;
     transform:none !important;

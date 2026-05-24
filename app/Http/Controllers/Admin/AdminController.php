@@ -766,8 +766,9 @@ public function updateRefundStatus(
         DB::commit();
 
         return back()->with(
-            'success',
-            'Đã xử lý hoàn hàng thành công!'
+    'success',
+    'Đã xử lý yêu cầu hoàn tiền'
+
         );
 
     } catch (\Exception $e) {

@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\Refund;
+use App\Models\Review;
 use App\Models\Transaction;
+use App\Models\News;
 
 use App\Http\Controllers\AuthController;
 
@@ -43,19 +46,63 @@ View::composer('*', function ($view) {
     $user = Auth::user();
 
     if (!$user) {
+
         $view->with([
             'orderPendingCount' => 0,
             'refundPendingCount' => 0,
             'transactionPendingCount' => 0,
+            'commentPendingCount' => 0,
+            'newsDraftCount' => 0,
         ]);
+
         return;
     }
 
     $view->with([
-        'orderPendingCount' => Order::where('status', 'pending')->count(),
-        'refundPendingCount' => Refund::where('status', 'pending')->count(),
-        'transactionPendingCount' => Transaction::where('status', 'pending')->count(),
+
+        'orderPendingCount' =>
+            Order::where('status', 'pending')->count(),
+
+        'refundPendingCount' =>
+            Refund::where('status', 'pending')->count(),
+
+        'transactionPendingCount' =>
+            Transaction::where('status', 'pending')->count(),
+
+        // FIXED
+        'commentPendingCount' =>
+            Review::where('is_approved', 0)->count(),
+
+        'newsDraftCount' =>
+            News::where('status', 'draft')->count(),
+
     ]);
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN BADGE API
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', AdminMiddleware::class])
+    ->get('/admin/badges', function () {
+
+    return response()->json([
+
+    'pendingOrders' => Order::where('status', 'pending')->count(),
+
+    'pendingRefunds' => Refund::where('status', 'pending')->count(),
+
+    'pendingComments' => Review::where('is_read', 0)->count(),
+
+    'pendingTransactions' => Transaction::where('status', 'pending')->count(),
+
+    'draftNews' => News::where('status', 'draft')->count(),
+
+    'lowStockProducts' => Product::where('stock', '<=', 5)->count(),
+
+]);
+
 });
 
 /*
@@ -104,8 +151,11 @@ Route::controller(AuthController::class)->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::post('/logout', function () {
+
     Auth::logout();
+
     return redirect()->route('login');
+
 })->name('logout');
 
 /*
@@ -118,41 +168,126 @@ Route::prefix('admin')
     ->middleware(['auth', AdminMiddleware::class])
     ->group(function () {
 
-        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/', [AdminController::class, 'dashboard'])
+            ->name('dashboard');
 
-        Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])->name('qr.index');
-        Route::post('/settings/qr', [AdminController::class, 'updateQR'])->name('qr.update');
+        /*
+        |--------------------------------------------------------------------------
+        | QR SETTINGS
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/settings/qr', [AdminController::class, 'showQRSettings'])
+            ->name('qr.index');
 
-        Route::get('/transactions', [AdminController::class, 'transactions'])->name('transactions.index');
-        Route::post('/transactions/{id}/update-status', [AdminController::class, 'updateTransactionStatus'])->name('transactions.updateStatus');
+        Route::post('/settings/qr', [AdminController::class, 'updateQR'])
+            ->name('qr.update');
 
-        Route::get('/refunds', [AdminController::class, 'refunds'])->name('refunds.index');
-        Route::post('/refunds/{id}/update-status', [AdminController::class, 'updateRefundStatus'])->name('refunds.updateStatus');
+        /*
+        |--------------------------------------------------------------------------
+        | TRANSACTIONS
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/transactions', [AdminController::class, 'transactions'])
+            ->name('transactions.index');
 
-        Route::resource('products', AdminProductController::class)->except(['show']);
+        Route::post('/transactions/{id}/update-status',
+            [AdminController::class, 'updateTransactionStatus'])
+            ->name('transactions.updateStatus');
+
+        /*
+        |--------------------------------------------------------------------------
+        | REFUNDS
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/refunds', [AdminController::class, 'refunds'])
+            ->name('refunds.index');
+
+        Route::post('/refunds/{id}/update-status',
+            [AdminController::class, 'updateRefundStatus'])
+            ->name('refunds.updateStatus');
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRODUCTS / CATEGORIES / NEWS
+        |--------------------------------------------------------------------------
+        */
+        Route::resource('products', AdminProductController::class)
+            ->except(['show']);
+
         Route::resource('categories', CategoryController::class);
+
         Route::resource('news', NewsController::class);
 
-        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
-        Route::post('/orders/{id}/update', [AdminOrderController::class, 'update'])->name('orders.update');
+        /*
+        |--------------------------------------------------------------------------
+        | ORDERS
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/orders',
+            [AdminOrderController::class, 'index'])
+            ->name('orders.index');
 
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/orders/{id}',
+            [AdminOrderController::class, 'show'])
+            ->name('orders.show');
 
-        Route::prefix('interactions')->name('interactions.')->group(function () {
+        Route::post('/orders/{id}/update',
+            [AdminOrderController::class, 'update'])
+            ->name('orders.update');
 
-            Route::get('/comments', [InteractionController::class, 'comments'])->name('comments');
-            Route::delete('/comments/{id}', [InteractionController::class, 'deleteComment'])->name('comments.delete');
-            Route::post('/comments/reply', [InteractionController::class, 'replyComment'])->name('comments.reply');
-            Route::get('/likes', [InteractionController::class, 'likes'])->name('likes');
-            Route::get('/ratings', [InteractionController::class, 'ratings'])->name('ratings');
+        /*
+        |--------------------------------------------------------------------------
+        | USERS
+        |--------------------------------------------------------------------------
+        */
+        Route::get('/users', [UserController::class, 'index'])
+            ->name('users.index');
 
-        });
+        Route::get('/users/create', [UserController::class, 'create'])
+            ->name('users.create');
+
+        Route::post('/users', [UserController::class, 'store'])
+            ->name('users.store');
+
+        Route::get('/users/{id}', [UserController::class, 'show'])
+            ->name('users.show');
+
+        Route::put('/users/{id}', [UserController::class, 'update'])
+            ->name('users.update');
+
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])
+            ->name('users.destroy');
+
+        /*
+        |--------------------------------------------------------------------------
+        | INTERACTIONS
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('interactions')
+            ->name('interactions.')
+            ->group(function () {
+
+                Route::get('/comments',
+                    [InteractionController::class, 'comments'])
+                    ->name('comments');
+
+                Route::delete('/comments/{id}',
+                    [InteractionController::class, 'deleteComment'])
+                    ->name('comments.delete');
+
+                Route::post('/comments/reply',
+                    [InteractionController::class, 'replyComment'])
+                    ->name('comments.reply');
+
+                Route::get('/likes',
+                    [InteractionController::class, 'likes'])
+                    ->name('likes');
+
+                Route::get('/ratings',
+                    [InteractionController::class, 'ratings'])
+                    ->name('ratings');
+
+            });
 
     });
 
@@ -163,58 +298,207 @@ Route::prefix('admin')
 */
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    /*
+    |--------------------------------------------------------------------------
+    | HOME
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/home',
+        [HomeController::class, 'index'])
+        ->name('home');
 
-    Route::get('/products', [ProductController::class, 'products'])->name('user.products');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('user.products.detail');
+    /*
+    |--------------------------------------------------------------------------
+    | PRODUCTS
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/products',
+        [ProductController::class, 'products'])
+        ->name('user.products');
 
-    Route::post('/products/{id}/comment', [ProductController::class, 'storeComment'])->name('user.comment.store');
-    Route::post('/comment/update/{id}', [ProductController::class, 'updateComment'])->name('user.comment.update');
-    Route::delete('/comment/{id}', [ProductController::class, 'deleteComment'])->name('user.comment.delete');
+    Route::get('/products/{id}',
+        [ProductController::class, 'show'])
+        ->name('user.products.detail');
 
-    Route::get('/categories', [ProductController::class, 'categories'])->name('user.categories');
-    Route::get('/categories/{id}', [ProductController::class, 'byCategory'])->name('user.categories.show');
+    Route::post('/products/{id}/comment',
+        [ProductController::class, 'storeComment'])
+        ->name('user.comment.store');
 
-    Route::get('/news', [UserNewsController::class, 'index'])->name('user.news.index');
-    Route::get('/news/{slug}', [UserNewsController::class, 'show'])->name('user.news.show');
+    Route::post('/comment/update/{id}',
+        [ProductController::class, 'updateComment'])
+        ->name('user.comment.update');
 
-    Route::prefix('checkout')->name('user.checkout.')->group(function () {
-        Route::post('/buy-now', [CheckoutController::class, 'buyNow'])->name('buyNow');
-        Route::get('/', [CheckoutController::class, 'index'])->name('index');
-        Route::post('/process', [CheckoutController::class, 'placeOrder'])->name('process');
-    });
+    Route::delete('/comment/{id}',
+        [ProductController::class, 'deleteComment'])
+        ->name('user.comment.delete');
 
-    Route::prefix('cart')->name('user.cart.')->group(function () {
-        Route::get('/', [CartController::class, 'index'])->name('index');
-        Route::post('/add', [CartController::class, 'add'])->name('add');
-        Route::delete('/{id}', [CartController::class, 'destroy'])->name('destroy');
-        Route::put('/{id}', [CartController::class, 'update'])->name('update');
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | CATEGORIES
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/categories',
+        [ProductController::class, 'categories'])
+        ->name('user.categories');
 
-    Route::prefix('orders')->name('user.orders.')->group(function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::get('/{id}', [OrderController::class, 'show'])->name('show');
-        Route::post('/{id}/cancel', [OrderController::class, 'cancel'])->name('cancel');
-        Route::get('/{id}/refund', [OrderController::class, 'showRefundForm'])->name('refund');
-        Route::post('/{id}/refund', [OrderController::class, 'submitRefund'])->name('refund.submit');
-    });
+    Route::get('/categories/{id}',
+        [ProductController::class, 'byCategory'])
+        ->name('user.categories.show');
 
-    Route::prefix('profile')->name('user.profile.')->group(function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('index');
-        Route::post('/update', [ProfileController::class, 'update'])->name('update');
-        
-        // --- CÁC ROUTE ĐỊA CHỈ BỊ THIẾU CẦN THÊM VÀO ---
-        Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
-        Route::get('/address/{id}/json', [ProfileController::class, 'getAddressJson'])->name('address.json');
-        Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])->name('address.update');
-        Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])->name('address.destroy');
-        Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | NEWS
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/news',
+        [UserNewsController::class, 'index'])
+        ->name('user.news.index');
 
-    Route::prefix('wallet')->name('user.wallet.')->group(function () {
-        Route::get('/', [WalletController::class, 'index'])->name('index');
-        Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
-        Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
-    });
+    Route::get('/news/{slug}',
+        [UserNewsController::class, 'show'])
+        ->name('user.news.show');
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECKOUT
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('checkout')
+        ->name('user.checkout.')
+        ->group(function () {
+
+            Route::post('/buy-now',
+                [CheckoutController::class, 'buyNow'])
+                ->name('buyNow');
+
+            Route::get('/',
+                [CheckoutController::class, 'index'])
+                ->name('index');
+
+            Route::post('/process',
+                [CheckoutController::class, 'placeOrder'])
+                ->name('process');
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | CART
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('cart')
+        ->name('user.cart.')
+        ->group(function () {
+
+            Route::get('/',
+                [CartController::class, 'index'])
+                ->name('index');
+
+            Route::post('/add',
+                [CartController::class, 'add'])
+                ->name('add');
+
+            Route::delete('/{id}',
+                [CartController::class, 'destroy'])
+                ->name('destroy');
+
+            Route::put('/{id}',
+                [CartController::class, 'update'])
+                ->name('update');
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | ORDERS
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('orders')
+        ->name('user.orders.')
+        ->group(function () {
+
+            Route::get('/',
+                [OrderController::class, 'index'])
+                ->name('index');
+
+            Route::get('/{id}',
+                [OrderController::class, 'show'])
+                ->name('show');
+
+            Route::post('/{id}/cancel',
+                [OrderController::class, 'cancel'])
+                ->name('cancel');
+
+            Route::get('/{id}/refund',
+                [OrderController::class, 'showRefundForm'])
+                ->name('refund');
+
+            Route::post('/{id}/refund',
+                [OrderController::class, 'submitRefund'])
+                ->name('refund.submit');
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('profile')
+        ->name('user.profile.')
+        ->group(function () {
+
+            Route::get('/',
+                [ProfileController::class, 'index'])
+                ->name('index');
+
+            Route::post('/update',
+                [ProfileController::class, 'update'])
+                ->name('update');
+
+            Route::post('/address/store',
+                [ProfileController::class, 'storeAddress'])
+                ->name('address.store');
+
+            Route::get('/address/{id}/json',
+                [ProfileController::class, 'getAddressJson'])
+                ->name('address.json');
+
+            Route::put('/address/{id}',
+                [ProfileController::class, 'updateAddress'])
+                ->name('address.update');
+
+            Route::delete('/address/{id}',
+                [ProfileController::class, 'destroyAddress'])
+                ->name('address.destroy');
+
+            Route::post('/address/{id}/set-default',
+                [ProfileController::class, 'setDefaultAddress'])
+                ->name('address.setDefault');
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | WALLET
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('wallet')
+        ->name('user.wallet.')
+        ->group(function () {
+
+            Route::get('/',
+                [WalletController::class, 'index'])
+                ->name('index');
+
+            Route::post('/deposit',
+                [WalletController::class, 'deposit'])
+                ->name('deposit');
+
+            Route::post('/withdraw',
+                [WalletController::class, 'withdraw'])
+                ->name('withdraw');
+
+        });
 
 });

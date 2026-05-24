@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
+
 
 use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\ProductApiController;
@@ -105,4 +104,12 @@ Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
 
     // Orders
     Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'updateStatus']);
-});
+
+
+//    // Thêm các route quản lý khác , 
+// đang thiếu
+// Route::get('/admin/refunds', ...);
+// Route::get('/admin/transactions', ...);
+
+
+    });

@@ -4,6 +4,57 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/Admin/categories/refunds2.css') }}">
+
+<style>
+
+/* AJAX TOAST */
+.ajax-toast{
+
+    position:fixed;
+    top:30px;
+    right:30px;
+
+    min-width:280px;
+
+    padding:16px 22px;
+
+    border-radius:14px;
+
+    color:#fff;
+
+    font-weight:600;
+
+    z-index:99999;
+
+    opacity:0;
+    transform:translateY(-20px);
+
+    transition:.3s ease;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+
+}
+
+.ajax-toast.show{
+
+    opacity:1;
+    transform:translateY(0);
+
+}
+
+.ajax-toast.success{
+
+    background:linear-gradient(135deg,#10b981,#059669);
+
+}
+
+.ajax-toast.error{
+
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+}
+
+</style>
 @endpush
 
 @section('content')
@@ -33,19 +84,6 @@
         </div>
 
     </div>
-
-    {{-- ALERT --}}
-    @if(session('success'))
-        <div class="alert-box success-box">
-            ✔️ {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert-box error-box">
-            ⚠️ {{ session('error') }}
-        </div>
-    @endif
 
     {{-- MAIN TABLE CARD --}}
     <div class="refund-card">
@@ -186,7 +224,9 @@
 
                                     {{-- APPROVE --}}
                                     <form action="{{ route('admin.refunds.updateStatus',$rf->id) }}"
-                                          method="POST">
+                                          method="POST"
+                                          class="refund-form">
+
                                         @csrf
 
                                         <input type="hidden"
@@ -194,8 +234,7 @@
                                                value="approved">
 
                                         <button type="submit"
-                                                class="btn-action btn-approve"
-                                                onclick="return confirm('Xác nhận hoàn {{ number_format($rf->total) }}đ vào ví khách?')">
+                                                class="btn-action btn-approve">
 
                                             ✔️ Duyệt
                                         </button>
@@ -204,7 +243,9 @@
 
                                     {{-- REJECT --}}
                                     <form action="{{ route('admin.refunds.updateStatus',$rf->id) }}"
-                                          method="POST">
+                                          method="POST"
+                                          class="refund-form">
+
                                         @csrf
 
                                         <input type="hidden"
@@ -212,8 +253,7 @@
                                                value="rejected">
 
                                         <button type="submit"
-                                                class="btn-action btn-reject"
-                                                onclick="return confirm('Từ chối yêu cầu này?')">
+                                                class="btn-action btn-reject">
 
                                             ✖ Từ chối
                                         </button>
@@ -280,3 +320,96 @@
 </div>
 
 @endsection
+
+@push('scripts')
+
+<script>
+
+document.querySelectorAll('.refund-form').forEach(form => {
+
+    form.addEventListener('submit', async function(e){
+
+        e.preventDefault();
+
+        const status =
+            this.querySelector('input[name="status"]').value;
+
+        const confirmText =
+            status === 'approved'
+            ? 'Xác nhận hoàn tiền vào ví khách?'
+            : 'Từ chối yêu cầu này?';
+
+        if(!confirm(confirmText)) return;
+
+        const formData = new FormData(this);
+
+        try{
+
+            const response = await fetch(this.action,{
+
+                method:'POST',
+
+                headers:{
+                    'X-CSRF-TOKEN':'{{ csrf_token() }}',
+                    'Accept':'application/json'
+                },
+
+                body:formData
+
+            });
+
+            const data = await response.json();
+
+            if(data.success){
+
+                showToast(data.message,'success');
+
+                setTimeout(()=>{
+                    location.reload();
+                },1000);
+
+            }else{
+
+                showToast('Có lỗi xảy ra','error');
+
+            }
+
+        }catch(error){
+
+            showToast('Lỗi server','error');
+
+        }
+
+    });
+
+});
+
+function showToast(message,type='success'){
+
+    const toast = document.createElement('div');
+
+    toast.className = `ajax-toast ${type}`;
+
+    toast.innerText = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(()=>{
+        toast.classList.add('show');
+    },100);
+
+    setTimeout(()=>{
+
+        toast.classList.remove('show');
+
+        setTimeout(()=>{
+            toast.remove();
+        },300);
+
+    },2500);
+
+}
+
+</script>
+
+@endpush

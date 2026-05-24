@@ -153,6 +153,7 @@ body{
 
 .sidebar-dropdown{
     margin-bottom:12px;
+    position:relative;
 }
 
 /* =========================================
@@ -183,6 +184,8 @@ body{
     cursor:pointer;
 
     transition:0.25s ease;
+
+    position:relative;
 }
 
 .dropdown-toggle span{
@@ -238,6 +241,8 @@ body{
     font-size:12px;
 
     transition:0.3s ease;
+
+    flex-shrink:0;
 }
 
 .dropdown-toggle.active .dropdown-icon{
@@ -269,10 +274,11 @@ body{
 
     display:flex;
     align-items:center;
+    justify-content:space-between;
 
     gap:10px;
 
-    padding:12px 48px 12px 14px;
+    padding:12px 14px;
 
     margin-bottom:6px;
 
@@ -290,6 +296,8 @@ body{
     position:relative;
 
     overflow:hidden;
+
+    min-height:48px;
 }
 
 /* LEFT */
@@ -299,6 +307,10 @@ body{
     align-items:center;
 
     gap:10px;
+
+    flex:1;
+
+    min-width:0;
 }
 
 /* ICON */
@@ -307,6 +319,8 @@ body{
     color:#94a3b8;
 
     transition:0.2s;
+
+    flex-shrink:0;
 }
 
 /* HOVER */
@@ -361,13 +375,7 @@ body{
 ========================================= */
 .menu-badge{
 
-    position:absolute;
-
-    right:12px;
-
-    top:50%;
-
-    transform:translateY(-50%);
+    position:static;
 
     min-width:22px;
     height:22px;
@@ -385,7 +393,58 @@ body{
 
     color:#ffffff;
 
-    display:flex;
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    flex-shrink:0;
+
+    font-size:11px;
+    font-weight:700;
+
+    line-height:1;
+
+    white-space:nowrap;
+
+    z-index:5;
+
+    box-shadow:
+        0 0 14px rgba(255,59,48,0.45);
+
+    animation:pulseBadge 1.5s infinite;
+}
+
+/* =========================================
+   PARENT BADGE
+========================================= */
+.parent-badge{
+
+    position:absolute;
+
+    right:40px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    min-width:24px;
+    height:24px;
+
+    padding:0 7px;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff3b30,
+            #ff0066
+        );
+
+    color:#fff;
+
+    display:none;
+
     align-items:center;
     justify-content:center;
 
@@ -394,7 +453,11 @@ body{
 
     line-height:1;
 
-    z-index:5;
+    white-space:nowrap;
+
+    z-index:10;
+
+    flex-shrink:0;
 
     box-shadow:
         0 0 14px rgba(255,59,48,0.45);
@@ -430,8 +493,10 @@ body{
     border-top:1px solid rgba(255,255,255,0.08);
 }
 
-/* BUTTON */
-.sidebar-btn{
+/* =========================================
+   BUTTON ĐĂNG XUẤT
+========================================= */
+.sidebar-logout-btn{
 
     width:100%;
 
@@ -452,9 +517,9 @@ body{
             135deg,
             #ef4444,
             #dc2626
-        );
+        ) !important;
 
-    color:#fff;
+    color:#fff !important;
 
     font-size:14px;
     font-weight:700;
@@ -464,12 +529,23 @@ body{
     transition:0.25s ease;
 }
 
-.sidebar-btn:hover{
+.sidebar-logout-btn:hover{
 
     transform:translateY(-2px);
 
+    background:
+        linear-gradient(
+            135deg,
+            #f87171,
+            #ef4444
+        ) !important;
+
     box-shadow:
         0 10px 20px rgba(239,68,68,0.25);
+}
+
+.sidebar-logout-btn i{
+    color:#fff !important;
 }
 
 /* =========================================
@@ -572,4 +648,30 @@ body{
     flex:1;
 
     padding:28px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+@media(max-width:768px){
+
+    :root{
+        --sidebar-w:100%;
+    }
+
+    .admin-sidebar{
+        width:100%;
+    }
+
+    .admin-body{
+        margin-left:0;
+    }
+
+    .admin-topbar{
+        padding:0 16px;
+    }
+
+    .admin-main{
+        padding:18px;
+    }
 }

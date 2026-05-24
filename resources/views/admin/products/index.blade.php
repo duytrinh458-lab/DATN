@@ -89,6 +89,8 @@
 
                     <th>Giá bán</th>
 
+                    <th>Tồn kho</th>
+
                     <th>Ảnh</th>
 
                     <th>Hành động</th>
@@ -119,6 +121,32 @@
                     <td>
 
                         {{ number_format($product->sale_price, 0, ',', '.') }}₫
+
+                    </td>
+
+
+                    {{-- STOCK --}}
+                    <td>
+
+                        @if($product->stock <= 0)
+
+                            <span class="stock-badge stock-out">
+                                Hết hàng
+                            </span>
+
+                        @elseif($product->stock <= 5)
+
+                            <span class="stock-badge stock-low">
+                                {{ $product->stock }}
+                            </span>
+
+                        @else
+
+                            <span class="stock-badge stock-normal">
+                                {{ $product->stock }}
+                            </span>
+
+                        @endif
 
                     </td>
 
@@ -176,7 +204,7 @@
 
                 <tr>
 
-                    <td colspan="5"
+                    <td colspan="6"
                         class="empty-table">
 
                         Chưa có sản phẩm nào.
