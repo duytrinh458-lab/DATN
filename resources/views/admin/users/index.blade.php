@@ -3,7 +3,7 @@
 @section('title', 'Quản lý người dùng')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/user.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/admin-user3.css') }}">
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endpush
@@ -111,9 +111,21 @@
 
                                 <div class="user-info-cell">
 
-                                    <div class="avatar-circle">
+                                    <div class="avatar-wrapper">
 
-                                        {{ strtoupper(substr($user->full_name,0,1)) }}
+    @if($user->avatar)
+
+        <img src="{{ asset($user->avatar) }}"
+             alt="{{ $user->full_name }}"
+             class="user-avatar">
+
+    @else
+
+        <div class="avatar-circle">
+            {{ strtoupper(substr($user->full_name,0,1)) }}
+        </div>
+
+    @endif
 
                                     </div>
 

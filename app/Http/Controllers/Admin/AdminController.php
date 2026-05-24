@@ -550,73 +550,34 @@ class AdminController extends Controller
 // ==========================================
 public function refunds()
 {
-    /*
-    |--------------------------------------------------------------------------
-    | ĐẾM YÊU CẦU HOÀN HÀNG CHƯA DUYỆT
-    |--------------------------------------------------------------------------
-    */
     $pendingRefunds = DB::table('refunds')
         ->where('status', 'pending')
         ->count();
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | DANH SÁCH YÊU CẦU HOÀN
-    |--------------------------------------------------------------------------
-    */
     $refunds = DB::table('refunds')
 
-        ->join(
-            'users',
-            'refunds.user_id',
-            '=',
-            'users.id'
-        )
+        ->join('users', 'refunds.user_id', '=', 'users.id')
 
-        ->join(
-            'orders',
-            'refunds.order_id',
-            '=',
-            'orders.id'
-        )
+        ->join('orders', 'refunds.order_id', '=', 'orders.id')
 
         ->select(
             'refunds.*',
             'users.full_name as user_name',
+            'users.avatar as user_avatar',   // ⭐ THÊM DÒNG NÀY
             'orders.order_code',
             'orders.total'
         )
 
         ->orderByDesc('refunds.created_at')
-
         ->paginate(5);
 
+    $pendingOrders = Order::where('status', 'pending')->count();
 
-    /*
-    |--------------------------------------------------------------------------
-    | BADGE ĐƠN HÀNG CHỜ DUYỆT
-    |--------------------------------------------------------------------------
-    */
-    $pendingOrders = Order::where(
-        'status',
-        'pending'
-    )->count();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN VIEW
-    |--------------------------------------------------------------------------
-    */
-    return view(
-        'Admin.refunds.index',
-        compact(
-            'refunds',
-            'pendingOrders',
-            'pendingRefunds'
-        )
-    );
+    return view('Admin.refunds.index', compact(
+        'refunds',
+        'pendingOrders',
+        'pendingRefunds'
+    ));
 }
 
 

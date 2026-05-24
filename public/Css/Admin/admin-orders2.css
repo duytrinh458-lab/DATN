@@ -286,6 +286,49 @@ body{
 }
 
 /* =========================================
+   AVATAR FIX FINAL
+========================================= */
+
+.avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#e5e7eb;
+    flex-shrink:0;
+}
+
+/* image avatar */
+.avatar-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+/* fallback chữ */
+.avatar-text{
+    font-size:15px;
+    font-weight:900;
+    color:#111827;
+}
+
+/* nếu dùng trong table align đẹp hơn */
+.user-box .avatar{
+    margin-right:10px;
+}
+
+.user-name{
+    font-weight:700;
+    color:#0f172a;
+}
+
+/* =========================================
    ORDER PRODUCTS
 ========================================= */
 

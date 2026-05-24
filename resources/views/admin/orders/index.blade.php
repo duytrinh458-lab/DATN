@@ -3,7 +3,7 @@
 @section('title', 'Quản lý đơn hàng - Vanguard UAV')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/orders.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/admin-orders2.css') }}">
 @endpush
 
 @section('content')
@@ -121,15 +121,29 @@
                             {{-- CUSTOMER --}}
                             <td>
 
-                                <div class="user-box">
+                                <div class="avatar">
 
-                                    <span class="user-name">
+    @if(!empty($order->user_avatar))
 
-                                        {{ $order->full_name }}
+        <img src="{{ asset($order->user_avatar) }}"
+             class="avatar-img"
+             alt="{{ $order->full_name }}">
 
-                                    </span>
+    @else
 
-                                </div>
+        <div class="avatar-text">
+            {{ strtoupper(substr($order->full_name,0,1)) }}
+        </div>
+
+    @endif
+
+</div>
+
+    <span class="user-name">
+        {{ $order->full_name }}
+    </span>
+
+</div>
 
                             </td>
 

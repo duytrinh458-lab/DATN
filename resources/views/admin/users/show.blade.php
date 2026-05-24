@@ -3,7 +3,7 @@
 @section('title', 'Chi tiết người dùng #' . $user->id)
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('Css/Admin/user.css') }}">
+    <link rel="stylesheet" href="{{ asset('Css/Admin/admin-user3.css') }}">
 @endpush
 
 @section('content')
@@ -45,23 +45,32 @@
         {{-- INFO CARD --}}
         <div class="card shadow-premium info-card">
 
-            <div class="user-avatar-section">
+        {{-- USER AVATAR AND NAME --}}
+<div class="user-avatar-section">
 
-                <div class="avatar-placeholder">
-                    {{ strtoupper(substr($user->full_name, 0, 1)) }}
-                </div>
+    <div class="avatar-wrapper">
 
-                <h2 class="user-display-name">
-                    {{ $user->full_name }}
-                </h2>
-
-                <span class="badge {{ $user->role == 'admin' ? 'badge-admin' : 'badge-user' }}">
-
-                    {{ strtoupper($user->role) }}
-
-                </span>
-
+        @if(!empty($user->avatar) && file_exists(public_path($user->avatar)))
+            <img src="{{ asset($user->avatar) }}"
+                 alt="{{ $user->full_name }}"
+                 class="user-avatar-img">
+        @else
+            <div class="avatar-fallback">
+                {{ strtoupper(substr($user->full_name ?? $user->email, 0, 1)) }}
             </div>
+        @endif
+
+    </div>
+
+    <h2 class="user-display-name">
+        {{ $user->full_name }}
+    </h2>
+
+    <span class="badge {{ $user->role == 'admin' ? 'badge-admin' : 'badge-user' }}">
+        {{ strtoupper($user->role) }}
+    </span>
+
+</div>
 
             <div class="info-list">
 

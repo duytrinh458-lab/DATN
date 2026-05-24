@@ -3,7 +3,7 @@
 @section('title', 'Quản Lý Hoàn Trả UAV')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/categories/refunds2.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/categories/refunds3.css') }}">
 
 <style>
 
@@ -140,24 +140,37 @@
 
                             <div class="user-box">
 
-                                <div class="avatar">
-                                    {{ strtoupper(substr($rf->user_name,0,1)) }}
-                                </div>
+    <div class="avatar">
 
-                                <div>
+    @if(!empty($rf->user_avatar))
 
-                                    <div class="user-name">
-                                        {{ $rf->user_name }}
-                                    </div>
+        <img src="{{ asset($rf->user_avatar) }}"
+             alt="{{ $rf->user_name }}"
+             class="avatar-img">
 
-                                    <div class="user-role">
-                                        Khách hàng
-                                    </div>
+    @else
 
-                                </div>
+        <div class="avatar-text">
+            {{ strtoupper(substr($rf->user_name,0,1)) }}
+        </div>
 
-                            </div>
+    @endif
 
+</div>
+
+    <div>
+
+        <div class="user-name">
+            {{ $rf->user_name }}
+        </div>
+
+        <div class="user-role">
+            Khách hàng
+        </div>
+
+    </div>
+
+</div>
                         </td>
 
                         {{-- ORDER --}}

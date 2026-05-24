@@ -3,7 +3,7 @@
 @section('title', 'Thêm người dùng')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/Admin/user.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/Admin/admin-user3.css') }}">
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endpush

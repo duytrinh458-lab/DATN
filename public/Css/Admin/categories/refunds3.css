@@ -230,23 +230,26 @@
 }
 
 .avatar{
-    width:46px;
-    height:46px;
-
+    width:40px;
+    height:40px;
     border-radius:50%;
-
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-
+    overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
+    background:#e5e7eb;
+    font-weight:600;
+    color:#111;
+}
 
-    color:#fff;
-    font-size:18px;
-    font-weight:900;
+.avatar-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
 
-    box-shadow:
-        0 10px 20px rgba(37,99,235,.25);
+.avatar-text{
+    font-size:14px;
 }
 
 .user-name{
@@ -445,27 +448,72 @@
 }
 
 /* =========================================
-   PAGINATION
+   PAGINATION ONLY NUMBER (CLEANEST)
 ========================================= */
 
-.pagination-box{
-    display:flex;
-    justify-content:center;
-
-    padding:28px;
-    border-top:1px solid #eef2f7;
+/* ẨN "Showing..." */
+.pagination-box p{
+    display:none !important;
 }
 
-/* luôn hiện pagination đẹp */
+/* container */
 .pagination-box nav{
     display:flex;
     justify-content:center;
-    width:100%;
 }
 
-.pagination-box svg{
-    width:18px;
-    height:18px;
+/* list */
+.pagination-box nav ul.pagination{
+    display:flex;
+    gap:8px;
+    padding:0;
+    margin:0;
+    list-style:none;
+    align-items:center;
+}
+
+/* item */
+.pagination-box nav ul.pagination li a,
+.pagination-box nav ul.pagination li span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+
+    font-size:14px;
+    font-weight:700;
+
+    color:#64748b;
+    background:#f1f5f9;
+
+    text-decoration:none;
+}
+
+/* hover */
+.pagination-box nav ul.pagination li a:hover{
+    background:#e0f2fe;
+    color:#0369a1;
+}
+
+/* active */
+.pagination-box nav ul.pagination li.active span{
+    background:#22c55e;
+    color:#fff;
+}
+
+/* disabled (ẩn luôn để không thấy ‹ ›) */
+.pagination-box nav ul.pagination li.disabled{
+    display:none;
+}
+
+/* ẨN icon / text previous next (an toàn) */
+.pagination-box nav ul.pagination li:first-child,
+.pagination-box nav ul.pagination li:last-child{
+    display:none;
 }
 
 /* =========================================
