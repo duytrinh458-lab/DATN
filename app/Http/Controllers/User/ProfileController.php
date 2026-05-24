@@ -147,7 +147,7 @@ class ProfileController extends Controller
 
             'district'  => 'nullable|string|max:255',
 
-            'ward'      => 'nullable|string|max:255',
+            'city'      => 'nullable|string|max:255',
 
             'province'  => 'nullable|string|max:255',
 
@@ -182,7 +182,7 @@ class ProfileController extends Controller
 
             'district'   => $request->district,
 
-            'ward'       => $request->ward,
+            'city'       => $request->city,
 
             'province'   => $request->province,
 
@@ -296,7 +296,7 @@ class ProfileController extends Controller
 
             'district' => $address->district,
 
-            'ward' => $address->ward,
+            'city' => $address->city,
 
             'street' => $address->street,
 
@@ -323,7 +323,7 @@ class ProfileController extends Controller
 
             'district'  => 'nullable|string|max:255',
 
-            'ward'      => 'nullable|string|max:255',
+            'city'      => 'nullable|string|max:255',
 
             'province'  => 'nullable|string|max:255',
 
@@ -345,7 +345,7 @@ class ProfileController extends Controller
 
                 'district',
 
-                'ward',
+                'city',
 
                 'province',
 

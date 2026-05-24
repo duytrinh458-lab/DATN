@@ -1,6 +1,6 @@
 @extends('User.layouts.app')
 
-@section('title', 'Kho Hạm Đội UAV | Vanguard Command')
+@section('title', 'Danh sách sản phẩm | Vanguard Command')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/products.css') }}">

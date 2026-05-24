@@ -4,7 +4,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<link rel="stylesheet" href="{{ asset('Css/User/pdetail2.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/User/product_detail.css') }}">
 @endpush
 
 @section('content')

@@ -78,22 +78,47 @@ class CartController extends Controller
 
         if ($cartItem) {
             $cartItem->delete();
-            return back()->with('success', 'Đã xóa UAV khỏi giỏ hàng!');
+            return back()->with('success', 'Đã loại bỏ UAV khỏi đội hình!');
         }
 
         return back()->with('error', 'Không tìm thấy sản phẩm!');
     }
 
-    // 4. Cập nhật số lượng
+    // 4. Cập nhật số lượng (Controller làm trọng tài)
     public function update(Request $request, $id)
     {
-        $cartItem = CartItem::find($id);
+        $cartItem = CartItem::with('product')->findOrFail($id);
+        $newQuantity = $request->quantity;
 
-        if ($cartItem) {
-            $cartItem->update(['quantity' => $request->quantity]);
-            return back()->with('success', 'Đã cập nhật số lượng!');
+        // Xử lý khi Frontend gọi ngầm (AJAX)
+        if ($request->wantsJson() || $request->ajax()) {
+            
+            if ($newQuantity < 1) {
+                return response()->json([
+                    'status' => 'error', 
+                    'message' => 'Số lượng tối thiểu là 1 thiết bị!'
+                ]);
+            }
+            
+            // CONTROLLER TRỰC TIẾP CHECK TỒN KHO VÀ BÁO LỖI
+            if ($newQuantity > $cartItem->product->stock) {
+                return response()->json([
+                    'status' => 'error', 
+                    'message' => 'Kho Đã Hết Hàng Số Lượng trong Kho chỉ còn ' . $cartItem->product->stock . ' chiếc!'
+                ]);
+            }
+
+            // Nếu an toàn thì lưu
+            $cartItem->quantity = $newQuantity;
+            $cartItem->save();
+
+            return response()->json([
+                'status' => 'success',
+                'new_quantity' => $cartItem->quantity
+            ]);
         }
 
-        return back()->with('error', 'Cập nhật thất bại!');
+        // Dự phòng (non-ajax)
+        return back();
     }
 }

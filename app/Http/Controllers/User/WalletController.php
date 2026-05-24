@@ -4,40 +4,50 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Transaction;
 use App\Models\Wallet;
-use Illuminate\Support\Facades\Auth; // KHAI BÁO CÁI NÀY ĐỂ HẾT BÁO ĐỎ CHỮ USER
 
 class WalletController extends Controller
 {
+    /**
+     * WALLET DASHBOARD
+     */
     public function index()
     {
-        // Dùng Auth::user() để IDE nhận diện chuẩn, hết gạch đỏ
         $user = Auth::user();
 
+        // Tạo ví nếu chưa có
         $wallet = Wallet::firstOrCreate(
             ['user_id' => $user->id],
             ['balance' => 0]
         );
 
-        $balance = $wallet->balance;
-
+        // Lấy lịch sử giao dịch
         $transactions = Transaction::where('wallet_id', $wallet->id)
             ->latest()
             ->paginate(5);
 
-        return view('User.wallet.index', compact('balance', 'transactions'));
+        return view('User.wallet.index', [
+            'balance'      => $wallet->balance,
+            'transactions' => $transactions
+        ]);
     }
 
+    /**
+     * NẠP TIỀN
+     */
     public function deposit(Request $request)
     {
-        // 1. Kiểm tra đầu vào, thêm thông báo chuẩn
         $request->validate([
-            'amount' => 'required|numeric|min:10000'
+            'amount' => 'required|numeric|min:10000|max:500000000'
         ], [
             'amount.required' => 'Vui lòng nhập số tiền.',
-            'amount.numeric'  => 'Số tiền phải là số hợp lệ.',
-            'amount.min'      => 'Số tiền nạp tối thiểu là 10.000 VNĐ.'
+            'amount.numeric'  => 'Số tiền không hợp lệ.',
+            'amount.min'      => 'Nạp tối thiểu 10.000 VNĐ.',
+            'amount.max'      => 'Số tiền vượt giới hạn cho phép.'
         ]);
 
         $user = Auth::user();
@@ -47,51 +57,100 @@ class WalletController extends Controller
             ['balance' => 0]
         );
 
-        // 2. KHÔNG CỘNG TIỀN VÀO $wallet->balance NỮA
-        // Xóa 2 dòng $wallet->balance +=... và $wallet->save();
+        DB::beginTransaction();
 
-        // 3. TẠO GIAO DỊCH VỚI TRẠNG THÁI 'PENDING'
-        Transaction::create([
-            'wallet_id' => $wallet->id,
-            'type'      => 'deposit',
-            'amount'    => $request->amount,
-            'status'    => 'pending' // Cột này cần có trong DB của ông nhé
-        ]);
+        try {
 
-        return back()->with('success', 'Yêu cầu nạp tiền đã được gửi. Vui lòng chờ Admin phê duyệt!');
+            Transaction::create([
+                'wallet_id' => $wallet->id,
+                'type'      => 'deposit',
+                'amount'    => $request->amount,
+                'status'    => 'pending'
+            ]);
+
+            DB::commit();
+
+            return back()->with(
+                'success',
+                'Yêu cầu nạp tiền đã được gửi. Vui lòng chờ hệ thống xác nhận.'
+            );
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with(
+                'error',
+                'Không thể tạo yêu cầu nạp tiền.'
+            );
+        }
     }
 
+    /**
+     * RÚT TIỀN
+     */
     public function withdraw(Request $request)
     {
-        // Rút tiền cũng đưa về pending để Admin duyệt chuyển khoản thủ công
         $request->validate([
-            'amount' => 'required|numeric|min:10000'
+            'amount'    => 'required|numeric|min:10000|max:500000000',
+            'bank_info' => 'required|string|max:255'
         ], [
-            'amount.min' => 'Số tiền rút tối thiểu là 10.000 VNĐ.'
+            'amount.required'    => 'Vui lòng nhập số tiền.',
+            'amount.numeric'     => 'Số tiền không hợp lệ.',
+            'amount.min'         => 'Rút tối thiểu 10.000 VNĐ.',
+            'bank_info.required' => 'Vui lòng nhập thông tin ngân hàng.'
         ]);
 
         $user = Auth::user();
+
         $wallet = Wallet::where('user_id', $user->id)->first();
 
         if (!$wallet) {
-            return back()->with('error', 'Không tìm thấy ví V-Pay của bạn.');
+            return back()->with(
+                'error',
+                'Không tìm thấy ví V-Pay.'
+            );
         }
 
+        // Kiểm tra số dư
         if ($wallet->balance < $request->amount) {
-            return back()->with('error', 'Số dư trong ví không đủ để rút.');
+            return back()->with(
+                'error',
+                'Số dư không đủ để thực hiện giao dịch.'
+            );
         }
 
-        // Tạm trừ tiền trong ví để khách không lấy tiền đó mua hàng
-        $wallet->balance -= $request->amount;
-        $wallet->save();
+        DB::beginTransaction();
 
-        Transaction::create([
-            'wallet_id' => $wallet->id,
-            'type'      => 'withdraw',
-            'amount'    => $request->amount,
-            'status'    => 'pending' // Chờ Admin xác nhận đã chuyển tiền
-        ]);
+        try {
 
-        return back()->with('success', 'Yêu cầu rút tiền đã được gửi. Hệ thống sẽ xử lý trong 24h.');
+            // Tạm khóa tiền
+            $wallet->balance -= $request->amount;
+            $wallet->save();
+
+            Transaction::create([
+                'wallet_id'      => $wallet->id,
+                'type'           => 'withdraw',
+                'amount'         => $request->amount,
+                'status'         => 'pending',
+                'reference_code' => $request->bank_info // 🛠️ SỬA CHỮ 'note' THÀNH 'reference_code' CHO KHỚP DATABASE
+            ]);
+
+            DB::commit();
+
+            return back()->with(
+                'success',
+                'Yêu cầu rút tiền đã được gửi.'
+            );
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with(
+                'error',
+                'Không thể xử lý yêu cầu rút tiền.'
+            );
+        }
     }
 }

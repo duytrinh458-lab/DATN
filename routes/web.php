@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Session;
 
 use App\Models\Order;
 use App\Models\Refund;
@@ -87,12 +88,12 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/change-password', 'updatePassword')->name('password.change.update');
 
     Route::get('/register/reset-phone', function () {
-        session()->forget('phone_step1');
+        Session::forget('phone_step1');
         return redirect('/register');
     });
 
     Route::get('/forgot-password/reset-session', function () {
-        session()->forget('forgot_phone');
+        Session::forget('forgot_phone');
         return redirect('/forgot');
     });
 });
@@ -201,6 +202,13 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('profile')->name('user.profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::post('/update', [ProfileController::class, 'update'])->name('update');
+        
+        // --- CÁC ROUTE ĐỊA CHỈ BỊ THIẾU CẦN THÊM VÀO ---
+        Route::post('/address/store', [ProfileController::class, 'storeAddress'])->name('address.store');
+        Route::get('/address/{id}/json', [ProfileController::class, 'getAddressJson'])->name('address.json');
+        Route::put('/address/{id}', [ProfileController::class, 'updateAddress'])->name('address.update');
+        Route::delete('/address/{id}', [ProfileController::class, 'destroyAddress'])->name('address.destroy');
+        Route::post('/address/{id}/set-default', [ProfileController::class, 'setDefaultAddress'])->name('address.setDefault');
     });
 
     Route::prefix('wallet')->name('user.wallet.')->group(function () {

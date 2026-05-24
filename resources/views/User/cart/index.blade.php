@@ -1,6 +1,6 @@
 @extends('User.layouts.app') 
 
-@section('title', 'Giỏ Hàng Chiến Thuật - Vanguard UAV')
+@section('title', 'Giỏ Hàng - Vanguard UAV')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('Css/User/cart.css') }}">
@@ -10,8 +10,7 @@
 @section('content')
 <div class="vanguard-cart-page">
     <div class="cart-header">
-        <h2>Giỏ hàng chiến lược</h2>
-        <div style="color: var(--outline); font-size: 10px; text-transform: uppercase; letter-spacing: 4px;">Tactical Resource Management</div>
+        <h2>Giỏ hàng</h2>
     </div>
 
     <div class="cart-flex-wrapper">
@@ -20,7 +19,7 @@
                 
                 <div class="select-all-bar">
                     <input type="checkbox" id="check-all" class="vg-checkbox" onchange="toggleAll(this)">
-                    <label for="check-all" style="cursor: pointer; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Chọn toàn bộ đội hình</label>
+                    <label for="check-all" style="cursor: pointer; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Chọn toàn</label>
                 </div>
 
                 @foreach($cartItems as $item)
@@ -42,21 +41,16 @@
                             <div class="item-name">{{ $item->product->name }}</div>
                         </div>
 
-                        <!-- BẢNG ĐIỀU KHIỂN SỐ LƯỢNG MỚI (CÓ NÚT + / -) -->
                         <div class="quantity-hud">
-                            <form action="{{ route('user.cart.update', $item->id) }}" method="POST" style="display:flex; align-items:center; width: 100%; margin: 0;">
-                                @csrf
-                                @method('PUT')
-                                <button type="button" class="qty-btn" onclick="updateQty(this, -1)">
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">remove</span>
-                                </button>
-                                
-                                <input type="number" name="quantity" class="qty-input" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}" onchange="this.form.submit()">
-                                
-                                <button type="button" class="qty-btn" onclick="updateQty(this, 1)">
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
-                                </button>
-                            </form>
+                            <button type="button" class="qty-btn" onclick="updateQtyAjax('{{ $item->id }}', -1, '{{ route('user.cart.update', $item->id) }}')">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">remove</span>
+                            </button>
+                            
+                            <input type="number" id="qty-input-{{ $item->id }}" class="qty-input" value="{{ $item->quantity }}" onchange="updateQtyDirect('{{ $item->id }}', this.value, '{{ route('user.cart.update', $item->id) }}')">
+                            
+                            <button type="button" class="qty-btn" onclick="updateQtyAjax('{{ $item->id }}', 1, '{{ route('user.cart.update', $item->id) }}')">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                            </button>
                         </div>
 
                         <div style="text-align: right; min-width: 120px;">
@@ -140,22 +134,66 @@
         if (currentDeleteFormId) document.getElementById(currentDeleteFormId).submit();
     }
 
-    // XỬ LÝ NÚT TĂNG/GIẢM SỐ LƯỢNG MỚI
-    function updateQty(btn, change) {
-        const form = btn.closest('form');
-        const input = form.querySelector('.qty-input');
+    // ==========================================
+    // 🛠️ HỆ THỐNG AJAX CẬP NHẬT (GIAO CHO CONTROLLER XỬ LÝ)
+    // ==========================================
+    function updateQtyAjax(itemId, change, url) {
+        let input = document.getElementById('qty-input-' + itemId);
         let newVal = parseInt(input.value) + change;
-        let max = parseInt(input.getAttribute('max'));
-        let min = parseInt(input.getAttribute('min'));
+
+        if (newVal < 1) return;
         
-        if (newVal >= min && newVal <= max) {
-            input.value = newVal;
-            form.submit(); // Tự động submit lên database
-        } else if (newVal > max) {
-            showFrontendToast('Không đủ lượng UAV trong kho để cung cấp!');
-        }
+        // Đẩy thẳng về Backend, không thèm check trên HTML nữa
+        sendAjaxRequest(itemId, newVal, url);
     }
 
+    function updateQtyDirect(itemId, value, url) {
+        let newVal = parseInt(value);
+        if (isNaN(newVal) || newVal < 1) newVal = 1;
+        
+        sendAjaxRequest(itemId, newVal, url);
+    }
+
+    function sendAjaxRequest(itemId, quantity, url) {
+        // Lấy số lượng cũ để nhả về nếu lỗi
+        let checkbox = document.querySelector(`.item-checkbox[value="${itemId}"]`);
+        let oldQty = checkbox ? checkbox.getAttribute('data-qty') : 1;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Cập nhật giao diện khi thành công
+                document.getElementById('qty-input-' + itemId).value = data.new_quantity;
+                if(checkbox) checkbox.setAttribute('data-qty', data.new_quantity);
+                calculateTotal();
+            } else {
+                // 🛠️ ĐÂY LÀ CHỖ CHÍNH: HIỆN THÔNG BÁO TỪ CONTROLLER RA MÀN HÌNH
+                showFrontendToast(data.message); 
+                
+                // Nhả lại giá trị cũ trong ô nhập
+                document.getElementById('qty-input-' + itemId).value = oldQty; 
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi kết nối:', error);
+            showFrontendToast('Lỗi kết nối đến máy chủ chỉ huy!');
+            document.getElementById('qty-input-' + itemId).value = oldQty; 
+        });
+    }
+
+    // ==========================================
+    // CÁC HÀM XỬ LÝ CHECKBOX VÀ TỔNG TIỀN
+    // ==========================================
     function toggleAll(source) {
         const checkboxes = document.querySelectorAll('.item-checkbox');
         checkboxes.forEach(cb => { cb.checked = source.checked; });
@@ -186,7 +224,7 @@
     function proceedToCheckout() {
         const selected = document.querySelectorAll('.item-checkbox:checked');
         if(selected.length === 0) {
-            showFrontendToast('Vui lòng chọn ít nhất 1 thiết bị UAV để tiến hành thanh toán!');
+            showFrontendToast('Vui lòng chọn ít nhất 1 thiết bị UAV để điều động!');
             return;
         }
 
@@ -198,15 +236,35 @@
     }
 
     function showFrontendToast(message) {
-        let toast = document.getElementById('vanguard-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'vanguard-toast';
-            document.body.appendChild(toast);
-        }
-        toast.className = 'toast-error show';
-        toast.innerHTML = `<span class="material-symbols-outlined">warning</span><span class="toast-msg">${message}</span>`;
-        setTimeout(() => { toast.classList.remove('show'); }, 5000);
-    }
+    // 1. Dọn dẹp toast cũ nếu đang hiện
+    let oldToast = document.querySelector('.uav-toast.ajax-toast');
+    if (oldToast) oldToast.remove();
+
+    // 2. Tạo khung bao ngoài với ĐÚNG tên class của giao diện xịn
+    let toast = document.createElement('div');
+    toast.className = 'uav-toast uav-toast--error show-toast ajax-toast';
+    toast.setAttribute('role', 'alert');
+
+    // 3. Đổ đúng cấu trúc HTML (có hiệu ứng glow, progress bar)
+    toast.innerHTML = `
+        <div class="uav-toast__glow"></div>
+        <div class="uav-toast__content">
+            <div class="uav-toast__title">Cảnh báo tồn kho</div>
+            <div class="uav-toast__msg">${message}</div>
+        </div>
+        <div class="uav-toast__progress"></div>
+    `;
+
+    // 4. Bơm vào màn hình
+    document.body.appendChild(toast);
+
+    // 5. Hiệu ứng trượt ra trượt vào như Layout
+    setTimeout(() => {
+        toast.style.transition = "all 0.5s ease";
+        toast.style.opacity = "0";
+        toast.style.transform = "translateX(420px) scale(0.95)";
+        setTimeout(() => { toast.remove(); }, 500);
+    }, 5000);
+}
 </script>
 @endpush
