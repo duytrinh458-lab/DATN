@@ -4,6 +4,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('Css/User/home.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/User/user-news.css') }}">
 @endpush
 
 @section('content')
@@ -121,17 +122,58 @@
 </section>
 
 {{-- LATEST NEWS --}}
-<section class="latest-news" style="max-width: 1280px; margin: 0 auto; padding: 0 24px 60px;">
+<section class="latest-news" id="latest-news" style="width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 24px 60px;">
     <div class="section-header">
         <div>
             <h2 class="tech-title">TÌNH BÁO MỚI NHẤT</h2>
         </div>
+        <a href="{{ route('user.news.index') }}" class="section-link">XEM TOÀN BỘ</a>
     </div>
     
-    <div class="news-placeholder" style="border: 1px dashed rgba(28, 169, 201, 0.4); padding: 50px; text-align: center; color: var(--glow-blue); border-radius: 6px; background: rgba(0, 191, 255, 0.02);">
-        <p style="font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px;">KÊNH TÌNH BÁO ĐANG ĐƯỢC THIẾT LẬP KẾT NỐI...</p>
-        <p style="font-size: 13px; margin-top: 10px;">Dữ liệu tin tức sẽ sớm được đồng bộ từ trung tâm chỉ huy.</p>
-    </div>
+    <div class="news-grid">
+    @forelse($latestNews as $item)
+        <div class="news-card">
+            <a href="{{ route('user.news.show', $item->id) }}" class="news-link">
+
+                <div class="news-image">
+                    @if($item->thumbnail)
+                        <img src="{{ asset('storage/' . $item->thumbnail) }}" 
+                             alt="{{ $item->title }}"
+                             onerror="this.onerror=null; this.src='{{ asset('images/default-news.jpg') }}';">
+                    @else
+                        <div class="no-img"><span class="material-symbols-outlined">satellite_alt</span></div>
+                    @endif
+                </div>
+
+                <div class="news-content">
+                    <h3 class="news-title">
+                        {{ Str::limit($item->title, 55) }}
+                    </h3>
+
+                    <p class="news-excerpt">
+                        {{ Str::limit(strip_tags($item->content), 80) }}
+                    </p>
+
+                    <div class="news-meta-footer">
+                        <div class="news-date">
+                            <span class="material-symbols-outlined icon-sm">schedule</span>
+                            {{ $item->published_at ? \Carbon\Carbon::parse($item->published_at)->format('d/m/Y') : 'Đang giải mã' }}
+                        </div>
+                        
+                        <div class="news-readmore">
+                            ĐỌC TIẾP <span class="material-symbols-outlined">arrow_forward_ios</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    @empty
+        <div class="news-empty" style="grid-column: 1 / -1;">
+            <span class="material-symbols-outlined">radar</span>
+            <p>RADAR CHƯA QUÉT THẤY TÍN HIỆU TIN TỨC NÀO.</p>
+        </div>
+    @endforelse
+</div>
 </section>
 
 @endsection

@@ -32,18 +32,6 @@
                         <span class="material-symbols-outlined">fingerprint</span> Thông tin cá nhân
                     </h3>
 
-                    @if(session('success'))
-                        <div class="alert-vg alert-success">
-                            ✔️ [HỆ THỐNG]: {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="alert-vg alert-error">
-                            ⚠️ [LỖI]: {{ session('error') }}
-                        </div>
-                    @endif
-
                     <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -126,14 +114,15 @@
                                             </form>
                                         @endif
 
-                                        <button type="button" class="btn-action edit" onclick="editAddress({{ $addr->id }})" title="Chỉnh sửa tọa độ">
+                                        <button type="button" class="btn-action edit" onclick="editAddress({{ $addr->id }})" title="Chỉnh sửa Địa Chỉ">
                                             <span class="material-symbols-outlined">edit_location</span>
                                         </button>
 
-                                        <form action="{{ route('user.profile.address.destroy', $addr->id) }}" method="POST" style="display:inline;">
+                                        <form id="delete-address-form-{{ $addr->id }}" action="{{ route('user.profile.address.destroy', $addr->id) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn-action delete" onclick="return confirm('Hủy bỏ tọa độ này khỏi hệ thống?')" title="Xóa tọa độ">
+                                            
+                                            <button type="button" class="btn-action delete" onclick="openDeleteModal({{ $addr->id }})" title="Xóa Địa Chỉ">
                                                 <span class="material-symbols-outlined">delete</span>
                                             </button>
                                         </form>
@@ -143,7 +132,7 @@
                         </div>
                     @else
                         <div class="alert-vg alert-neutral">
-                            Hệ thống chưa ghi nhận tọa độ nào.
+                            Hệ thống chưa ghi nhận Địa Chỉ nào.
                         </div>
                     @endif
                 </div>
@@ -204,10 +193,50 @@
         </div>
     </div>
 </div>
+<div id="vg-delete-modal" class="vg-modal-overlay">
+    <div class="vg-modal-box">
+        <div class="vg-modal-glow"></div>
+        <span class="material-symbols-outlined vg-modal-icon">warning</span>
+        <div class="vg-modal-title">CẢNH BÁO HỆ THỐNG</div>
+        <div class="vg-modal-text">Xác nhận xóa bỏ vĩnh viễn Địa Chỉ này khỏi dữ liệu lưu trữ? Hành động này không thể hoàn tác.</div>
+        <div class="vg-modal-actions">
+            <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">HỦY BỎ</button>
+            <button type="button" class="btn-modal-confirm" onclick="executeDelete()">XÁC NHẬN XÓA</button>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
+/* =========================================
+   HỆ THỐNG XÁC NHẬN XÓA (DELETE MODAL)
+========================================== */
+let currentDeleteAddressId = null;
+
+// Hàm mở hộp thoại
+function openDeleteModal(id) {
+    currentDeleteAddressId = id;
+    document.getElementById('vg-delete-modal').classList.add('active');
+}
+
+// Hàm đóng hộp thoại
+function closeDeleteModal() {
+    document.getElementById('vg-delete-modal').classList.remove('active');
+    currentDeleteAddressId = null;
+}
+
+// Hàm thực thi lệnh Xóa
+function executeDelete() {
+    if (currentDeleteAddressId) {
+        // Tìm đúng cái Form mang ID của địa chỉ đó và ép nó submit
+        let form = document.getElementById('delete-address-form-' + currentDeleteAddressId);
+        if (form) {
+            form.submit();
+        }
+    }
+}
+
 /* PREVIEW AVATAR */
 function previewAvatar(event) {
     const reader = new FileReader();
@@ -254,7 +283,7 @@ function editAddress(id) {
             methodInput.value = 'PUT';
 
             const btn = document.getElementById('submitAddressBtn');
-            btn.innerHTML = '<span class="material-symbols-outlined">update</span> CẬP NHẬT TỌA ĐỘ';
+            btn.innerHTML = '<span class="material-symbols-outlined">update</span> CẬP NHẬT Địa Chỉ';
             
             form.scrollIntoView({ behavior: 'smooth', block: 'center' });
             form.closest('.vg-card').style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';

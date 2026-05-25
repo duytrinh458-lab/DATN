@@ -1,6 +1,6 @@
 /* BACKGROUND & LAYOUT */
 .vg-detail-viewport {
-    padding: 120px 5% 80px;
+    padding: 50px 5% 80px;
     background: radial-gradient(circle at top, #0b1220 0%, #05070d 100%);
     min-height: 100vh;
     color: #e5e7eb;
@@ -298,3 +298,4 @@
 @media (max-width: 500px) {
     .fleet-item { flex-direction: column; text-align: center; gap: 10px; }
 }
+

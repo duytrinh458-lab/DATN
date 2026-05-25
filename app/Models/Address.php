@@ -36,7 +36,7 @@ class Address extends Model
 
         'district',
 
-        'ward',
+        'city',
 
         'province',
 

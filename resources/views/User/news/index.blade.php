@@ -1,84 +1,78 @@
 @extends('User.layouts.app')
 
-@section('title', 'Tin tức')
+@section('title', 'Trung tâm Tin tức | Vanguard')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('Css/User/user-news.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('Css/User/user-news.css') }}">
 @endpush
 
 @section('content')
+<div class="news-viewport">
+    <div class="news-page-container">
 
-<div class="news-page-container">
+        <div class="news-page-header">
+            <h1 class="news-title-main">BẢN TIN <span class="highlight">VANGUARD</span></h1>
+            <p class="news-subtitle">CẬP NHẬT CÔNG NGHỆ UAV & TÌNH HÌNH CHIẾN SỰ MỚI NHẤT</p>
+        </div>
 
-    <!-- TITLE -->
-    <div class="news-page-header">
-        <h1 class="news-title-main">Tin tức mới nhất</h1>
-    </div>
+        <div class="news-grid">
+            @forelse($news as $item)
+                <div class="news-card">
+                    <a href="{{ route('user.news.show', $item->id) }}" class="news-link">
 
-    <!-- GRID -->
-    <div class="news-grid">
-
-        @forelse($news as $item)
-
-            <div class="news-card">
-
-                <a href="{{ route('user.news.show', $item->id) }}" class="news-link">
-
-                    <!-- IMAGE -->
-                    <div class="news-image">
-                        @if($item->thumbnail)
-                            <img src="{{ asset('storage/' . $item->thumbnail) }}"
-                                 alt="{{ $item->title }}">
-                        @endif
-                    </div>
-
-                    <!-- CONTENT -->
-                    <div class="news-content">
-
-                        <h3 class="news-title">
-                            {{ $item->title }}
-                        </h3>
-
-                        <p class="news-excerpt">
-                            {{ \Illuminate\Support\Str::limit(strip_tags($item->content), 120) }}
-                        </p>
-
-                        <div class="news-date">
-                            📅
-                            {{ $item->published_at
-                                ? \Carbon\Carbon::parse($item->published_at)->format('d/m/Y')
-                                : 'Chưa cập nhật' }}
+                        <div class="news-image">
+                            @if($item->thumbnail)
+                                <img src="{{ asset('storage/' . $item->thumbnail) }}" 
+                                     alt="{{ $item->title }}"
+                                     onerror="this.onerror=null; this.src='{{ asset($item->thumbnail) }}';">
+                            @else
+                                <div class="news-image-placeholder">
+                                    <span class="material-symbols-outlined">satellite_alt</span>
+                                </div>
+                            @endif
+                            <div class="news-image-overlay"></div>
                         </div>
 
-                    </div>
+                        <div class="news-content">
+                            <h3 class="news-title" title="{{ $item->title }}">
+                                {{ $item->title }}
+                            </h3>
 
-                </a>
+                            <p class="news-excerpt">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($item->content), 100) }}
+                            </p>
 
-            </div>
+                            <div class="news-meta-footer">
+                                <div class="news-date">
+                                    <span class="material-symbols-outlined icon-sm">schedule</span>
+                                    {{ $item->published_at ? \Carbon\Carbon::parse($item->published_at)->format('d/m/Y') : 'Đang giải mã' }}
+                                </div>
+                                
+                                <div class="news-readmore">
+                                    ĐỌC TIẾP <span class="material-symbols-outlined">arrow_forward_ios</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @empty
+                <div class="news-empty">
+                    <span class="material-symbols-outlined">radar</span>
+                    <p>RADAR CHƯA QUÉT THẤY TÍN HIỆU TIN TỨC NÀO.</p>
+                </div>
+            @endforelse
+        </div>
 
-        @empty
-
-            <div class="news-empty">
-                Không có bài viết nào
-            </div>
-
-        @endforelse
+        <div class="pagination-wrapper">
+            @if($news->lastPage() > 1)
+                {{ $news->links() }}
+            @else
+                
+            @endif
+        </div>
 
     </div>
-
-    <!-- PAGINATION (FIX CHẮC CHẮN HIỂN THỊ) -->
-    <div class="pagination-wrapper">
-
-        @if($news->lastPage() > 1)
-    {{ $news->links() }}
-@else
-    <div class="pagination-single">
-        Trang 1 / 1
-    </div>
-@endif
-
-    </div>
-
 </div>
-
 @endsection

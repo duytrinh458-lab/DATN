@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -11,32 +12,35 @@ use Illuminate\Support\Facades\Cache;
 class HomeController extends Controller
 {
     public function index()
-{
-    // BƯỚC 1: Xóa cache cũ để nó update dữ liệu mới
-    \Illuminate\Support\Facades\Cache::forget('home_page_data');
+    {
+        // BƯỚC 1: Xóa cache cũ để nó update dữ liệu mới
+        \Illuminate\Support\Facades\Cache::forget('home_page_data');
 
-    $data = Cache::remember('home_page_data', 600, function () {
-        return [
-            'productCount' => Product::count(),
-            'newsCount'    => class_exists(News::class) ? News::count() : 0,
-            
-            // BƯỚC 2: Sửa điều kiện where ở đây
-            // Chuyển sang lọc theo 'is_featured' = 1
-            'featuredProducts' => Product::with('images')
-                                        ->where('is_featured', 1) 
-                                        ->orderBy('id', 'desc')
-                                        ->limit(4)
-                                        ->get(),
+        $data = Cache::remember('home_page_data', 600, function () {
+            return [
+                'productCount' => Product::count(),
+                'newsCount'    => class_exists(News::class) ? News::count() : 0,
+                
+                // BƯỚC 2: Sửa điều kiện where ở đây
+                // Chuyển sang lọc theo 'is_featured' = 1
+                'featuredProducts' => Product::with('images')
+                                            ->where('is_featured', 1) 
+                                            ->orderBy('id', 'desc')
+                                            ->limit(4)
+                                            ->get(),
 
-            'latestNews'   => class_exists(News::class) ? News::latest()->limit(3)->get() : collect()
-        ];
-    });
+                // ĐÃ SỬA: Lọc tin tức 'published' và lấy đúng 4 bài
+                'latestNews'   => class_exists(News::class) 
+                                    ? News::where('status', 'published')->latest('published_at')->limit(4)->get() 
+                                    : collect()
+            ];
+        });
 
-    return view('User.home', [
-        'productCount'     => $data['productCount'],
-        'newsCount'        => $data['newsCount'],
-        'featuredProducts' => $data['featuredProducts'],
-        'latestNews'       => $data['latestNews']
-    ]);
-}
+        return view('User.home', [
+            'productCount'     => $data['productCount'],
+            'newsCount'        => $data['newsCount'],
+            'featuredProducts' => $data['featuredProducts'],
+            'latestNews'       => $data['latestNews']
+        ]);
+    }
 }

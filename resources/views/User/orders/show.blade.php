@@ -1,6 +1,6 @@
 @extends('User.layouts.app')
 
-@section('title', 'Chi tiết Chiến dịch - Vanguard')
+@section('title', 'Chi tiết Đơn Hàng - Vanguard')
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('Css/User/order_detail.css') }}">

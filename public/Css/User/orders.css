@@ -1,6 +1,6 @@
 /* BACKGROUND & LAYOUT */
 .orders-viewport {
-    padding: 120px 5% 80px;
+    padding: 20px 5% 80px;
     background: radial-gradient(circle at top center, #0d1b2a 0%, #05070d 100%);
     min-height: 100vh;
     color: #e5e7eb;
@@ -513,3 +513,4 @@
     .btn-view, .btn-cancel-order { flex: 1; }
     .order-info-grid { grid-template-columns: 1fr; }
 }
+

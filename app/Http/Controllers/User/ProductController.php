@@ -22,7 +22,7 @@ class ProductController extends Controller
         }
 
         // ĐÃ SỬA: Phân trang 10 SP/trang
-        $products = $query->latest()->paginate(10);
+        $products = $query->latest()->paginate(8);
 
         return view('User.products.products', compact('products'));
     }
@@ -126,7 +126,7 @@ class ProductController extends Controller
             ->where('category_id', $id)
             ->where('status', 'active')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate(8);
 
         return view('User.categories.show', compact('category', 'products'));
     }
