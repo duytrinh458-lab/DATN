@@ -35,7 +35,7 @@
 
     </div>
 
-    {{-- ALERT --}}
+    {{-- THÔNG BÁO --}}
     @if(session('success'))
 
         <div class="success-alert">
@@ -48,7 +48,7 @@
 
     @endif
 
-    {{-- TABLE --}}
+    {{-- BẢNG NGƯỜI DÙNG --}}
     <div class="table-container shadow-premium">
 
         <div class="table-header-box">
@@ -81,7 +81,7 @@
 
                         <th>Email</th>
 
-                        <th>Liên hệ</th>
+                        <th>Số điện thoại</th>
 
                         <th class="center">Vai trò</th>
 
@@ -99,36 +99,38 @@
 
                         <tr>
 
+                            {{-- ID --}}
                             <td>
-
                                 <span class="user-id">
                                     #{{ $user->id }}
                                 </span>
-
                             </td>
 
+                            {{-- THÔNG TIN NGƯỜI DÙNG --}}
                             <td>
 
                                 <div class="user-info-cell">
 
+                                    {{-- AVATAR --}}
                                     <div class="avatar-wrapper">
 
-    @if($user->avatar)
+                                        @if(!empty($user->avatar) && file_exists(public_path($user->avatar)))
 
-        <img src="{{ asset($user->avatar) }}"
-             alt="{{ $user->full_name }}"
-             class="user-avatar">
+                                            <img src="{{ asset($user->avatar) }}"
+                                                 alt="{{ $user->full_name }}"
+                                                 class="user-avatar">
 
-    @else
+                                        @else
 
-        <div class="avatar-circle">
-            {{ strtoupper(substr($user->full_name,0,1)) }}
-        </div>
+                                            <div class="avatar-circle">
+                                                {{ strtoupper(substr($user->full_name,0,1)) }}
+                                            </div>
 
-    @endif
+                                        @endif
 
                                     </div>
 
+                                    {{-- TÊN --}}
                                     <div>
 
                                         <div class="user-name">
@@ -145,34 +147,43 @@
 
                             </td>
 
-                            <td>{{ $user->email }}</td>
+                            {{-- EMAIL --}}
+                            <td>
+                                {{ $user->email }}
+                            </td>
 
-                            <td>{{ $user->phone }}</td>
+                            {{-- PHONE --}}
+                            <td>
+                                {{ $user->phone }}
+                            </td>
 
+                            {{-- ROLE --}}
                             <td class="center">
 
-                                <span class="badge {{ $user->role == 'admin' ? 'badge-admin' : 'badge-user' }}">
+                                <span class="badge {{ $user->role === 'admin' ? 'badge-admin' : 'badge-user' }}">
 
-                                    {{ strtoupper($user->role) }}
+                                    {{ $user->role === 'admin' ? 'QUẢN TRỊ' : 'NGƯỜI DÙNG' }}
 
                                 </span>
 
                             </td>
 
+                            {{-- STATUS --}}
                             <td class="center">
 
-                                <div class="status-wrapper {{ $user->status }}">
+                                <div class="status-wrapper {{ $user->status == 'active' ? 'active' : 'inactive' }}">
 
                                     <span class="status-dot"></span>
 
                                     <span>
-                                        {{ ucfirst($user->status) }}
+                                        {{ $user->status == 'active' ? 'Hoạt động' : 'Tạm khóa' }}
                                     </span>
 
                                 </div>
 
                             </td>
 
+                            {{-- ACTION --}}
                             <td class="center">
 
                                 <a href="{{ route('admin.users.show',$user->id) }}"
@@ -218,9 +229,9 @@
 
         </div>
 
-        {{-- PAGINATION --}}
+        {{-- PHÂN TRANG --}}
         <div class="pagination-wrapper">
-            {{ $users->onEachSide(1)->links('pagination::bootstrap-5') }}
+            {{ $users->onEachSide(1)->links() }}
         </div>
 
     </div>

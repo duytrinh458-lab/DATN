@@ -1,6 +1,6 @@
 
 /* =========================================================
-   GLOBAL & LAYOUT COMMON
+   ADMIN UI FULL FIX - MODERN DASHBOARD
 ========================================================= */
 
 *{
@@ -41,87 +41,102 @@
 }
 
 /* =========================================================
-   BUTTONS STYLES
+   BUTTON SYSTEM (CLEAN + COLORFUL)
 ========================================================= */
 
 .btn-add-new,
-.btn-back-text,
 .btn-update,
-.btn-view-detail {
+.btn-view-detail,
+.btn-back-text{
     display:inline-flex;
     align-items:center;
     justify-content:center;
     gap:8px;
-    padding:10px 20px;
-    border-radius:12px;
+
+    padding:10px 16px;
+    border-radius:10px;
+
     font-size:13px;
     font-weight:800;
+
     text-decoration:none !important;
+    cursor:pointer;
+
+    transition:.2s ease;
     border:none;
-    transition:.2s;
-    cursor: pointer;
 }
 
-/* Icon size inside buttons */
-.btn-update i, .btn-back-text i, .btn-add-new i, .btn-view-detail i {
-    font-size: 14px;
-}
-
-/* Back button */
-.btn-back-text{
-    background:#f1f5f9;
-    color:#0f172a !important;
-    border:1px solid #e5e7eb;
-}
-
-.btn-back-text:hover{
-    background:#e2e8f0;
-    transform:translateY(-2px);
-}
-
-/* Primary buttons (Add, Update, Save) */
-.btn-add-new,
-.btn-update {
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-    color:#fff !important;
-    box-shadow:0 10px 25px rgba(37,99,235,.25);
-}
-
-.btn-add-new:hover,
-.btn-update:hover {
-    transform:translateY(-2px);
-    box-shadow:0 14px 30px rgba(37,99,235,.35);
-}
-
-/* View detail button in Table */
-.btn-view-detail {
-    background: #f8fafc;
-    color: #334155 !important;
-    border: 1px solid #e2e8f0;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 12px;
-}
-
-.btn-view-detail:hover {
-    background: #f1f5f9;
-    color: #0f172a !important;
+/* ICON */
+.btn-update i,
+.btn-back-text i,
+.btn-add-new i,
+.btn-view-detail i{
+    font-size:14px;
 }
 
 /* =========================================================
-   CARDS & CONTAINERS
+   PRIMARY BUTTON (BLUE GRADIENT)
 ========================================================= */
 
-.card, .table-container {
+.btn-add-new,
+.btn-update{
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    color:#fff !important;
+    box-shadow:0 10px 20px rgba(37,99,235,.25);
+}
+
+.btn-add-new:hover,
+.btn-update:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 28px rgba(37,99,235,.35);
+}
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.btn-view-detail{
+    background:#f1f5f9;
+    color:#334155 !important;
+    border:1px solid #e2e8f0;
+}
+
+.btn-view-detail:hover{
+    background:#e0f2fe;
+    color:#2563eb !important;
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   BACK BUTTON (SOFT GRAY)
+========================================================= */
+
+.btn-back-text{
+    background:#f8fafc;
+    color:#0f172a !important;
+    border:1px solid #e2e8f0;
+}
+
+.btn-back-text:hover{
+    background:#eef2f7;
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card,
+.table-container{
     background:#fff;
     border-radius:20px;
     border:1px solid #e5e7eb;
     box-shadow:0 10px 30px rgba(15,23,42,.08);
-    overflow: hidden;
+    overflow:hidden;
 }
 
 /* =========================================================
-   FORM STYLES (USED IN CREATE & DETAIL)
+   FORM
 ========================================================= */
 
 .uav-form{
@@ -133,8 +148,8 @@
 }
 
 .form-group label{
-    display: block;
-    margin-bottom: 8px;
+    display:block;
+    margin-bottom:8px;
     font-size:13px;
     font-weight:800;
     color:#334155;
@@ -154,176 +169,162 @@
 .form-group select:focus{
     border-color:#3b82f6;
     box-shadow:0 0 0 3px rgba(59,130,246,.15);
-    outline: none;
-}
-
-.form-footer {
-    padding: 10px 22px 22px;
+    outline:none;
 }
 
 /* =========================================================
-   ⭐ TRANG INDEX: DANH SÁCH & AVATAR TRONG BẢNG (TABLE)
+   TABLE
 ========================================================= */
 
-.table-header-box {
-    padding: 22px;
-    border-bottom: 1px solid #f1f5f9;
+.table-responsive{
+    width:100%;
+    overflow-x:auto;
 }
 
-.card-title {
-    font-size: 18px;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0 0 4px;
+.uav-table{
+    width:100%;
+    border-collapse:collapse;
+    text-align:left;
 }
 
-.card-subtitle {
-    font-size: 13px;
-    color: #64748b;
-    margin: 0;
+.uav-table th{
+    background:#f8fafc;
+    padding:14px 20px;
+    font-size:12px;
+    font-weight:800;
+    color:#64748b;
+    text-transform:uppercase;
+    border-bottom:1px solid #e5e7eb;
 }
 
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
+.uav-table td{
+    padding:16px 20px;
+    font-size:14px;
+    color:#334155;
+    border-bottom:1px solid #f1f5f9;
+    background:#fff;
 }
 
-.uav-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+.uav-table tbody tr:hover td{
+    background:#f8fafc;
 }
-
-.uav-table th {
-    background: #f8fafc;
-    padding: 14px 20px;
-    font-size: 12px;
-    font-weight: 800;
-    color: #64748b;
-    text-transform: uppercase;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.uav-table td {
-    padding: 16px 20px;
-    font-size: 14px;
-    color: #334155;
-    border-bottom: 1px solid #f1f5f9;
-    vertical-align: middle;
-}
-
-.uav-table tbody tr:hover td {
-    background: #f8fafc;
-}
-
-.center {
-    text-align: center !important;
-}
-
-/* Định dạng khối hiển thị hàng ngang user trong cột */
-.user-info-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-/* Vòng tròn bọc avatar thu nhỏ tại dòng Table (Trang Index) */
-.user-management-page .avatar-wrapper {
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    background: #f1f5f9;
-    border: 1px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-/* Khống chế ảnh avatar chuẩn không vỡ trong Table */
-.user-management-page .user-avatar {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block !important;
-    margin: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-}
-
-/* Vòng tròn ký tự chữ cái thay thế (Index) */
-.user-management-page .avatar-circle {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e0f2fe;
-    color: #0369a1;
-    font-weight: 800;
-    font-size: 14px;
-}
-
-.user-name {
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.user-sub {
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-.user-id {
-    font-weight: 700;
-    color: #64748b;
-}
-
-/* Badges & Status */
-.badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 800;
-}
-
-.badge-admin { background: #fee2e2; color: #ef4444; }
-.badge-user { background: #e0f2fe; color: #0284c7; }
-
-.status-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-.status-wrapper.active { color: #16a34a; }
-.status-wrapper.active .status-dot { background: #16a34a; }
-.status-wrapper.inactive { color: #94a3b8; }
-.status-wrapper.inactive .status-dot { background: #94a3b8; }
-
-.pagination-wrapper {
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 40px;
-}
-.empty-icon { font-size: 30px; margin-bottom: 8px; }
-.empty-title { font-weight: 700; color: #94a3b8; }
 
 /* =========================================================
-   ⭐ TRANG DETAIL: CẤU TRÚC GRID & AVATAR TRÒN NHỎ
+   AVATAR FIX (NO LOST IMAGE)
+========================================================= */
+
+.user-info-cell{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.avatar-wrapper{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#f1f5f9;
+    border:1px solid #e5e7eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.avatar-wrapper img,
+.user-avatar{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+/* fallback chữ */
+.avatar-circle{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#e0f2fe;
+    color:#0369a1;
+    font-weight:800;
+}
+
+/* =========================================================
+   BADGE / SPAN (ROLE + STATUS BEAUTY)
+========================================================= */
+
+.badge,
+.status-wrapper{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:6px 12px;
+    border-radius:999px;
+
+    font-size:12px;
+    font-weight:800;
+
+    white-space:nowrap;
+}
+
+/* ROLE */
+.badge-admin{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.badge-user{
+    background:#dbeafe;
+    color:#2563eb;
+}
+
+/* STATUS */
+.status-wrapper.active{
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.status-wrapper.inactive{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+/* DOT */
+.status-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+}
+
+/* =========================================================
+   DETAIL AVATAR
+========================================================= */
+
+.user-detail-page .avatar-wrapper{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    overflow:hidden;
+    margin:0 auto 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#f1f5f9;
+    border:2px solid #cbd5e1;
+}
+
+.user-detail-page .avatar-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* =========================================================
+   DETAIL GRID
 ========================================================= */
 
 .detail-grid{
@@ -332,107 +333,86 @@
     gap:22px;
 }
 
-/* Chỉ thu nhỏ ảnh đại diện lớn bị lỗi thành hình tròn nhỏ 60px trên trang Detail */
-.user-detail-page .detail-grid > div:first-child img,
-.user-detail-page .info-card img,
-.user-detail-page .user-avatar-wrapper img,
-.user-detail-page .avatar-img {
-    width: 60px !important;       
-    height: 60px !important;      
-    border-radius: 50% !important; 
-    object-fit: cover !important; 
-    display: block !important;
-    margin: 15px auto !important; 
-    border: 2px solid #cbd5e1;   
-}
-
-.user-detail-page .user-avatar-wrapper, 
-.user-detail-page .avatar {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important; 
-}
-
-.user-display-name{
-    font-size:16px;
-    font-weight:800;
-    color:#0f172a;
-    text-align:center;
-    margin: 10px 0 5px;
-}
-
-.info-card{
-    padding:22px;
-}
-
-.info-list{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
-
-.info-item{
-    padding:12px 14px;
-    border-radius:12px;
-    background:#f8fafc;
-}
-
-.info-label{
-    font-size:11px;
-    font-weight:800;
-    color:#94a3b8;
-    text-transform:uppercase;
-}
-
-.info-value{
-    font-size:14px;
-    font-weight:700;
-    color:#0f172a;
-}
-
 /* =========================================================
-   DANGER ZONE (XÓA TÀI KHOẢN TRONG DETAIL)
+   PAGINATION (CLEAN + MODERN + NO TEXT LEFT)
 ========================================================= */
 
-.danger-zone{
-    margin:0 22px 22px;
-    padding:18px;
-    border-radius:16px;
-    background:#fef2f2;
-    border:1px solid #fecaca;
+.pagination-wrapper{
+    padding:20px;
+    display:flex;
+    justify-content:center;
 }
 
-.danger-zone p {
-    margin-top: 0;
-    margin-bottom: 12px;
-}
-
-.btn-delete-link{
+.pagination-wrapper nav{
     width:100%;
-    height:44px;
-    border:none;
+    display:flex;
+    justify-content:center;
+}
+
+/* hide laravel text */
+.pagination-wrapper p,
+.pagination-wrapper .text-sm,
+.pagination-wrapper .text-gray-700{
+    display:none !important;
+}
+
+.pagination-wrapper ul{
+    display:flex;
+    gap:8px;
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.pagination-wrapper a,
+.pagination-wrapper span{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     border-radius:10px;
-    background:linear-gradient(135deg,#ef4444,#dc2626);
-    color:#fff;
-    font-weight:800;
-    cursor:pointer;
+
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+
+    text-decoration:none;
+
     transition:.2s;
 }
 
-.btn-delete-link:hover{
+.pagination-wrapper a:hover{
+    background:#e0f2fe;
+    border-color:#93c5fd;
+    color:#2563eb;
     transform:translateY(-2px);
 }
 
-/* =========================================================
-   phân trang
-========================================================= */
+.pagination-wrapper .active span{
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+    border-color:#2563eb;
+    color:#fff;
+    box-shadow:0 8px 18px rgba(37,99,235,.25);
+}
 
+.pagination-wrapper .disabled span{
+    background:#f1f5f9;
+    border-color:#e2e8f0;
+    color:#94a3b8;
+}
+
+.pagination-wrapper li:first-child,
+.pagination-wrapper li:last-child{
+    display:none !important;
+}
 
 /* =========================================================
-   RESPONSIVE (MOBILE)
+   MOBILE
 ========================================================= */
 
 @media(max-width:768px){
@@ -443,5 +423,12 @@
 
     .detail-grid{
         grid-template-columns:1fr;
+    }
+
+    .pagination-wrapper a,
+    .pagination-wrapper span{
+        width:36px;
+        height:36px;
+        font-size:12px;
     }
 }

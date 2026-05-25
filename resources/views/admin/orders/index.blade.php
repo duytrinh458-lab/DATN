@@ -10,7 +10,7 @@
 
 <div class="admin-content">
 
-    {{-- PAGE HEADER --}}
+    {{-- HEADER --}}
     <header class="admin-header">
 
         <div class="header-info">
@@ -20,12 +20,12 @@
             </h1>
 
             <p>
-                Theo dõi và xử lý các giao dịch hệ thống
+                Theo dõi và xử lý các đơn hàng trong hệ thống
             </p>
 
             <div class="total-orders">
 
-                Tổng đơn hàng:
+                Tổng số đơn hàng:
                 <span>{{ $orders->total() }}</span>
 
             </div>
@@ -35,7 +35,7 @@
     </header>
 
 
-    {{-- SUCCESS ALERT --}}
+    {{-- THÔNG BÁO --}}
     @if(session('success'))
 
         <div class="alert success-alert">
@@ -51,13 +51,13 @@
     @endif
 
 
-    {{-- TABLE CARD --}}
+    {{-- BẢNG ĐƠN HÀNG --}}
     <div class="table-card">
 
         <div class="table-header-box">
 
             <h2 class="card-title">
-                Danh sách vận đơn
+                Danh sách đơn hàng
             </h2>
 
         </div>
@@ -71,7 +71,7 @@
                     <tr>
 
                         <th width="90">
-                            ID
+                            Mã đơn
                         </th>
 
                         <th>
@@ -91,7 +91,7 @@
                         </th>
 
                         <th>
-                            Ngày tạo
+                            Ngày đặt
                         </th>
 
                         <th class="center">
@@ -118,37 +118,39 @@
                             </td>
 
 
-                            {{-- CUSTOMER --}}
+                            {{-- KHÁCH HÀNG --}}
                             <td>
 
-                                <div class="avatar">
+                                <div class="user-info-cell">
 
-    @if(!empty($order->user_avatar))
+                                    <div class="avatar">
 
-        <img src="{{ asset($order->user_avatar) }}"
-             class="avatar-img"
-             alt="{{ $order->full_name }}">
+                                        @if(!empty($order->user_avatar) && file_exists(public_path($order->user_avatar)))
 
-    @else
+                                            <img src="{{ asset($order->user_avatar) }}"
+                                                 class="avatar-img"
+                                                 alt="{{ $order->full_name }}">
 
-        <div class="avatar-text">
-            {{ strtoupper(substr($order->full_name,0,1)) }}
-        </div>
+                                        @else
 
-    @endif
+                                            <div class="avatar-text">
+                                                {{ strtoupper(substr($order->full_name,0,1)) }}
+                                            </div>
 
-</div>
+                                        @endif
 
-    <span class="user-name">
-        {{ $order->full_name }}
-    </span>
+                                    </div>
 
-</div>
+                                    <span class="user-name">
+                                        {{ $order->full_name }}
+                                    </span>
+
+                                </div>
 
                             </td>
 
 
-                            {{-- PHONE --}}
+                            {{-- SỐ ĐIỆN THOẠI --}}
                             <td>
 
                                 <span class="user-phone">
@@ -160,7 +162,7 @@
                             </td>
 
 
-                            {{-- TOTAL --}}
+                            {{-- TỔNG TIỀN --}}
                             <td>
 
                                 <span class="order-price">
@@ -172,19 +174,48 @@
                             </td>
 
 
-                            {{-- STATUS --}}
+                            {{-- TRẠNG THÁI --}}
                             <td class="center">
 
                                 <span class="status-badge status-{{ $order->status }}">
 
-                                    {{ strtoupper($order->status) }}
+                                    @switch($order->status)
+
+                                        @case('pending')
+                                            Chờ xử lý
+                                            @break
+
+                                        @case('processing')
+                                            Đang xử lý
+                                            @break
+
+                                        @case('shipping')
+                                            Đang giao
+                                            @break
+
+                                        @case('delivered')
+                                            Đã giao
+                                            @break
+
+                                        @case('cancelled')
+                                            Đã hủy
+                                            @break
+
+                                        @case('refunded')
+                                            Đã hoàn tiền
+                                            @break
+
+                                        @default
+                                            {{ ucfirst($order->status) }}
+
+                                    @endswitch
 
                                 </span>
 
                             </td>
 
 
-                            {{-- DATE --}}
+                            {{-- NGÀY TẠO --}}
                             <td>
 
                                 <span class="order-date">
@@ -198,7 +229,7 @@
                             </td>
 
 
-                            {{-- ACTION --}}
+                            {{-- HÀNH ĐỘNG --}}
                             <td class="center">
 
                                 <a href="{{ route('admin.orders.show', $order->id) }}"
@@ -247,7 +278,7 @@
     </div>
 
 
-    {{-- PAGINATION --}}
+    {{-- PHÂN TRANG --}}
     <div class="pagination-wrapper">
 
         @if ($orders->lastPage() > 1)

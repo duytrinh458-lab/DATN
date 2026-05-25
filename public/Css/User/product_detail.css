@@ -153,6 +153,90 @@ body {
     display: block;
 }
 
+/* ================= RATING ================= */
+
+.rating-box{
+    margin-bottom:16px;
+}
+
+.rating-label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:600;
+    color:#fff;
+}
+
+.star-rating{
+    display:flex;
+    flex-direction:row-reverse;
+    justify-content:flex-end;
+    gap:6px;
+}
+
+.star-rating input{
+    display:none;
+}
+
+/* MẶC ĐỊNH TRẮNG */
+
+.star-rating label{
+    font-size:34px;
+    color:#ffffff;
+    cursor:pointer;
+    transition:0.2s ease;
+}
+
+/* HOVER */
+
+.star-rating label:hover,
+.star-rating label:hover ~ label{
+    color:#ffd700;
+    transform:scale(1.08);
+}
+
+/* ĐÃ CHỌN */
+
+.star-rating input:checked ~ label{
+    color:#ffd700;
+}
+
+/* ================= STAR RATING ================= */
+
+.star-rating,
+.edit-star-rating{
+    display:flex;
+    flex-direction:row-reverse;
+    justify-content:flex-end;
+    gap:5px;
+}
+
+.star-rating input,
+.edit-star-rating input{
+    display:none;
+}
+
+.star-rating label,
+.edit-star-rating label{
+    font-size:32px;
+    color:#fff;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+/* HOVER */
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.edit-star-rating label:hover,
+.edit-star-rating label:hover ~ label{
+    color:gold;
+}
+
+/* CHECKED */
+.star-rating input:checked ~ label,
+.edit-star-rating input:checked ~ label{
+    color:gold;
+}
+
 /* ===== COMMENT AVATAR FIX ===== */
 .comment-avatar {
     width: 50px !important;

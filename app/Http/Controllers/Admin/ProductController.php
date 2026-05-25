@@ -25,7 +25,7 @@ class ProductController extends Controller
                 'brand'
             ])
             ->orderBy('id', 'desc')
-            ->paginate(5); // 🔥 FIX PHÂN TRANG
+            ->paginate(5);
 
         return view(
             'Admin.products.index',
@@ -79,7 +79,9 @@ class ProductController extends Controller
 
             'weight' => 'nullable|numeric|min:0',
 
-            'image1' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'images' => 'required|array|min:1|max:10',
+
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
 
         ]);
 
@@ -121,35 +123,36 @@ class ProductController extends Controller
 
             $product->save();
 
-            // ================= UPLOAD IMAGE =================
+            // ================= UPLOAD MULTIPLE IMAGES =================
 
-            if ($request->hasFile('image1')) {
+            if ($request->hasFile('images')) {
 
-                $file = $request->file('image1');
+                foreach ($request->file('images') as $index => $file) {
 
-                $fileName =
-                    'uav_' .
-                    time() .
-                    '_' .
-                    uniqid() .
-                    '.' .
-                    $file->getClientOriginalExtension();
+                    $fileName =
+                        'uav_' .
+                        time() .
+                        '_' .
+                        uniqid() .
+                        '.' .
+                        $file->getClientOriginalExtension();
 
-                $file->move(
-                    public_path('uploads/products'),
-                    $fileName
-                );
+                    $file->move(
+                        public_path('uploads/products'),
+                        $fileName
+                    );
 
-                ProductImage::create([
+                    ProductImage::create([
 
-                    'product_id' => $product->id,
+                        'product_id' => $product->id,
 
-                    'image_url' =>
-                        'uploads/products/' . $fileName,
+                        'image_url' =>
+                            'uploads/products/' . $fileName,
 
-                    'position' => 1
+                        'position' => $index + 1
 
-                ]);
+                    ]);
+                }
             }
 
             DB::commit();
@@ -232,7 +235,9 @@ class ProductController extends Controller
 
             'weight' => 'nullable|numeric|min:0',
 
-            'image1' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'images' => 'nullable|array|max:10',
+
+            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
 
         ]);
 
@@ -272,9 +277,9 @@ class ProductController extends Controller
 
             $product->save();
 
-            // ================= UPDATE IMAGE =================
+            // ================= UPDATE MULTIPLE IMAGES =================
 
-            if ($request->hasFile('image1')) {
+            if ($request->hasFile('images')) {
 
                 $oldImages = ProductImage::where(
                     'product_id',
@@ -296,31 +301,32 @@ class ProductController extends Controller
                     $img->delete();
                 }
 
-                $file = $request->file('image1');
+                foreach ($request->file('images') as $index => $file) {
 
-                $fileName =
-                    'uav_' .
-                    time() .
-                    '_' .
-                    uniqid() .
-                    '.' .
-                    $file->getClientOriginalExtension();
+                    $fileName =
+                        'uav_' .
+                        time() .
+                        '_' .
+                        uniqid() .
+                        '.' .
+                        $file->getClientOriginalExtension();
 
-                $file->move(
-                    public_path('uploads/products'),
-                    $fileName
-                );
+                    $file->move(
+                        public_path('uploads/products'),
+                        $fileName
+                    );
 
-                ProductImage::create([
+                    ProductImage::create([
 
-                    'product_id' => $product->id,
+                        'product_id' => $product->id,
 
-                    'image_url' =>
-                        'uploads/products/' . $fileName,
+                        'image_url' =>
+                            'uploads/products/' . $fileName,
 
-                    'position' => 1
+                        'position' => $index + 1
 
-                ]);
+                    ]);
+                }
             }
 
             DB::commit();
@@ -394,23 +400,4 @@ class ProductController extends Controller
             );
         }
     }
-
-    // ================= USER PRODUCTS =================
-
-    // public function products()
-    // {
-    //     $products = Product::with([
-    //             'images',
-    //             'category',
-    //             'brand'
-    //         ])
-    //         ->where('status', 'active')
-    //         ->orderBy('id', 'desc')
-    //         ->paginate(3);
-
-    //     return view(
-    //         'User.products',
-    //         compact('products')
-    //     );
-    // }
 }

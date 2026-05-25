@@ -36,15 +36,30 @@
 
             <tbody>
 
-                @foreach($comments as $c)
+                @forelse($comments as $c)
 
                 <tr>
 
-                    <td>{{ $c->id }}</td>
+                    <td>#{{ $c->id }}</td>
 
+                    <!-- USER + AVATAR -->
                     <td>
                         <div class="comment-user">
-                            {{ $c->full_name }}
+                            
+                            <div class="comment-avatar">
+                                @if($c->avatar)
+                                    <img src="{{ asset($c->avatar) }}" alt="avatar">
+                                @else
+                                    <div class="avatar-fallback">
+                                        {{ strtoupper(substr($c->full_name, 0, 1)) }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="comment-user-info">
+                                <div class="name">{{ $c->full_name }}</div>
+                            </div>
+
                         </div>
                     </td>
 
@@ -61,10 +76,34 @@
                     </td>
 
                     <td>
-                        <div class="comment-rating">
-                            ⭐ {{ $c->rating ?? 0 }}
-                        </div>
-                    </td>
+
+    <div class="comment-rating">
+
+        @php
+            $rating = $c->rating ?? 0;
+        @endphp
+
+        @for($i = 1; $i <= 5; $i++)
+
+            @if($i <= $rating)
+
+                <span style="color: gold;">★</span>
+
+            @else
+
+                <span style="color: #666;">★</span>
+
+            @endif
+
+        @endfor
+
+        <span>
+            ({{ $rating }}/5)
+        </span>
+
+    </div>
+
+</td>
 
                     <td>
                         <div class="comment-date">
@@ -91,11 +130,24 @@
 
                 </tr>
 
-                @endforeach
+                @empty
+
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:30px; color:#6b7280;">
+                        Chưa có bình luận nào
+                    </td>
+                </tr>
+
+                @endforelse
 
             </tbody>
 
         </table>
+
+        <!-- PAGINATION -->
+        <div class="pagination-wrapper">
+            {{ $comments->onEachSide(1)->links() }}
+        </div>
 
     </div>
 

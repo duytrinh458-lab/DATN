@@ -409,98 +409,158 @@
 
         </div>
 
-        {{-- ================= ẢNH ================= --}}
-        <div class="form-group full-width">
+        {{-- ================= ẢNH SẢN PHẨM ================= --}}
+<div class="form-group full-width">
 
-            <label for="image1">
-                Ảnh sản phẩm <span class="required">*</span>
-            </label>
+    <label for="images">
+        Ảnh sản phẩm <span class="required">*</span>
+    </label>
 
-            <div class="file-upload">
+    <div class="file-upload">
 
-                <input type="file"
-                       id="image1"
-                       name="image1"
-                       class="form-control"
-                       required
-                       accept="image/*">
+        <input type="file"
+               id="images"
+               name="images[]"
+               class="form-control"
+               accept="image/*"
+               multiple>
 
-                <div class="file-preview">
+        <div class="image-preview-grid" id="previewContainer">
 
-                    <i class="fas fa-cloud-upload-alt"></i>
+            <div class="upload-placeholder">
 
-                    <p>
-                        Chọn ảnh JPG, PNG (Tối đa 2MB)
-                    </p>
+                <i class="fas fa-cloud-upload-alt"></i>
 
-                </div>
+                <p>
+                    Chọn nhiều ảnh JPG, PNG (Tối đa 2MB/ảnh)
+                </p>
 
             </div>
 
         </div>
 
-        {{-- ================= MÔ TẢ ================= --}}
-        <div class="form-group full-width">
-
-            <label for="description">
-                Mô tả sản phẩm
-            </label>
-
-            <textarea id="description"
-                      name="description"
-                      class="form-control"
-                      rows="6"
-                      placeholder="Nhập mô tả chi tiết sản phẩm...">{{ old('description') }}</textarea>
-
-        </div>
-
     </div>
 
-    {{-- ================= ACTIONS ================= --}}
-    <div class="form-actions">
+</div>
 
-        <button type="submit" class="btn btn-primary">
+{{-- ================= MÔ TẢ ================= --}}
+<div class="form-group full-width">
 
-            <i class="fas fa-save"></i>
+    <label for="description">
+        Mô tả sản phẩm
+    </label>
 
-            Lưu sản phẩm
+    <textarea id="description"
+              name="description"
+              class="form-control"
+              rows="6"
+              placeholder="Nhập mô tả chi tiết sản phẩm...">{{ old('description') }}</textarea>
 
-        </button>
+</div>
 
-        <a href="{{ route('admin.products.index') }}"
-           class="btn btn-secondary">
+</div>
 
-            <i class="fas fa-times"></i>
+{{-- ================= ACTIONS ================= --}}
+<div class="form-actions">
 
-            Hủy bỏ
+    <button type="submit" class="btn btn-primary">
 
-        </a>
+        <i class="fas fa-save"></i>
 
-    </div>
+        Lưu sản phẩm
+
+    </button>
+
+    <a href="{{ route('admin.products.index') }}"
+       class="btn btn-secondary">
+
+        <i class="fas fa-times"></i>
+
+        Hủy bỏ
+
+    </a>
+
+</div>
 
 </form>
-    </div>
+</div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Chỉ giữ lại Preview ảnh
-    const imageInput = document.getElementById('image1');
-    const filePreview = document.querySelector('.file-preview');
-    
-    if (imageInput && filePreview) {
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    filePreview.innerHTML = `<img src="${e.target.result}" style="max-height: 200px; border-radius: 8px;">`;
-                };
-                reader.readAsDataURL(file);
-            }
+document.addEventListener('DOMContentLoaded', function () {
+
+    const imageInput = document.getElementById('images');
+    const previewContainer = document.getElementById('previewContainer');
+
+    let selectedFiles = [];
+
+    imageInput.addEventListener('change', function (e) {
+
+        const files = Array.from(e.target.files);
+
+        selectedFiles = [...selectedFiles, ...files];
+
+        renderPreview();
+    });
+
+    function renderPreview() {
+
+        previewContainer.innerHTML = '';
+
+        if(selectedFiles.length === 0){
+
+            previewContainer.innerHTML = `
+                <div class="upload-placeholder">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Chọn nhiều ảnh JPG, PNG (Tối đa 2MB/ảnh)</p>
+                </div>
+            `;
+
+            return;
+        }
+
+        selectedFiles.forEach((file, index) => {
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                const item = document.createElement('div');
+
+                item.classList.add('preview-item');
+
+                item.innerHTML = `
+                    <img src="${e.target.result}" alt="preview">
+
+                    <button type="button"
+                            class="remove-preview">
+                        ×
+                    </button>
+                `;
+
+                item.querySelector('.remove-preview')
+                    .addEventListener('click', function () {
+
+                        selectedFiles.splice(index, 1);
+
+                        const dt = new DataTransfer();
+
+                        selectedFiles.forEach(f => {
+                            dt.items.add(f);
+                        });
+
+                        imageInput.files = dt.files;
+
+                        renderPreview();
+                    });
+
+                previewContainer.appendChild(item);
+            };
+
+            reader.readAsDataURL(file);
         });
     }
-    // Đã xóa bỏ hoàn toàn đoạn format giá tiền gây lỗi gửi dấu chấm về Server
+
 });
 </script>
 @endsection

@@ -433,46 +433,72 @@
                 </div>
 
                 {{-- ================= ẢNH HIỆN TẠI ================= --}}
-                <div class="form-group full-width">
+<div class="form-group full-width">
 
-                    <label>
-                        Ảnh hiện tại
-                    </label>
+    <label>
+        Ảnh hiện tại
+    </label>
 
-                    @if($product->images->first())
+    <div id="previewContainer" class="image-preview-grid">
 
-                        <img src="{{ asset($product->images->first()->image_url) }}"
-                             id="preview"
-                             style="
-                                width:180px;
-                                border-radius:14px;
-                                border:1px solid #ddd;
-                                margin-top:10px;
-                             ">
+        @forelse($product->images as $image)
 
-                    @endif
+            <div class="preview-item">
 
-                </div>
+                <img src="{{ asset($image->image_url) }}"
+                     alt="product-image">
 
-                {{-- ================= ẢNH MỚI ================= --}}
-                <div class="form-group full-width">
+            </div>
 
-                    <label for="image1">
-                        Chọn ảnh mới
-                    </label>
+        @empty
 
-                    <div class="file-upload">
+            <div class="upload-placeholder">
 
-                        <input type="file"
-                               id="image1"
-                               name="image1"
-                               class="form-control"
-                               accept="image/*"
-                               onchange="previewImage(event)">
+                <i class="fas fa-image"></i>
 
-                    </div>
+                <p>Chưa có ảnh sản phẩm</p>
 
-                </div>
+            </div>
+
+        @endforelse
+
+    </div>
+
+</div>
+
+{{-- ================= ẢNH MỚI ================= --}}
+<div class="form-group full-width">
+
+    <label for="images">
+        Chọn ảnh mới
+    </label>
+
+    <div class="file-upload">
+
+        <input type="file"
+               id="images"
+               name="images[]"
+               class="form-control"
+               accept="image/*"
+               multiple>
+
+        <div class="image-preview-grid" id="newPreviewContainer">
+
+            <div class="upload-placeholder">
+
+                <i class="fas fa-cloud-upload-alt"></i>
+
+                <p>
+                    Chọn nhiều ảnh JPG, PNG (Tối đa 2MB/ảnh)
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
                 {{-- ================= DESCRIPTION ================= --}}
                 <div class="form-group full-width">
@@ -520,14 +546,92 @@
 </div>
 
 <script>
-function previewImage(event)
-{
-    const preview = document.getElementById('preview');
+document.addEventListener('DOMContentLoaded', function () {
 
-    preview.src = URL.createObjectURL(event.target.files[0]);
+    const imageInput = document.getElementById('images');
 
-    preview.style.display = 'block';
-}
+    const previewContainer =
+        document.getElementById('newPreviewContainer');
+
+    let selectedFiles = [];
+
+    imageInput.addEventListener('change', function (e) {
+
+        const files = Array.from(e.target.files);
+
+        selectedFiles = [...selectedFiles, ...files];
+
+        renderPreview();
+    });
+
+    function renderPreview() {
+
+        previewContainer.innerHTML = '';
+
+        if(selectedFiles.length === 0){
+
+            previewContainer.innerHTML = `
+                <div class="upload-placeholder">
+
+                    <i class="fas fa-cloud-upload-alt"></i>
+
+                    <p>
+                        Chọn nhiều ảnh JPG, PNG (Tối đa 2MB/ảnh)
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        selectedFiles.forEach((file, index) => {
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                const item = document.createElement('div');
+
+                item.classList.add('preview-item');
+
+                item.innerHTML = `
+
+                    <img src="${e.target.result}" alt="preview">
+
+                    <button type="button"
+                            class="remove-preview">
+
+                        ×
+
+                    </button>
+
+                `;
+
+                item.querySelector('.remove-preview')
+                    .addEventListener('click', function () {
+
+                        selectedFiles.splice(index, 1);
+
+                        const dt = new DataTransfer();
+
+                        selectedFiles.forEach(f => {
+                            dt.items.add(f);
+                        });
+
+                        imageInput.files = dt.files;
+
+                        renderPreview();
+                    });
+
+                previewContainer.appendChild(item);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+});
 </script>
 
 @endsection

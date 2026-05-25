@@ -68,9 +68,9 @@
             </tbody>
         </table>
 
-        <div style="margin-top: 20px;">
-            {{ $transactions->links() }}
-        </div>
+        <div class="pagination-wrapper">
+    {{ $transactions->onEachSide(1)->links() }}
+</div>
     </div>
 </div>
 @endsection

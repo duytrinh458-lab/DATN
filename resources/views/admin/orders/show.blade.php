@@ -52,87 +52,128 @@
         <div class="left-column">
 
             {{-- ================= STATUS ================= --}}
-            <section class="detail-section">
+<section class="detail-section">
 
-                <div class="info-card">
+    <div class="info-card">
 
-                    <div class="card-header">
-                        <h2 class="card-title">
-                            Xử lý đơn hàng
-                        </h2>
-                    </div>
+        <div class="card-header">
+            <h2 class="card-title">
+                Xử lý đơn hàng
+            </h2>
+        </div>
 
-                    <div class="status-wrapper">
+        <div class="status-wrapper">
 
-                        <div class="current-status-box">
+            <div class="current-status-box">
 
-                            <div class="status-label">
-                                Trạng thái hiện tại
-                            </div>
+                <div class="status-label">
+                    Trạng thái hiện tại
+                </div>
 
-                            <div>
+                <div>
 
-                                <span class="order-status status-{{ $order->status }}">
-                                    {{ strtoupper($order->status) }}
-                                </span>
+                    <span class="order-status status-{{ $order->status }}">
 
-                            </div>
+                        @switch(strtolower($order->status))
 
-                        </div>
+                            @case('pending')
+                                Chờ xử lý
+                                @break
 
-                        <form method="POST"
-                              action="{{ route('admin.orders.update', $order->id) }}"
-                              class="uav-form-inline">
+                            @case('processing')
+                                Đang xử lý
+                                @break
 
-                            @csrf
+                            @case('shipping')
+                                Đang giao hàng
+                                @break
 
-                            <div class="form-group">
+                            @case('delivered')
+                                Đã giao hàng
+                                @break
 
-                                <label>
-                                    Cập nhật trạng thái
-                                </label>
+                            @case('cancelled')
+                                Đã hủy
+                                @break
 
-                                <select name="status">
+                            @case('refunded')
+                                Đã hoàn tiền
+                                @break
 
-                                    <option value="pending"
-                                        {{ $order->status == 'pending' ? 'selected' : '' }}>
-                                        Chờ xử lý
-                                    </option>
+                            @default
+                                {{ $order->status }}
 
-                                    <option value="processing"
-                                        {{ $order->status == 'processing' ? 'selected' : '' }}>
-                                        Đang xử lý
-                                    </option>
+                        @endswitch
 
-                                    <option value="shipping"
-                                        {{ $order->status == 'shipping' ? 'selected' : '' }}>
-                                        Đang giao
-                                    </option>
-
-                                    <option value="delivered"
-                                        {{ $order->status == 'delivered' ? 'selected' : '' }}>
-                                        Đã giao
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                            <button type="submit" class="btn-update">
-
-                                <i class="fas fa-save"></i>
-
-                                Cập nhật
-
-                            </button>
-
-                        </form>
-
-                    </div>
+                    </span>
 
                 </div>
 
-            </section>
+            </div>
+
+            <form method="POST"
+                  action="{{ route('admin.orders.update', $order->id) }}"
+                  class="uav-form-inline">
+
+                @csrf
+
+                <div class="form-group">
+
+                    <label>
+                        Cập nhật trạng thái
+                    </label>
+
+                    <select name="status">
+
+                        <option value="pending"
+                            {{ $order->status == 'pending' ? 'selected' : '' }}>
+                            Chờ xử lý
+                        </option>
+
+                        <option value="processing"
+                            {{ $order->status == 'processing' ? 'selected' : '' }}>
+                            Đang xử lý
+                        </option>
+
+                        <option value="shipping"
+                            {{ $order->status == 'shipping' ? 'selected' : '' }}>
+                            Đang giao hàng
+                        </option>
+
+                        <option value="delivered"
+                            {{ $order->status == 'delivered' ? 'selected' : '' }}>
+                            Đã giao hàng
+                        </option>
+
+                        <option value="cancelled"
+                            {{ $order->status == 'cancelled' ? 'selected' : '' }}>
+                            Đã hủy
+                        </option>
+
+                        <option value="refunded"
+                            {{ $order->status == 'refunded' ? 'selected' : '' }}>
+                            Đã hoàn tiền
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <button type="submit" class="btn-update">
+
+                    <i class="fas fa-save"></i>
+
+                    Cập nhật
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
 
             {{-- ================= SHIPPING ================= --}}
             <section class="detail-section">

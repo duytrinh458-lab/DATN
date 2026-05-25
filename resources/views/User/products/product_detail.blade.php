@@ -85,21 +85,74 @@
 
                 @auth
                     <form action="{{ route('user.comment.store', $product->id) }}"
-                          method="POST"
-                          class="comment-form">
+      method="POST"
+      class="comment-form">
 
-                        @csrf
+    @csrf
 
-                        <textarea name="comment"
-                                  class="comment-textarea"
-                                  placeholder="Viết bình luận..."
-                                  required></textarea>
+    {{-- ===== RATING ===== --}}
+    <div class="rating-box">
 
-                        <button type="submit" class="submit-comment-btn">
-                            Gửi
-                        </button>
+        <label class="rating-label">
+            Đánh giá sản phẩm
+        </label>
 
-                    </form>
+        <div class="star-rating">
+
+            <input type="radio"
+                   id="star5"
+                   name="rating"
+                   value="5"
+                   checked>
+
+            <label for="star5">★</label>
+
+            <input type="radio"
+                   id="star4"
+                   name="rating"
+                   value="4">
+
+            <label for="star4">★</label>
+
+            <input type="radio"
+                   id="star3"
+                   name="rating"
+                   value="3">
+
+            <label for="star3">★</label>
+
+            <input type="radio"
+                   id="star2"
+                   name="rating"
+                   value="2">
+
+            <label for="star2">★</label>
+
+            <input type="radio"
+                   id="star1"
+                   name="rating"
+                   value="1">
+
+            <label for="star1">★</label>
+
+        </div>
+
+    </div>
+
+    {{-- ===== COMMENT ===== --}}
+    <textarea name="comment"
+              class="comment-textarea"
+              placeholder="Viết bình luận..."
+              required></textarea>
+
+    <button type="submit"
+            class="submit-comment-btn">
+
+        Gửi
+
+    </button>
+
+</form>
                 @else
                     <p class="comment-login-text">Đăng nhập để bình luận</p>
                 @endauth
@@ -108,118 +161,167 @@
 
                     @forelse($reviews as $cmt)
 
-                        <div class="comment-item">
+<div class="comment-item">
 
-                            <!-- USER -->
-                            <div class="comment-header">
+    <!-- USER -->
+    <div class="comment-header">
 
-                                <div class="comment-user">
+        <div class="comment-user">
 
-                                    <img
-                                        src="{{ optional($cmt->user)->avatar
-                                            ? asset($cmt->user->avatar)
-                                            : 'https://ui-avatars.com/api/?name=' . urlencode(optional($cmt->user)->full_name ?? 'User') }}"
-                                        class="comment-avatar"
-                                        alt="avatar">
+            <img
+                src="{{ optional($cmt->user)->avatar
+                    ? asset($cmt->user->avatar)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode(optional($cmt->user)->full_name ?? 'User') }}"
+                class="comment-avatar"
+                alt="avatar">
 
-                                    <div>
+            <div>
 
-                                        <div class="comment-username">
-                                            {{ optional($cmt->user)->full_name ?? 'User' }}
-                                        </div>
+                <div class="comment-username">
+                    {{ optional($cmt->user)->full_name ?? 'User' }}
+                </div>
 
-                                        <div class="comment-rating">
-                                            ⭐ {{ $cmt->rating ?? 5 }}/5
-                                        </div>
+                {{-- HIỂN THỊ RATING --}}
+                <div class="comment-rating"
+                     id="rating-display-{{ $cmt->id }}">
 
-                                    </div>
+                    @for($i = 1; $i <= 5; $i++)
 
-                                </div>
+                        @if($i <= $cmt->rating)
+                            <span style="color:gold;">★</span>
+                        @else
+                            <span style="color:#777;">★</span>
+                        @endif
 
-                            </div>
+                    @endfor
 
-                            <!-- CONTENT -->
-                            <div class="comment-content" id="content-{{ $cmt->id }}">
-                                {{ $cmt->comment }}
-                            </div>
+                    ({{ $cmt->rating }}/5)
 
-                            <!-- EDIT -->
-                            <textarea class="edit-comment-textarea"
-                                      id="textarea-{{ $cmt->id }}"
-                                      style="display:none;">{{ $cmt->comment }}</textarea>
+                </div>
 
-                            @auth
-                                @if(auth()->id() == $cmt->user_id)
+            </div>
 
-                                    <div class="comment-actions">
+        </div>
 
-                                        <button type="button"
-                                                class="btn-comment-edit"
-                                                onclick="editComment({{ $cmt->id }})">
-                                            Sửa
-                                        </button>
+    </div>
 
-                                        <button type="button"
-                                                class="btn-comment-save"
-                                                id="save-btn-{{ $cmt->id }}"
-                                                style="display:none;"
-                                                onclick="saveComment({{ $cmt->id }})">
-                                            Lưu
-                                        </button>
+    <!-- CONTENT -->
+    <div class="comment-content"
+         id="content-{{ $cmt->id }}">
 
-                                        <button type="button"
-        id="cancel-btn-{{ $cmt->id }}"
-        class="btn-comment-cancel"
-        style="display:none;"
-        onclick="cancelEdit({{ $cmt->id }})">
-    Hủy
-</button>
+        {{ $cmt->comment }}
 
-                                        <form action="{{ route('user.comment.delete', $cmt->id) }}"
-                                              method="POST"
-                                              onsubmit="return confirm('Xóa bình luận?')"
-                                              style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
+    </div>
 
-                                            <button type="submit" class="btn-comment-delete">
-                                                Xóa
-                                            </button>
-                                        </form>
+    <!-- EDIT COMMENT -->
+    <textarea class="edit-comment-textarea"
+              id="textarea-{{ $cmt->id }}"
+              style="display:none;">{{ $cmt->comment }}</textarea>
 
-                                    </div>
+    <!-- EDIT RATING -->
+    <div class="edit-rating-box"
+         id="edit-rating-{{ $cmt->id }}"
+         style="display:none; margin-top:10px;">
 
-                                @endif
-                            @endauth
+        <div class="edit-star-rating">
 
-                            <!-- REPLIES -->
-                            @if($cmt->replies && $cmt->replies->count())
+            @for($i = 5; $i >= 1; $i--)
 
-                                <div class="reply-list">
+                <input type="radio"
+                       id="edit-star-{{ $cmt->id }}-{{ $i }}"
+                       name="edit-rating-{{ $cmt->id }}"
+                       value="{{ $i }}"
+                       {{ $cmt->rating == $i ? 'checked' : '' }}>
 
-                                    @foreach($cmt->replies as $reply)
+                <label for="edit-star-{{ $cmt->id }}-{{ $i }}">
+                    ★
+                </label>
 
-                                        <div class="reply-item">
+            @endfor
 
-                                            <strong>
-                                                {{ optional($reply->user)->full_name ?? 'User' }}
-                                            </strong>
+        </div>
 
-                                            <p>{{ $reply->comment }}</p>
+    </div>
 
-                                        </div>
+    @auth
+        @if(auth()->id() == $cmt->user_id)
 
-                                    @endforeach
+            <div class="comment-actions">
 
-                                </div>
+                <button type="button"
+                        class="btn-comment-edit"
+                        onclick="editComment({{ $cmt->id }})">
+                    Sửa
+                </button>
 
-                            @endif
+                <button type="button"
+                        class="btn-comment-save"
+                        id="save-btn-{{ $cmt->id }}"
+                        style="display:none;"
+                        onclick="saveComment({{ $cmt->id }})">
+                    Lưu
+                </button>
 
-                        </div>
+                <button type="button"
+                        id="cancel-btn-{{ $cmt->id }}"
+                        class="btn-comment-cancel"
+                        style="display:none;"
+                        onclick="cancelEdit({{ $cmt->id }})">
+                    Hủy
+                </button>
 
-                    @empty
-                        <p class="empty-comment">Chưa có bình luận</p>
-                    @endforelse
+                <form action="{{ route('user.comment.delete', $cmt->id) }}"
+                      method="POST"
+                      onsubmit="return confirm('Xóa bình luận?')"
+                      style="display:inline;">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit"
+                            class="btn-comment-delete">
+                        Xóa
+                    </button>
+
+                </form>
+
+            </div>
+
+        @endif
+    @endauth
+
+    <!-- REPLIES -->
+    @if($cmt->replies && $cmt->replies->count())
+
+        <div class="reply-list">
+
+            @foreach($cmt->replies as $reply)
+
+                <div class="reply-item">
+
+                    <strong>
+                        {{ optional($reply->user)->full_name ?? 'User' }}
+                    </strong>
+
+                    <p>{{ $reply->comment }}</p>
+
+                </div>
+
+            @endforeach
+
+        </div>
+
+    @endif
+
+</div>
+
+@empty
+
+<p class="empty-comment">
+    Chưa có bình luận
+</p>
+
+@endforelse
 
                 </div>
 
@@ -312,58 +414,111 @@
 function editComment(id)
 {
     document.getElementById('content-' + id).style.display = 'none';
+
     document.getElementById('textarea-' + id).style.display = 'block';
 
+    document.getElementById('edit-rating-' + id).style.display = 'block';
+
     document.getElementById('save-btn-' + id).style.display = 'inline-block';
+
     document.getElementById('cancel-btn-' + id).style.display = 'inline-block';
 }
 
 function cancelEdit(id)
 {
     document.getElementById('content-' + id).style.display = 'block';
+
     document.getElementById('textarea-' + id).style.display = 'none';
 
+    document.getElementById('edit-rating-' + id).style.display = 'none';
+
     document.getElementById('save-btn-' + id).style.display = 'none';
+
     document.getElementById('cancel-btn-' + id).style.display = 'none';
 }
 
 function saveComment(id)
 {
     const textarea = document.getElementById('textarea-' + id);
-    const content  = document.getElementById('content-' + id);
+
+    const content = document.getElementById('content-' + id);
+
+    const selectedRating = document.querySelector(
+        'input[name="edit-rating-' + id + '"]:checked'
+    );
 
     let newValue = textarea.value.trim();
 
     if (!newValue) {
+
         alert("Bình luận không được để trống");
+
         return;
     }
 
-    fetch("{{ route('user.comment.update', ':id') }}".replace(':id', id), {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        },
-        body: JSON.stringify({
-            comment: newValue
-        })
-    })
+    let rating = selectedRating
+        ? selectedRating.value
+        : 5;
+
+    fetch(
+        "{{ route('user.comment.update', ':id') }}"
+            .replace(':id', id),
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+
+            body: JSON.stringify({
+                comment: newValue,
+                rating: rating
+            })
+        }
+    )
     .then(res => res.json())
     .then(data => {
 
-        if (data.success) {
+        if (data.success)
+        {
             content.innerText = newValue;
+
+            let html = '';
+
+            for(let i = 1; i <= 5; i++)
+            {
+                if(i <= rating){
+                    html += '<span style="color:gold;">★</span>';
+                }else{
+                    html += '<span style="color:#777;">★</span>';
+                }
+            }
+
+            html += ' (' + rating + '/5)';
+
+            document.getElementById(
+                'rating-display-' + id
+            ).innerHTML = html;
+
             cancelEdit(id);
-        } else {
-            alert(data.message ?? "Không cập nhật được bình luận");
+        }
+        else
+        {
+            alert(
+                data.message ??
+                "Không cập nhật được bình luận"
+            );
         }
 
     })
     .catch(err => {
+
         console.log(err);
+
         alert("Lỗi server khi cập nhật");
+
     });
 }
 

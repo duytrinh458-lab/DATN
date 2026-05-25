@@ -46,7 +46,7 @@ class InteractionController extends Controller
                 'products.name as product_name'
             )
             ->orderByDesc('reviews.id')
-            ->paginate(20);
+            ->paginate(5);
 
 
         /*
