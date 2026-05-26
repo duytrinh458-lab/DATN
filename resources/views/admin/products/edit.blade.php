@@ -561,6 +561,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         selectedFiles = [...selectedFiles, ...files];
 
+        const dt = new DataTransfer();
+        selectedFiles.forEach(f => dt.items.add(f));
+        imageInput.files = dt.files;
+
         renderPreview();
     });
 
@@ -635,3 +639,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 @endsection
+

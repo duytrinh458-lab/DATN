@@ -434,14 +434,13 @@
 .news-grid-home {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 cột chuẩn */
-    gap: 30px; /* Tăng gap cho thoáng */
+    gap: 24px; /* ĐỒNG BỘ: Đổi 30px thành 24px cho bằng khít với hàng sản phẩm */
 }
 
 .home-news-card {
     height: 100%; /* Đảm bảo thẻ cao hết cỡ */
     background: #0f172a; /* Đồng bộ màu nền */
     border-radius: 16px; /* Đồng bộ độ bo góc */
-    /* ... các thuộc tính khác của .news-card bên user-news.css */
 }
 
 .home-news-card a {
@@ -531,4 +530,3 @@
 
 @media (max-width: 1024px) { .news-grid-home { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .news-grid-home { grid-template-columns: 1fr; } }
-

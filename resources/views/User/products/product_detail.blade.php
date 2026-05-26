@@ -30,7 +30,6 @@
 
 <main class="vanguard-detail-container">
 
-    <!-- BREADCRUMB -->
     <nav class="vanguard-breadcrumb">
 
         <span class="hud-tag-sm">Tactical Fleet</span>
@@ -47,7 +46,6 @@
 
     <div class="product-layout-grid">
 
-        <!-- LEFT -->
         <div class="gallery-col">
 
             <div class="main-frame glass-panel">
@@ -62,6 +60,9 @@
                         @endforeach
 
                     </div>
+                    
+                    <div class="swiper-button-next vg-swiper-btn"></div>
+                    <div class="swiper-button-prev vg-swiper-btn"></div>
                 </div>
 
             </div>
@@ -78,7 +79,6 @@
                 </div>
             </div>
 
-            <!-- COMMENTS -->
             <div class="comments-section glass-panel">
 
                 <h3 class="comment-title">Bình luận</h3>
@@ -163,7 +163,6 @@
 
 <div class="comment-item">
 
-    <!-- USER -->
     <div class="comment-header">
 
         <div class="comment-user">
@@ -205,7 +204,6 @@
 
     </div>
 
-    <!-- CONTENT -->
     <div class="comment-content"
          id="content-{{ $cmt->id }}">
 
@@ -213,12 +211,10 @@
 
     </div>
 
-    <!-- EDIT COMMENT -->
     <textarea class="edit-comment-textarea"
               id="textarea-{{ $cmt->id }}"
               style="display:none;">{{ $cmt->comment }}</textarea>
 
-    <!-- EDIT RATING -->
     <div class="edit-rating-box"
          id="edit-rating-{{ $cmt->id }}"
          style="display:none; margin-top:10px;">
@@ -290,7 +286,6 @@
         @endif
     @endauth
 
-    <!-- REPLIES -->
     @if($cmt->replies && $cmt->replies->count())
 
         <div class="reply-list">
@@ -329,7 +324,6 @@
 
         </div>
 
-        <!-- RIGHT -->
         <div class="control-panel-col">
 
             <div class="info-card glass-panel">
@@ -352,12 +346,42 @@
                     @endif
                 </div>
 
-                <div class="product-spec">
-                    <p>Thời gian bay: {{ $product->flight_time ?? 'N/A' }} phút</p>
-                    <p>Độ cao tối đa: {{ $product->max_altitude ?? 'N/A' }} m</p>
-                    <p>Camera: {{ $product->camera_mp ?? 'N/A' }} MP</p>
-                    <p>Tần số: {{ $product->frequency ?? 'N/A' }}</p>
-                    <p>Trọng lượng: {{ $product->weight ?? 'N/A' }} kg</p>
+                <div class="product-spec-grid">
+                    <div class="spec-item">
+                        <span class="material-symbols-outlined spec-icon">timer</span>
+                        <div class="spec-data">
+                            <span class="spec-label">Thời gian bay</span>
+                            <span class="spec-value">{{ $product->flight_time ?? 'N/A' }} <small>phút</small></span>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <span class="material-symbols-outlined spec-icon">altitude</span>
+                        <div class="spec-data">
+                            <span class="spec-label">Độ cao Max</span>
+                            <span class="spec-value">{{ $product->max_altitude ?? 'N/A' }} <small>m</small></span>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <span class="material-symbols-outlined spec-icon">photo_camera</span>
+                        <div class="spec-data">
+                            <span class="spec-label">Camera</span>
+                            <span class="spec-value">{{ $product->camera_mp ?? 'N/A' }} <small>MP</small></span>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <span class="material-symbols-outlined spec-icon">wifi_tethering</span>
+                        <div class="spec-data">
+                            <span class="spec-label">Tần số</span>
+                            <span class="spec-value">{{ $product->frequency ?? 'N/A' }}</span>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <span class="material-symbols-outlined spec-icon">weight</span>
+                        <div class="spec-data">
+                            <span class="spec-label">Trọng lượng</span>
+                            <span class="spec-value">{{ $product->weight ?? 'N/A' }} <small>kg</small></span>
+                        </div>
+                    </div>
                 </div>
 
                 <form id="purchase-form"
@@ -410,6 +434,32 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    var swiperThumb = new Swiper(".thumb-swiper", {
+        spaceBetween: 12,
+        slidesPerView: 5,
+        freeMode: true,
+        watchSlidesProgress: true,
+        breakpoints: {
+            320: { slidesPerView: 4 },
+            768: { slidesPerView: 5 }
+        }
+    });
+
+    var swiperMain = new Swiper(".main-swiper", {
+        spaceBetween: 10,
+        effect: "fade",
+        fadeEffect: { crossFade: true },
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        thumbs: {
+            swiper: swiperThumb,
+        },
+    });
+});
 
 function editComment(id)
 {
