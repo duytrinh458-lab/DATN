@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use App\Http\Resources\UserResource;
 class AuthApiController extends Controller
 {
     // 📌 1. ĐĂNG KÝ (SIGNUP)
@@ -51,7 +51,6 @@ class AuthApiController extends Controller
         ], 201);
     }
 
-    // 📌 2. ĐĂNG NHẬP (LOGIN)
     public function login(Request $request)
     {
         $request->validate([
@@ -72,7 +71,8 @@ class AuthApiController extends Controller
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'data' => [
-                'user' => $user,
+                // 🟢 ĐÃ FIX: Sử dụng UserResource để ẩn các cột nhạy cảm
+                'user' => new UserResource($user),
                 'token' => $user->createToken('VanguardToken')->plainTextToken
             ]
         ]);

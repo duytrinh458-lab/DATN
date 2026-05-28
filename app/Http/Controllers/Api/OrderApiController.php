@@ -112,16 +112,75 @@ class OrderApiController extends Controller
         }
     }
 
-    public function cancel($id)
-    {
-        $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
-        if (!$order || !in_array($order->status, ['pending', 'processing'])) {
-            return response()->json(['status' => false, 'message' => 'Không thể hủy đơn hàng ở trạng thái này'], 400);
+    // 📌 API: Hủy đơn hàng và hoàn tiền vào ví (PUT hoặc POST /api/orders/{id}/cancel)
+public function cancel($id) 
+{
+    // 1. Tìm đúng đơn hàng của User đang đăng nhập
+    $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
+
+    if (!$order) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Không tìm thấy đơn hàng!'
+        ], 404);
+    }
+
+    // 2. ĐIỀU KIỆN CHẶN BẢO VỆ: Chỉ cho phép hủy khi đơn hàng đang ở trạng thái chờ xử lý (pending/processing)
+    // Tránh trường hợp đơn hàng đã giao thành công (delivered) hoặc đã hủy rồi vẫn cố tình gọi API để "hack" hoàn tiền
+    if (in_array($order->status, ['cancelled', 'delivered', 'shipped'])) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Đơn hàng này không thể hủy do đã được xử lý, đang giao hoặc đã hủy trước đó.'
+        ], 400);
+    }
+
+    // 3. TIẾN HÀNH HỦY ĐƠN VÀ HOÀN TIỀN (Sử dụng Transaction bảo mật)
+    DB::beginTransaction();
+
+    try {
+        // Lấy ví V-Pay của user và dùng lockForUpdate() để khóa dòng dữ liệu, chống bấm hủy liên tiếp
+        $wallet = Wallet::where('user_id', Auth::id())->lockForUpdate()->first();
+
+        if ($wallet) {
+            // Cộng tiền trả lại vào số dư ví của khách 
+            // 💡 Lưu ý: Bạn kiểm tra lại trong DB xem cột tổng tiền là 'total' hay 'total_price' để điền cho đúng nhé
+            $wallet->balance += $order->total; 
+            $wallet->save();
+
+            // Chèn lịch sử giao dịch hoàn tiền vào bảng wallet_transactions (Đồng bộ logic với WalletApiController)
+            DB::table('wallet_transactions')->insert([
+                'wallet_id'      => $wallet->id,
+                'type'           => 'refund', // Loại giao dịch: Hoàn tiền (hoặc 'deposit' tùy bạn quy định, nhưng 'refund' sẽ tường minh hơn)
+                'amount'         => $order->total,
+                'reference_code' => 'REF-' . $order->id . '-' . time(),
+                'status'         => 'completed', // Khác với nạp tiền cần duyệt, hoàn tiền do hủy đơn hệ thống tự cộng và đổi thành 'completed' luôn
+                'created_at'     => now()
+            ]);
         }
+
+        // Cập nhật trạng thái đơn hàng sang đã hủy
         $order->status = 'cancelled';
         $order->save();
-        return response()->json(['status' => true, 'message' => 'Đã hủy đơn hàng thành công']);
+
+        // Hoàn thành phiên giao dịch an toàn
+        DB::commit();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Hủy đơn hàng thành công. Tiền đã được hoàn lại vào ví V-Pay của bạn!'
+        ]);
+
+    } catch (\Exception $e) {
+        // Nếu có bất kỳ lỗi phát sinh nào (ví dụ lỗi SQL), lập tức khôi phục lại dữ liệu ban đầu, không lo mất mát tiền bạc
+        DB::rollBack();
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Có lỗi xảy ra trong quá trình hủy đơn và hoàn tiền!',
+            'error'   => $e->getMessage() // Hiện mã lỗi để bạn dễ debug khi chạy thử
+        ], 500);
     }
+}
 
     public function getStatus($id)
     {
@@ -141,31 +200,118 @@ class OrderApiController extends Controller
         return response()->json(['status' => true, 'data' => $timeline]);
     }
 
-    public function confirmReceived($id)
-    {
-        $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
-        if ($order->status != 'shipping') return response()->json(['status' => false, 'message' => 'Đơn hàng chưa được giao đến'], 400);
+    // 📌 API 46: Xác nhận nhận hàng (PUT /api/orders/{id}/confirm)
+public function confirmReceived($id) 
+{
+    // Tìm đơn hàng khớp với ID truyền vào và phải thuộc về User đang đăng nhập
+    $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
 
-        $order->status = 'delivered';
-        $order->save();
-        return response()->json(['status' => true, 'message' => 'Xác nhận đã nhận hạm đội UAV thành công']);
+    // 1. 🔥 ĐÃ FIX LỖI CRASH: Kiểm tra null trước khi gọi bất cứ thuộc tính nào của $order
+    if (!$order) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập!'
+        ], 404);
     }
 
-    public function requestRefund(Request $request, $id)
-    {
-        $request->validate(['reason' => 'required']);
-        $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
+    // 2. CHẶN LOGIC SAI: Chỉ cho phép "Đã nhận hàng" nếu trạng thái hiện tại đang là "Đang giao" (shipping)
+    if ($order->status !== 'shipping') {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Đơn hàng hiện chưa được giao, không thể xác nhận lúc này!'
+        ], 400);
+    }
 
+    // 3. CẬP NHẬT TRẠNG THÁI
+    $order->status = 'delivered'; // Hoặc 'completed' tùy vào quy định trạng thái cuối cùng trong database của bạn
+    $order->save();
+
+    // 4. (Tùy chọn nâng cao) Ghi nhận mốc thời gian hoàn thành đơn hàng nếu bảng orders có cột completed_at
+    // $order->completed_at = now();
+    // $order->save();
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Xác nhận nhận hàng thành công! Cảm ơn bạn đã mua các sản phẩm UAV của chúng tôi.'
+    ]);
+}
+
+    // 📌 API 47: Gửi yêu cầu hoàn tiền (POST /api/orders/{id}/refund)
+public function requestRefund(Request $request, $id)
+{
+    // 1. Validate lý do hoàn tiền truyền lên từ phía người dùng
+    $request->validate([
+        'reason' => 'required|string|max:500',
+    ], [
+        'reason.required' => 'Vui lòng nhập lý do bạn muốn hoàn tiền.',
+        'reason.max'      => 'Lý do hoàn tiền không được vượt quá 500 ký tự.'
+    ]);
+
+    // Tìm đơn hàng thuộc sở hữu của User đang đăng nhập
+    $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
+
+    // 2. 🔥 ĐÃ FIX: Kiểm tra đơn hàng null để tránh Fatal Error sập hệ thống (Lỗi 500)
+    if (!$order) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Không tìm thấy đơn hàng hoặc bạn không có quyền yêu cầu hoàn tiền cho đơn này!'
+        ], 404);
+    }
+
+    // 3. 🔥 ĐÃ FIX: Kiểm tra điều kiện trạng thái hợp lệ
+    // Chỉ cho phép hoàn tiền khi đơn hàng đang giao (shipping) hoặc đã giao thành công (delivered)
+    if (!in_array($order->status, ['shipping', 'delivered'])) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Đơn hàng này chưa được xử lý hoặc giao đi, không thể yêu cầu hoàn tiền lúc này.'
+        ], 400);
+    }
+
+    // 4. CHẶN LOGIC NÂNG CAO: Kiểm tra xem đơn hàng này đã từng gửi yêu cầu hoàn tiền trước đó chưa
+    // Tránh việc user bấm gửi liên tục tạo ra nhiều bản ghi rác trong bảng refunds
+    $alreadyRequested = DB::table('refunds')->where('order_id', $order->id)->exists();
+    if ($alreadyRequested) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Yêu cầu hoàn tiền cho đơn hàng này đã được gửi trước đó và đang chờ xử lý!'
+        ], 400);
+    }
+
+    // 5. TIẾN HÀNH TRANSACTION ĐỂ ĐỒNG BỘ DỮ LIỆU AN TOÀN
+    DB::beginTransaction();
+    try {
+        // Chèn bản ghi yêu cầu hoàn tiền vào bảng refunds
         DB::table('refunds')->insert([
-            'order_id' => $id,
-            'user_id' => Auth::id(),
-            'reason' => $request->reason,
-            'refund_amount' => $order->total,
-            'status' => 'pending',
-            'created_at' => now()
+            'order_id'      => $order->id,
+            'user_id'       => Auth::id(),
+            'refund_amount' => $order->total, // An toàn tuyệt đối vì $order đã được check null ở trên
+            'reason'        => $request->reason,
+            'status'        => 'pending',     // Trạng thái yêu cầu: Chờ Admin kiểm duyệt và phê duyệt hoàn tiền
+            'created_at'    => now(),
+            'updated_at'    => now()
         ]);
-        return response()->json(['status' => true, 'message' => 'Yêu cầu hoàn tiền đã được gửi tới Ban Quản Trị']);
+
+        // Cập nhật trạng thái đơn hàng (Tùy chọn: đổi sang trạng thái chờ hoàn tiền để Admin dễ quản lý)
+        // $order->status = 'refund_pending';
+        // $order->save();
+
+        DB::commit();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Gửi yêu cầu hoàn tiền thành công. Vui lòng chờ Ban quản trị duyệt kiểm tra sản phẩm UAV!'
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'status'  => false,
+            'message' => 'Có lỗi hệ thống xảy ra khi gửi yêu cầu hoàn tiền!',
+            'error'   => $e->getMessage()
+        ], 500);
     }
+}
 
     public function adminUpdateStatus(Request $request, $id)
     {

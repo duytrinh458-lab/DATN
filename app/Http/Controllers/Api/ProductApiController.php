@@ -114,24 +114,69 @@ class ProductApiController extends Controller
     }
 
     // 📌 API 24: Viết Bình luận
-    public function setComment(Request $request, $id)
-    {
-        $request->validate(['comment' => 'required']);
+    // 📌 API: Viết bình luận/đánh giá sản phẩm (POST /api/products/{id}/comment)
+public function setComment(Request $request, $id)
+{
+    // 1. Validate dữ liệu truyền lên, bắt buộc phải truyền order_id hợp lệ
+    $request->validate([
+        'comment'  => 'required|string|max:1000',
+        'rating'   => 'required|integer|min:1|max:5',
+        'order_id' => 'required|exists:orders,id', // Kiểm tra order_id phải tồn tại trong bảng orders
+    ], [
+        'comment.required'  => 'Vui lòng nhập nội dung bình luận.',
+        'rating.required'   => 'Vui lòng chọn số sao đánh giá.',
+        'order_id.required' => 'Thiếu mã đơn hàng để đánh giá.',
+        'order_id.exists'   => 'Đơn hàng không tồn tại trên hệ thống.',
+    ]);
 
-        DB::table('reviews')->insert([
-            'user_id' => Auth::id(),
-            'product_id' => $id,
-            'order_id' => 1,
-            'rating' => $request->rating ?? 5,
-            'comment' => $request->comment,
-            'created_at' => now()
-        ]);
+    $userId = Auth::id();
 
+    // 2. ĐỐI CHIẾU BẢO MẬT: Kiểm tra xem đơn hàng này có đúng là của User này hay không
+    // Tránh việc User A truyền order_id của User B vào để phá hoại dữ liệu
+    $orderExists = DB::table('orders')
+        ->where('id', $request->order_id)
+        ->where('user_id', $userId)
+        ->exists();
+
+    if (!$orderExists) {
         return response()->json([
-            'status' => true,
-            'message' => 'Đã gửi đánh giá UAV thành công'
-        ]);
+            'status'  => false,
+            'message' => 'Bạn không có quyền đánh giá cho đơn hàng này!'
+        ], 403);
     }
+
+    // 3. KIỂM TRA TRÙNG LẶP (Tùy chọn): Nếu một đơn hàng chỉ cho phép đánh giá sản phẩm này 1 lần
+    $alreadyReviewed = DB::table('reviews')
+        ->where('order_id', $request->order_id)
+        ->where('product_id', $id)
+        ->where('user_id', $userId)
+        ->exists();
+
+    if ($alreadyReviewed) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Sản phẩm trong đơn hàng này đã được bạn đánh giá trước đó!'
+        ], 400);
+    }
+
+    // 4. TIẾN HÀNH INSERT (Xóa bỏ hoàn toàn số 1 hardcode)
+    DB::table('reviews')->insert([
+        'user_id'    => $userId,
+        'product_id' => $id,
+        'order_id'   => $request->order_id, // 🔥 ĐÃ FIX: Lấy động theo đơn hàng thực tế truyền lên
+        'comment'    => $request->comment,
+        'rating'     => $request->rating,
+        'parent_id'  => null, // Mặc định là đánh giá gốc, không phải reply
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    // 5. Trả về JSON Response chuẩn form các API khác của bạn
+    return response()->json([
+        'status'  => true,
+        'message' => 'Gửi đánh giá sản phẩm thành công!'
+    ]);
+}
 
     // 📌 API 25: Thả tim / Bỏ tim
     public function likeProduct($id)

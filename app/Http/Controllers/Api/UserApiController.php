@@ -2,130 +2,111 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\UserResource; // 🟢 Import Resource
 
 class UserApiController extends Controller
 {
-    // 📌 API 62: Admin xem danh sách người dùng (GET /api/users)
+    // 📌 API 62: Admin xem danh sách (ĐÃ VÁ: Phân trang + Resource)
     public function index()
     {
-        // Sắp xếp người dùng mới nhất lên đầu
-        $users = User::orderBy('id', 'desc')->get();
+        // Dùng paginate(15) thay vì get() để tránh tràn RAM khi hệ thống nhiều user
+        $users = User::orderBy('id', 'desc')->paginate(15);
 
         return response()->json([
-            'status' => true,
+            'status'  => true,
             'message' => 'Lấy danh sách người dùng thành công',
-            'data' => $users
+            'data'    => UserResource::collection($users), // 🟢 Lọc dữ liệu qua Resource
+            'meta'    => [
+                'current_page' => $users->currentPage(),
+                'last_page'    => $users->lastPage(),
+                'total'        => $users->total()
+            ]
         ]);
     }
 
-    // 📌 API 63: Admin xem chi tiết 1 người dùng (GET /api/users/{id})
+    // 📌 API 63: Admin xem chi tiết (ĐÃ VÁ: Resource)
     public function show($id)
     {
         $user = User::find($id);
-
         if (!$user) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Không tìm thấy người dùng này trong hệ thống'
-            ], 404);
+            return response()->json(['status' => false, 'message' => 'Người dùng không tồn tại'], 404);
         }
 
         return response()->json([
             'status' => true,
-            'data' => $user
+            'data'   => new UserResource($user) // 🟢 Lọc dữ liệu qua Resource
         ]);
     }
 
-    // 📌 API 64: Admin tạo người dùng mới (POST /api/users)
+    // 📌 API 64: Admin tạo user (ĐÃ VÁ: Chống Mass Assignment)
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'phone' => 'required',
+            'phone'    => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Dữ liệu không hợp lệ',
-                'errors' => $validator->errors()
-            ], 422);
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
         }
 
         $user = User::create([
-            'username' => $request->username,
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'role' => $request->role ?? 'customer', // Mặc định là khách hàng nếu không chọn
-            'password' => Hash::make($request->password),
-            'is_verified' => 1, // Admin tạo thì cho xác thực luôn
+            'username'    => $request->username,
+            'full_name'   => $request->full_name,
+            'email'       => $request->email,
+            'phone'       => $request->phone,
+            'role'        => $request->role ?? 'customer',
+            'password'    => Hash::make($request->password),
+            'is_verified' => 1,
         ]);
 
         return response()->json([
-            'status' => true,
-            'message' => 'Đã tạo tài khoản mới thành công',
-            'data' => $user
+            'status'  => true,
+            'message' => 'Đã tạo tài khoản thành công',
+            'data'    => new UserResource($user) // 🟢 Lọc dữ liệu trả về
         ], 201);
     }
 
-    // 📌 API 64 (tiếp): Admin cập nhật thông tin người dùng (PUT /api/users/{id})
+    // 📌 API 64 (Tiếp): Admin cập nhật (ĐÃ VÁ: Chống Mass Assignment)
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-
         if (!$user) {
             return response()->json(['status' => false, 'message' => 'Người dùng không tồn tại'], 404);
         }
 
-        // Cập nhật các thông tin cơ bản
-        $user->username = $request->username ?? $user->username;
-        $user->full_name = $request->full_name ?? $user->full_name;
-        $user->email = $request->email ?? $user->email;
-        $user->phone = $request->phone ?? $user->phone;
-        $user->role = $request->role ?? $user->role;
-
-        // Nếu Admin có nhập mật khẩu mới thì mới mã hóa và lưu
+        // 🟢 CHỐNG MASS ASSIGNMENT: Chỉ cập nhật các trường cụ thể
+        $updateData = $request->only(['username', 'full_name', 'email', 'phone', 'role']);
+        
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $updateData['password'] = Hash::make($request->password);
         }
 
-        $user->save();
+        $user->update($updateData);
 
         return response()->json([
-            'status' => true,
-            'message' => 'Đã cập nhật thông tin thành công',
-            'data' => $user
+            'status'  => true,
+            'message' => 'Cập nhật thành công',
+            'data'    => new UserResource($user) // 🟢 Lọc dữ liệu trả về
         ]);
     }
 
-    // 📌 API 65: Admin xóa người dùng (DELETE /api/users/{id})
+    // 📌 API 65: Admin xóa người dùng
     public function destroy($id)
     {
         $user = User::find($id);
-
-        if (!$user) {
-            return response()->json(['status' => false, 'message' => 'Người dùng không tồn tại'], 404);
-        }
-
-        // Không cho phép Admin tự xóa chính mình (để an toàn)
-        if ($user->id == Auth::id()) {
-            return response()->json(['status' => false, 'message' => 'Bạn không thể tự xóa tài khoản của chính mình'], 400);
-        }
+        if (!$user) return response()->json(['status' => false, 'message' => 'Người dùng không tồn tại'], 404);
+        if ($user->id == Auth::id()) return response()->json(['status' => false, 'message' => 'Không thể tự xóa bản thân'], 400);
 
         $user->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Đã xóa người dùng khỏi hệ thống'
-        ]);
+        return response()->json(['status' => true, 'message' => 'Đã xóa người dùng']);
     }
 }

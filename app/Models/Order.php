@@ -9,7 +9,6 @@ class Order extends Model
 {
     use SoftDeletes;
 
-
     /*
     |--------------------------------------------------------------------------
     | CUSTOM TIMESTAMPS
@@ -26,22 +25,15 @@ class Order extends Model
     |--------------------------------------------------------------------------
     */
     protected $fillable = [
-
         'order_code',
-
         'user_id',
-
         'address_id',
-
         'subtotal',
-
         'shipping_fee',
-
         'discount',
-
         'total',
-
         'status',
+        'note', // 🔥 ĐÃ THÊM: Cho phép cập nhật ghi chú đơn hàng (Sửa lỗi BUG #6)
 
         /*
         |--------------------------------------------------------------------------
@@ -49,15 +41,10 @@ class Order extends Model
         |--------------------------------------------------------------------------
         */
         'shipping_full_name',
-
         'shipping_phone',
-
         'shipping_province',
-
         'shipping_district',
-
         'shipping_ward',
-
         'shipping_street',
     ];
 
@@ -99,6 +86,5 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id')->withTrashed();
-
     }
 }

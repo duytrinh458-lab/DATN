@@ -29,7 +29,7 @@ class AddressApiController extends Controller
             'phone'     => 'required',
             'street'    => 'required',
             'district'  => 'required', 
-            'ward'      => 'nullable',
+            'city'      => 'required',
             'province'  => 'required'  
         ]);
 
@@ -46,7 +46,7 @@ class AddressApiController extends Controller
             'phone'      => $request->phone,
             'street'     => $request->street,
             'district'   => $request->district,
-            'ward'       => $request->ward,
+            'city'       => $request->city,
             'province'   => $request->province,
             'is_default' => $isDefault
         ]);
@@ -73,7 +73,7 @@ class AddressApiController extends Controller
 
         // 🔥 ĐÃ FIX: Chỉ lấy đúng dữ liệu an toàn
         $address->update($request->only([
-            'full_name', 'phone', 'street', 'district', 'ward', 'province', 'is_default'
+            'full_name', 'phone', 'street', 'district', 'city', 'province', 'is_default'
         ]));
 
         return response()->json([
@@ -129,7 +129,7 @@ class AddressApiController extends Controller
         }
 
         $fee = 50000; 
-        if (strpos(strtolower($address->province), 'hà nội') !== false || strpos(strtolower($address->ward), 'hà nội') !== false) {
+        if (strpos(strtolower($address->province), 'hà nội') !== false || strpos(strtolower($address->city), 'hà nội') !== false) {
             $fee = 30000;
         }
 
