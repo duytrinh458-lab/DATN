@@ -184,20 +184,66 @@ public function cancel($id)
 
     public function getStatus($id)
     {
-        $order = Order::select('status', 'order_code')->where('id', $id)->first();
-        return response()->json(['status' => true, 'data' => $order]);
+        $user = Auth::user();
+
+        // 🛡️ Xây dựng query cơ sở
+        $query = Order::select('id', 'user_id', 'status', 'order_code')->where('id', $id);
+
+        // 🛡️ Nếu không phải Admin, bắt buộc đơn hàng phải thuộc về user đang đăng nhập
+        if ($user->role !== 'admin') {
+            $query->where('user_id', $user->id);
+        }
+
+        $order = $query->first();
+
+        // 💡 Trả về 404 thay vì 403 để kẻ tấn công không biết ID này có tồn tại trong hệ thống hay không
+        if (!$order) {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true, 
+            'data' => [
+                'order_code' => $order->order_code,
+                'status'     => $order->status
+            ]
+        ]);
     }
 
+    // 📌 Lấy timeline giao hàng (ĐÃ VÁ LỖI IDOR)
     public function getTimeline($id)
     {
-        $order = Order::find($id);
-        if (!$order) return response()->json(['status' => false, 'message' => 'Không tìm thấy đơn hàng'], 404);
+        $user = Auth::user();
+
+        // 🛡️ Xây dựng query cơ sở
+        $query = Order::where('id', $id);
+
+        // 🛡️ Nếu không phải Admin, bắt buộc đơn hàng phải thuộc về user đang đăng nhập
+        if ($user->role !== 'admin') {
+            $query->where('user_id', $user->id);
+        }
+
+        $order = $query->first();
+
+        if (!$order) {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập.'
+            ], 404);
+        }
 
         $timeline = [
             ['time' => $order->ordered_at, 'desc' => 'Đơn hàng đã được khởi tạo'],
             ['time' => $order->updated_at, 'desc' => 'Trạng thái hiện tại: ' . $order->status]
         ];
-        return response()->json(['status' => true, 'data' => $timeline]);
+
+        return response()->json([
+            'status' => true, 
+            'data' => $timeline
+        ]);
     }
 
     // 📌 API 46: Xác nhận nhận hàng (PUT /api/orders/{id}/confirm)
@@ -351,10 +397,46 @@ public function requestRefund(Request $request, $id)
         }
     }
 
-    public function editNote(Request $request, $id)
-    {
-        $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
-        if (!$order) return response()->json(['status' => false, 'message' => 'Không tìm thấy đơn hàng'], 404);
-        return response()->json(['status' => true, 'message' => 'Đã cập nhật ghi chú đơn hàng thành công']);
+    // 📌 API 42: Sửa ghi chú đơn hàng (PUT /api/orders/{id})
+public function editNote(Request $request, $id) 
+{
+    // 1. Validate dữ liệu đầu vào
+    $request->validate([
+        'note' => 'nullable|string|max:500' // Cho phép trống hoặc tối đa 500 ký tự
+    ], [
+        'note.max' => 'Ghi chú không được vượt quá 500 ký tự.'
+    ]);
+
+    // 2. Lấy đơn hàng và kiểm tra quyền sở hữu
+    $order = Order::where('id', $id)->where('user_id', Auth::id())->first();
+
+    // 3. Xử lý lỗi Crash: Kiểm tra đơn hàng tồn tại
+    if (!$order) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Không tìm thấy đơn hàng!'
+        ], 404);
     }
+
+    // 4. Chặn logic: Chỉ cho phép sửa ghi chú khi đơn hàng chưa xuất kho
+    if (!in_array($order->status, ['pending', 'processing'])) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Không thể sửa ghi chú vì đơn hàng đã được giao đi hoặc đã hủy!'
+        ], 400);
+    }
+
+    // 5. 🔥 ĐÃ FIX: Gán giá trị và lưu vào database
+    $order->note = $request->note;
+    $order->save();
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Đã cập nhật ghi chú đơn hàng thành công!',
+        'data'    => [
+            'order_id' => $order->id,
+            'note'     => $order->note
+        ]
+    ]);
+}
 }

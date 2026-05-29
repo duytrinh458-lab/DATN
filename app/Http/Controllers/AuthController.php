@@ -34,6 +34,7 @@ class AuthController extends Controller
     }
 
     // ================= REGISTER =================
+    // ================= REGISTER =================
     public function sendOtpRegister(Request $request)
     {
         $request->validate([
@@ -45,20 +46,34 @@ class AuthController extends Controller
             'phone.unique' => 'Số điện thoại này đã được đăng ký.',
         ]);
 
-        $otp = rand(100000, 999999);
+        // 🛡️ VÁ LỖI SPAM (RATE LIMIT CẤP ĐỘ CODE): Chặn gửi liên tục dưới 60 giây
+        $lastOtp = DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($lastOtp && now()->diffInSeconds(\Carbon\Carbon::parse($lastOtp->created_at)) < 60) {
+            return back()->with('error', 'Hệ thống đang xử lý. Vui lòng đợi 60 giây trước khi yêu cầu gửi lại mã mới.');
+        }
+
+        // 🛡️ VÁ LỖI BRUTE-FORCE: Dùng random_int() thay cho rand()
+        $otp = random_int(100000, 999999);
 
         DB::table('otp_verifications')->insert([
             'phone' => $request->phone,
             'otp_code' => $otp,
             'type' => 'register',
             'is_used' => 0,
-            'expires_at' => now()->addMinutes(5),
+            'expires_at' => now()->addMinutes(5), // 🛡️ Đã đồng bộ 5 phút
             'created_at' => now()
         ]);
 
         session(['phone_step1' => $request->phone]);
 
-        Log::info('Mã OTP Đăng ký của SĐT ' . $request->phone . ' là: ' . $otp);
+        // 🛡️ BẢO MẬT LOG: Chỉ in ra mã OTP khi đang ở môi trường Dev
+        if (config('app.debug')) {
+            Log::info('Mã OTP Đăng ký của SĐT ' . $request->phone . ' là: ' . $otp);
+        }
 
         return back()->with(
             'success',
@@ -221,6 +236,7 @@ class AuthController extends Controller
     }
 
     // ================= FORGOT PASSWORD =================
+    // ================= FORGOT PASSWORD =================
     public function sendOtpForgotPassword(Request $request)
     {
         $request->validate([
@@ -240,20 +256,34 @@ class AuthController extends Controller
             );
         }
 
-        $otp = rand(100000, 999999);
+        // 🛡️ VÁ LỖI SPAM (RATE LIMIT CẤP ĐỘ CODE): Chặn gửi liên tục dưới 60 giây
+        $lastOtp = DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($lastOtp && now()->diffInSeconds(\Carbon\Carbon::parse($lastOtp->created_at)) < 60) {
+            return back()->with('error', 'Hệ thống đang xử lý. Vui lòng đợi 60 giây trước khi yêu cầu gửi lại mã mới.');
+        }
+
+        // 🛡️ VÁ LỖI BRUTE-FORCE: Dùng random_int() thay cho rand()
+        $otp = random_int(100000, 999999);
 
         DB::table('otp_verifications')->insert([
             'phone' => $request->phone,
             'otp_code' => $otp,
             'type' => 'forgot_password',
             'is_used' => 0,
-            'expires_at' => now()->addMinutes(5),
+            'expires_at' => now()->addMinutes(5), // 🛡️ Đã đồng bộ 5 phút
             'created_at' => now()
         ]);
 
         session(['forgot_phone' => $request->phone]);
 
-        Log::info('Mã OTP Quên mật khẩu của SĐT ' . $request->phone . ' là: ' . $otp);
+        // 🛡️ BẢO MẬT LOG: Chỉ in ra mã OTP khi đang ở môi trường Dev
+        if (config('app.debug')) {
+            Log::info('Mã OTP Quên mật khẩu của SĐT ' . $request->phone . ' là: ' . $otp);
+        }
 
         return back()->with(
             'success',

@@ -234,20 +234,64 @@ public function setComment(Request $request, $id)
         ], 201);
     }
 
-    // 📌 API 58: Sửa thông số UAV
+    
+    // 📌 API 58: Admin cập nhật thông số UAV (PUT /api/admin/products/{id})
     public function update(Request $request, $id)
     {
         /** @var \App\Models\Product $product */
         $product = Product::find($id);
         
-        if (!$product) return response()->json(['status' => false, 'message' => 'Không tìm thấy UAV'], 404);
+        if (!$product) {
+            return response()->json([
+                'status'  => false, 
+                'message' => 'Không tìm thấy máy bay không người lái (UAV) cần cập nhật'
+            ], 404);
+        }
 
-        $product->update($request->all());
+        // 🛡️ BƯỚC 1: Kiểm tra tính hợp lệ của dữ liệu đầu vào (Validation)
+        $request->validate([
+            'category_id'    => 'nullable|integer|exists:categories,id',
+            'brand_id'       => 'nullable|integer|exists:brands,id',
+            'name'           => 'nullable|string|max:255',
+            'sku'            => 'nullable|string|max:50|unique:products,sku,' . $id,
+            'original_price' => 'nullable|numeric|min:0',
+            'sale_price'     => 'nullable|numeric|min:0',
+            'stock'          => 'nullable|integer|min:0',
+            'is_featured'    => 'nullable|boolean',
+            'status'         => 'nullable|in:active,out_of_stock,inactive',
+            'flight_time'    => 'nullable|numeric|min:0',
+            'max_altitude'   => 'nullable|numeric|min:0',
+            'camera_mp'      => 'nullable|numeric|min:0',
+            'weight'         => 'nullable|numeric|min:0',
+        ]);
+
+        // 🔒 BƯỚC 2: WHITELIST - Chỉ lọc các trường được phép thay đổi
+        // Loại bỏ hoàn toàn khả năng can thiệp vào các trường: id, created_at, updated_at, deleted_at
+        $safeData = $request->only([
+            'category_id',
+            'brand_id',
+            'name',
+            'sku',
+            'description',
+            'original_price',
+            'sale_price',
+            'stock',
+            'is_featured',
+            'status',
+            'flight_time',
+            'max_altitude',
+            'camera_mp',
+            'frequency',
+            'weight'
+        ]);
+
+        // 💾 BƯỚC 3: Tiến hành cập nhật an toàn vào Cơ sở dữ liệu
+        $product->update($safeData);
 
         return response()->json([
-            'status' => true,
-            'message' => 'Cập nhật thông số UAV thành công',
-            'data' => $product
+            'status'  => true,
+            'message' => 'Cập nhật thông số UAV thành công và bảo mật.',
+            'data'    => $product
         ]);
     }
 

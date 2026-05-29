@@ -128,55 +128,116 @@ class AuthApiController extends Controller
     // 📌 6. TẠO MÃ QUÊN MẬT KHẨU
     public function createCodeResetPassword(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
-        $user = User::where('email', $request->email)->first();
-        if (!$user) return response()->json(['status' => false, 'message' => 'Email không tồn tại'], 404);
+        $request->validate([
+            'phone' => 'required|numeric'
+        ], [
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'phone.numeric'  => 'Số điện thoại chỉ được chứa chữ số.'
+        ]);
+
+        $user = User::where('phone', $request->phone)->first();
+        if (!$user) return response()->json(['status' => false, 'message' => 'Số điện thoại không tồn tại'], 404);
 
         $otp = rand(100000, 999999);
         DB::table('otp_verifications')->insert([
-            'phone' => $user->phone, 'otp_code' => $otp, 'type' => 'forgot_password', 'expires_at' => now()->addMinutes(15)
+            'phone' => $request->phone, 
+            'otp_code' => $otp, 
+            'type' => 'forgot_password', 
+            'expires_at' => now()->addMinutes(15)
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Đã tạo mã khôi phục']);
+        return response()->json(['status' => true, 'message' => 'Đã tạo mã khôi phục và gửi về số điện thoại']);
     }
 
     // 📌 7. KIỂM TRA MÃ KHÔI PHỤC
     public function checkCodeResetPassword(Request $request)
     {
-        $request->validate(['email' => 'required|email', 'code' => 'required']);
-        $user = User::where('email', $request->email)->first();
+        $request->validate([
+            'phone' => 'required|numeric', 
+            'code'  => 'required|digits:6'
+        ], [
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'code.required'  => 'Vui lòng nhập mã khôi phục.',
+            'code.digits'    => 'Mã khôi phục phải có đúng 6 chữ số.'
+        ]);
+
+        $user = User::where('phone', $request->phone)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Số điện thoại không tồn tại trong hệ thống!'
+            ], 404);
+        }
 
         $otpRecord = DB::table('otp_verifications')
-            ->where('phone', $user->phone ?? '')
+            ->where('phone', $request->phone)
             ->where('otp_code', $request->code)
             ->where('type', 'forgot_password')
             ->where('is_used', 0)
             ->where('expires_at', '>=', now())
             ->first();
 
-        if (!$otpRecord) return response()->json(['status' => false, 'message' => 'Mã khôi phục không hợp lệ'], 400);
+        if (!$otpRecord) return response()->json(['status' => false, 'message' => 'Mã khôi phục không hợp lệ hoặc đã hết hạn'], 400);
+        
         return response()->json(['status' => true, 'message' => 'Mã khôi phục hợp lệ.']);
     }
 
     // 📌 8. ĐẶT LẠI MẬT KHẨU MỚI
     public function resetPassword(Request $request)
     {
-        $request->validate(['email' => 'required|email', 'new_password' => 'required|min:6']);
-        $user = User::where('email', $request->email)->first();
+        // Yêu cầu xác thực bằng số điện thoại và mã OTP
+        $request->validate([
+            'phone'        => 'required|numeric',
+            'otp_code'     => 'required|digits:6',
+            'new_password' => 'required|min:6'
+        ], [
+            'phone.required'        => 'Vui lòng nhập số điện thoại.',
+            'phone.numeric'         => 'Số điện thoại chỉ được chứa chữ số.',
+            'otp_code.required'     => 'Vui lòng nhập mã xác thực OTP.',
+            'otp_code.digits'       => 'Mã OTP phải có đúng 6 chữ số.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min'      => 'Mật khẩu phải có ít nhất 6 ký tự.'
+        ]);
+
+        $user = User::where('phone', $request->phone)->first();
         
-        // 💡 ĐÃ FIX LOGIC: Kiểm tra user có tồn tại không trước khi gán dữ liệu để né lỗi sập hệ thống 500
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'Email không tồn tại trong dữ liệu hệ thống!'
+                'message' => 'Số điện thoại không tồn tại trong hệ thống!'
             ], 404);
         }
 
+        // Đối chiếu mã OTP theo số điện thoại
+        $otpRecord = DB::table('otp_verifications')
+            ->where('phone', $user->phone)
+            ->where('otp_code', $request->otp_code)
+            ->where('type', 'forgot_password')
+            ->where('is_used', 0)
+            ->where('expires_at', '>=', now())
+            ->first();
+
+        if (!$otpRecord) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Mã OTP không hợp lệ, đã được sử dụng hoặc đã hết hạn!'
+            ], 400);
+        }
+
+        // Cập nhật mật khẩu
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        DB::table('otp_verifications')->where('phone', $user->phone)->where('type', 'forgot_password')->update(['is_used' => 1]);
-        return response()->json(['status' => true, 'message' => 'Đổi mật khẩu thành công!']);
+        // Khóa mã OTP
+        DB::table('otp_verifications')
+            ->where('id', $otpRecord->id)
+            ->update(['is_used' => 1]);
+
+        return response()->json([
+            'status' => true, 
+            'message' => 'Đổi mật khẩu thành công!'
+        ]);
     }
 
     // 📌 9. ĐỔI MẬT KHẨU KHI ĐANG ĐĂNG NHẬP

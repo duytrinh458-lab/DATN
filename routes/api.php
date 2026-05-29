@@ -44,6 +44,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Logout & đổi mật khẩu
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::post('/change-password', [AuthApiController::class, 'changePassword']);
+    // Chỉ cho phép tối đa 3 requests / 1 phút (chặn đứng mọi tool spam)
+Route::middleware('throttle:3,1')->group(function () {
+    Route::post('/resend-otp', [AuthApiController::class, 'resendOtp']);
+    Route::post('/forgot-password', [AuthApiController::class, 'createCodeResetPassword']);
+});
 
     // Profile
     Route::get('/profile', [ProfileApiController::class, 'show']);
