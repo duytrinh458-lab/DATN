@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\NewsApiController;
@@ -19,81 +18,115 @@ use App\Http\Controllers\Api\UserApiController;
 // ==========================================
 // PUBLIC ROUTES (Không cần đăng nhập)
 // ==========================================
-Route::post('/register', [AuthApiController::class, 'register']);
-Route::post('/verify-otp', [AuthApiController::class, 'verifyOtpRegister']);
+
+// Auth
+Route::post('/register', [AuthApiController::class, 'signup']);
+Route::post('/verify-otp', [AuthApiController::class, 'verifyOtp']);
 Route::post('/login', [AuthApiController::class, 'login']);
 
-Route::post('/forgot-password', [AuthApiController::class, 'forgotPassword']);
+Route::post('/forgot-password', [AuthApiController::class, 'createCodeResetPassword']);
+Route::post('/check-reset-code', [AuthApiController::class, 'checkCodeResetPassword']);
 Route::post('/reset-password', [AuthApiController::class, 'resetPassword']);
 
-// Lấy dữ liệu công khai
+// resend otp nên để public
+Route::middleware('throttle:3,1')->group(function () {
+    Route::post('/resend-otp', [AuthApiController::class, 'resendOtp']);
+});
+
+// Products
 Route::get('/get_list_products', [ProductApiController::class, 'index']);
-Route::get('/get_list_categories', [ProductApiController::class, 'categories']);
-Route::get('/get_list_brands', [ProductApiController::class, 'brands']);
+Route::get('/get_list_categories', [ProductApiController::class, 'getCategories']);
+Route::get('/get_list_brands', [ProductApiController::class, 'getBrands']);
 Route::get('/product_detail/{id}', [ProductApiController::class, 'show']);
 Route::get('/search_products', [ProductApiController::class, 'search']);
 
+// News
 Route::get('/get_list_news', [NewsApiController::class, 'index']);
 Route::get('/news_detail/{id}', [NewsApiController::class, 'show']);
+
 
 // ==========================================
 // USER ROUTES (CẦN ĐĂNG NHẬP)
 // ==========================================
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Logout & đổi mật khẩu
+    // Auth
     Route::post('/logout', [AuthApiController::class, 'logout']);
     Route::post('/change-password', [AuthApiController::class, 'changePassword']);
-    // Chỉ cho phép tối đa 3 requests / 1 phút (chặn đứng mọi tool spam)
-Route::middleware('throttle:3,1')->group(function () {
-    Route::post('/resend-otp', [AuthApiController::class, 'resendOtp']);
-    Route::post('/forgot-password', [AuthApiController::class, 'createCodeResetPassword']);
-});
 
     // Profile
-    Route::get('/profile', [ProfileApiController::class, 'show']);
+    Route::get('/profile', [ProfileApiController::class, 'me']);
     Route::post('/profile/update', [ProfileApiController::class, 'update']);
-    Route::post('/profile/update-avatar', [ProfileApiController::class, 'updateAvatar']);
-    Route::post('/profile/notification-settings', [ProfileApiController::class, 'updateNotificationSettings']);
+
+    // Device token
+    Route::post('/profile/device-token', [ProfileApiController::class, 'setDeviceToken']);
+
+    // Notification settings
+    Route::post('/profile/notification-settings', [ProfileApiController::class, 'setPushSetting']);
+
+    // lấy setting notification
+    Route::get('/profile/notification-settings', [ProfileApiController::class, 'getPushSetting']);
 
     // Address
     Route::get('/addresses', [AddressApiController::class, 'index']);
     Route::post('/addresses', [AddressApiController::class, 'store']);
     Route::put('/addresses/{id}', [AddressApiController::class, 'update']);
     Route::delete('/addresses/{id}', [AddressApiController::class, 'destroy']);
-    Route::post('/shipping-fee', [AddressApiController::class, 'calculateShippingFee']);
+
+    Route::post('/shipping-fee', [AddressApiController::class, 'getShipFee']);
 
     // Wallet
     Route::get('/wallet/balance', [WalletApiController::class, 'balance']);
     Route::get('/wallet/history', [WalletApiController::class, 'history']);
     Route::post('/wallet/deposit', [WalletApiController::class, 'deposit']);
 
+    // nếu controller có method confirmDeposit
+    Route::post('/wallet/confirm-deposit', [WalletApiController::class, 'confirmDeposit']);
+
     // Cart
     Route::get('/cart', [CartApiController::class, 'index']);
     Route::post('/cart/add', [CartApiController::class, 'add']);
+
     Route::put('/cart/update/{id}', [CartApiController::class, 'update']);
-    Route::delete('/cart/remove/{id}', [CartApiController::class, 'remove']);
+
+    Route::delete('/cart/remove/{id}', [CartApiController::class, 'destroy']);
+
     Route::post('/cart/clear', [CartApiController::class, 'clear']);
 
     // Orders
     Route::get('/orders', [OrderApiController::class, 'index']);
     Route::get('/orders/{id}', [OrderApiController::class, 'show']);
-    Route::post('/orders/place', [OrderApiController::class, 'placeOrder']);
-    Route::post('/orders/{id}/cancel', [OrderApiController::class, 'cancelOrder']);
+
+    Route::post('/orders/place', [OrderApiController::class, 'store']);
+
+    Route::post('/orders/{id}/cancel', [OrderApiController::class, 'cancel']);
+
     Route::post('/orders/{id}/refund', [OrderApiController::class, 'requestRefund']);
+
+    // nếu controller có
+    Route::post('/orders/{id}/confirm-received', [OrderApiController::class, 'confirmReceived']);
+
+    Route::get('/orders/{id}/timeline', [OrderApiController::class, 'getTimeline']);
+
+    Route::get('/orders/{id}/status', [OrderApiController::class, 'getStatus']);
+
+    Route::post('/orders/{id}/edit-note', [OrderApiController::class, 'editNote']);
 
     // Notifications
     Route::get('/notifications', [NotificationApiController::class, 'index']);
+
     Route::post('/notifications/read', [NotificationApiController::class, 'markAsRead']);
-    Route::post('/notifications/read-all', [NotificationApiController::class, 'markAllAsRead']);
-});
+
+    });
+
 
 // ==========================================
 // ADMIN ROUTES (CẦN QUYỀN ADMIN)
 // ==========================================
 Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
 
-    Route::get('/admin/dashboard', [AdminDashboardApiController::class, 'dashboard']);
+    // Dashboard
+    Route::get('/admin/dashboard', [AdminDashboardApiController::class, 'index']);
 
     // Users
     Route::get('/admin/users', [UserApiController::class, 'index']);
@@ -104,17 +137,18 @@ Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
 
     // Products
     Route::post('/add_products', [ProductApiController::class, 'store']);
+
     Route::put('/edit_products/{id}', [ProductApiController::class, 'update']);
+
     Route::delete('/del_products/{id}', [ProductApiController::class, 'destroy']);
 
     // Orders
-    Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'updateStatus']);
+    Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'adminUpdateStatus']);
 
+    // refund approve nếu controller có
+    Route::post('/admin/orders/{id}/approve-refund', [OrderApiController::class, 'adminApproveRefund']);
 
-//    // Thêm các route quản lý khác , 
-// đang thiếu
-// Route::get('/admin/refunds', ...);
-// Route::get('/admin/transactions', ...);
-
-
-    });
+    // TODO:
+    // Route::get('/admin/refunds', ...);
+    // Route::get('/admin/transactions', ...);
+});

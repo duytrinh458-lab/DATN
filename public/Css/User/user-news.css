@@ -1,11 +1,12 @@
 /* =========================
-   VANGUARD NEWS HUB CSS
+   VANGUARD NEWS HUB CSS (NỀN XANH KIM CƯƠNG ĐẬM)
 ========================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
 
 .news-viewport {
-    background-color: #0b0e14;
+    /* ĐÃ CHỈNH: Đổi sang màu xanh lam ngọc sâu thẳm của lõi viên kim cương */
+    background-color: #021122;
     min-height: 100vh;
     padding: 30px 20px 60px;
     font-family: 'Space Grotesk', sans-serif;
@@ -14,7 +15,7 @@
 
 .news-page-container {
     width: 100%;
-    max-width: 1400px; /* Sửa từ 1250px lên 1400px */
+    max-width: 1400px; 
     margin: 0 auto;
 }
 
@@ -49,25 +50,28 @@
 /* Grid Layout */
 .news-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Sửa thành 4 cột bằng nhau */
-    gap: 25px; /* Giảm khoảng cách giữa các thẻ một chút cho vừa vặn */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 25px; 
 }
 
 /* Card Style */
 .news-card {
-    background: #0f172a;
+    /* ĐÃ CHỈNH: Khối thẻ trong suốt màu tinh thể */
+    background: rgba(4, 26, 48, 0.65);
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid rgba(0, 234, 255, 0.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 234, 255, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
+    backdrop-filter: blur(5px);
 }
 
 .news-card:hover {
     transform: translateY(-10px);
-    border-color: rgba(0, 234, 255, 0.4);
-    box-shadow: 0 15px 40px rgba(0, 234, 255, 0.15);
+    border-color: rgba(0, 234, 255, 0.6);
+    box-shadow: 0 15px 40px rgba(0, 234, 255, 0.3);
+    background: rgba(5, 34, 64, 0.9);
 }
 
 .news-link {
@@ -81,8 +85,8 @@
 /* Image Section */
 .news-image {
     width: 100%;
-    height: 280px; /* Tăng từ 220px lên 280px */
-    background: #1e293b;
+    height: 280px; 
+    background: #031c34;
     position: relative;
     overflow: hidden;
 }
@@ -102,14 +106,15 @@
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 100px;
-    background: linear-gradient(to top, #0f172a, transparent);
+    /* ĐÃ CHỈNH: Tệp vào màu thẻ */
+    background: linear-gradient(to top, rgba(4, 26, 48, 1), transparent);
     z-index: 1;
 }
 
 .news-image-placeholder {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    color: #334155;
+    color: #1ca9c9;
 }
 .news-image-placeholder .material-symbols-outlined {
     font-size: 60px;
@@ -130,9 +135,9 @@
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #94a3b8; /* Đổi màu thời gian cho chìm xuống */
+    color: #00bfff; 
     font-weight: 500;
-    margin-bottom: 0; /* Xóa margin cũ */
+    margin-bottom: 0; 
 }
 
 .icon-sm {
@@ -144,7 +149,7 @@
     font-weight: 800;
     line-height: 1.4;
     margin-bottom: 12px;
-    margin-top: 0; /* Xóa khoảng trống phía trên */
+    margin-top: 0; 
     color: #ffffff;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -169,7 +174,7 @@
 }
 
 .news-readmore {
-    margin-top: 0; /* Xóa margin cũ vì đã có footer lo */
+    margin-top: 0; 
     font-size: 11px;
     font-weight: 900;
     color: #00eaff;
@@ -180,39 +185,15 @@
     transition: 0.3s;
 }
 
-.news-card:hover .news-readmore {
-    color: #00eaff;
-}
-
-.news-readmore .material-symbols-outlined {
-    font-size: 12px;
-    transition: transform 0.3s;
-}
-
-.news-card:hover .news-readmore .material-symbols-outlined {
-    transform: translateX(5px);
-}
-
 /* Empty State */
 .news-empty {
     grid-column: 1 / -1;
     padding: 100px 20px;
     text-align: center;
-    background: #0f172a;
+    background: #041a30;
     border-radius: 20px;
-    border: 1px dashed #334155;
+    border: 1px dashed #1ca9c9;
     color: #64748b;
-}
-
-.news-empty .material-symbols-outlined {
-    font-size: 48px;
-    margin-bottom: 15px;
-    opacity: 0.5;
-}
-
-.news-empty p {
-    font-size: 14px;
-    letter-spacing: 2px;
 }
 
 /* Pagination Wrapper */
@@ -237,38 +218,21 @@
 }
 
 /* Responsive */
-@media(max-width: 1200px) {
-    .news-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media(max-width: 768px) {
-    .news-title-main { font-size: 1.8rem; }
-    .news-grid { grid-template-columns: 1fr; }
-}
+@media(max-width: 1200px) { .news-grid { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 768px) { .news-title-main { font-size: 1.8rem; } .news-grid { grid-template-columns: 1fr; } }
 
 .news-meta-footer {
-    margin-top: auto; /* Lệnh ma thuật đẩy toàn bộ cục này xuống đáy thẻ */
+    margin-top: auto; 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px dashed rgba(148, 163, 184, 0.2);
+    border-top: 1px dashed rgba(0, 234, 255, 0.2);
     padding-top: 15px;
 }
 
 /* =========================
    PAGINATION VANGUARD
 ========================= */
-
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
 .page-item .page-link,
 .page-item span.page-link {
     min-width: 40px;
@@ -277,8 +241,8 @@
     align-items: center;
     justify-content: center;
     padding: 0 12px;
-    background: #0f172a;
-    border: 1px solid rgba(0, 234, 255, 0.2);
+    background: #041a30;
+    border: 1px solid rgba(0, 234, 255, 0.3);
     border-radius: 8px;
     text-decoration: none;
     color: #94a3b8;
@@ -288,31 +252,26 @@
     transition: all 0.3s ease;
 }
 
-/* Hiệu ứng khi hover chuột vào số trang */
 .page-item .page-link:hover {
-    background: rgba(0, 234, 255, 0.1);
+    background: rgba(0, 234, 255, 0.15);
     border-color: #00eaff;
     color: #00eaff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 234, 255, 0.2);
 }
 
-/* Nút của Trang hiện tại đang đứng (Active) */
 .page-item.active .page-link,
 .page-item.active span.page-link {
     background: #00eaff;
     border-color: #00eaff;
-    color: #0b0e14;
+    color: #021122;
     box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
 }
 
-/* Nút bị vô hiệu hóa (Ví dụ: Nút "Lùi" khi đang ở trang 1) */
 .page-item.disabled .page-link,
 .page-item.disabled span.page-link {
-    background: #1e293b;
-    border-color: #334155;
+    background: #020e1a;
+    border-color: #102a45;
     color: #475569;
     pointer-events: none;
-    transform: none;
-    box-shadow: none;
 }

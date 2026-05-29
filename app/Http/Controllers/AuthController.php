@@ -34,7 +34,6 @@ class AuthController extends Controller
     }
 
     // ================= REGISTER =================
-    // ================= REGISTER =================
     public function sendOtpRegister(Request $request)
     {
         $request->validate([
