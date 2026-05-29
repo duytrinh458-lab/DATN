@@ -85,20 +85,56 @@ class AuthApiController extends Controller
         return response()->json(['status' => true, 'message' => 'Đã đăng xuất hệ thống']);
     }
 
-    // 📌 4. GỬI LẠI MÃ OTP (RESEND OTP)
+    // 📌 4. GỬI LẠI MÃ OTP (RESEND OTP) - ĐÃ VÁ LỖI
     public function resendOtp(Request $request)
     {
-        $request->validate(['phone' => 'required']);
+        // 1. 🔥 ĐÃ FIX LOGIC #1: Yêu cầu truyền và validate loại OTP (type)
+        $request->validate([
+            'phone' => 'required|numeric',
+            'type'  => 'required|in:register,forgot_password' // Bắt buộc truyền type hợp lệ
+        ], [
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'phone.numeric'  => 'Số điện thoại chỉ được chứa chữ số.',
+            'type.required'  => 'Vui lòng truyền loại giao dịch OTP.',
+            'type.in'        => 'Loại giao dịch OTP không hợp lệ.'
+        ]);
+
         $user = User::where('phone', $request->phone)->first();
         if (!$user) return response()->json(['status' => false, 'message' => 'SĐT không tồn tại'], 404);
 
-        DB::table('otp_verifications')->where('phone', $request->phone)->update(['is_used' => 1]);
-        $otp = rand(100000, 999999);
+        // 🛡️ VÁ LỖI SPAM: Kiểm tra lần gửi OTP gần nhất chưa qua 60 giây (Chỉ check cùng type)
+        $lastOtp = DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->where('type', $request->type)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($lastOtp && now()->diffInSeconds(\Carbon\Carbon::parse($lastOtp->created_at)) < 60) {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Thao tác quá nhanh. Vui lòng đợi 60 giây để yêu cầu mã mới.'
+            ], 429); // 429 Too Many Requests
+        }
+
+        // Hủy các mã OTP cũ CÙNG LOẠI
+        DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->where('type', $request->type)
+            ->update(['is_used' => 1]);
+        
+        // 🛡️ VÁ LỖI BRUTE-FORCE: Sử dụng random_int an toàn tuyệt đối về mặt mật mã học
+        $otp = random_int(100000, 999999);
+        
+        // 3. 🔥 Insert mã mới với type động từ request
         DB::table('otp_verifications')->insert([
-            'phone' => $request->phone, 'otp_code' => $otp, 'type' => 'register', 'expires_at' => now()->addMinutes(15)
+            'phone'      => $request->phone, 
+            'otp_code'   => $otp, 
+            'type'       => $request->type, // <-- Dùng type động từ request
+            'expires_at' => now()->addMinutes(5), 
+            'created_at' => now()
         ]);
 
-        return response()->json(['status' => true, 'message' => 'Đã gửi lại OTP']);
+        return response()->json(['status' => true, 'message' => 'Đã gửi lại OTP thành công']);
     }
 
     // 📌 5. XÁC THỰC OTP (VERIFY OTP)
@@ -243,14 +279,29 @@ class AuthApiController extends Controller
     // 📌 9. ĐỔI MẬT KHẨU KHI ĐANG ĐĂNG NHẬP
     public function changePassword(Request $request)
     {
-        $request->validate(['old_password' => 'required', 'new_password' => 'required|min:6|confirmed']);
+        $request->validate([
+            'old_password' => 'required', 
+            'new_password' => 'required|min:6|confirmed'
+        ]);
+        
         $user = $request->user();
 
         if (!Hash::check($request->old_password, $user->password)) {
-            return response()->json(['status' => false, 'message' => 'Mật khẩu cũ sai'], 400);
+            return response()->json([
+                'status'  => false, 
+                'message' => 'Mật khẩu cũ không chính xác'
+            ], 400);
         }
+        
         $user->password = Hash::make($request->new_password);
+        
+        // 🔥 ĐÃ FIX LOGIC #5: Đánh dấu user đã qua lần đăng nhập đầu tiên
+        $user->is_first_login = 0; 
         $user->save();
-        return response()->json(['status' => true, 'message' => 'Cập nhật mật khẩu thành công']);
+        
+        return response()->json([
+            'status'  => true, 
+            'message' => 'Cập nhật mật khẩu thành công'
+        ]);
     }
 }

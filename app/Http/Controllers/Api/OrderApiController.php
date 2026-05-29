@@ -49,33 +49,52 @@ class OrderApiController extends Controller
         try {
             DB::beginTransaction();
 
+            // 1. 🔥 ĐÃ FIX LOGIC #2: Tính phí ship động dựa theo địa chỉ khách hàng
+            $address = \App\Models\Address::where('id', $request->address_id)
+                ->where('user_id', $userId)
+                ->first();
+
+            if (!$address) {
+                throw new \Exception('Địa chỉ giao hàng không hợp lệ hoặc không tồn tại.');
+            }
+
+            $province = mb_strtolower($address->province, 'UTF-8');
+            // Nếu ở Hà Nội hoặc Hồ Chí Minh thì phí ship là 30.000đ, các tỉnh khác là 50.000đ
+            $shippingFee = (str_contains($province, 'hà nội') || str_contains($province, 'hồ chí minh')) 
+                ? 30000 
+                : 50000;
+
+            // 2. Tính tổng tiền giỏ hàng
             $cartItems = DB::table('cart_items')->where('cart_id', $cart->id)->get();
             $subtotal = 0;
             foreach ($cartItems as $item) {
                 $subtotal += $item->unit_price * $item->quantity;
             }
 
+            // 3. Trừ tiền trong ví
+            $totalAmountToPay = $subtotal + $shippingFee;
             $wallet = Wallet::where('user_id', $userId)->lockForUpdate()->first();
-            if (!$wallet || $wallet->balance < $subtotal) {
+            
+            if (!$wallet || $wallet->balance < $totalAmountToPay) {
                 throw new \Exception('Số dư ví V-Pay không đủ để thanh toán!');
             }
 
-            $wallet->balance -= $subtotal;
+            $wallet->balance -= $totalAmountToPay;
             $wallet->save();
 
-            $shippingFee = 30000;
+            // 4. Khởi tạo đơn hàng
             $order = Order::create([
                 'user_id' => $userId,
                 'address_id' => $request->address_id,
                 'order_code' => 'VG-' . strtoupper(Str::random(8)),
                 'subtotal' => $subtotal,
-                'shipping_fee' => $shippingFee,
-                'total' => $subtotal + $shippingFee,
+                'shipping_fee' => $shippingFee, // Dùng phí ship động đã tính ở trên
+                'total' => $totalAmountToPay,
                 'status' => 'pending'
             ]);
 
+            // 5. Kiểm tra kho và thêm sản phẩm vào đơn hàng
             foreach ($cartItems as $item) {
-                // 🔥 THÊM CODE KIỂM TRA TỒN KHO TẠI ĐÂY
                 $product = Product::find($item->product_id);
                 if (!$product || $product->stock < $item->quantity) {
                     throw new \Exception('Sản phẩm ' . ($product ? $product->name : '') . ' không đủ hàng trong kho!');
@@ -92,15 +111,17 @@ class OrderApiController extends Controller
                 $product->decrement('stock', $item->quantity);
             }
 
+            // 6. Ghi lại lịch sử giao dịch ví
             DB::table('wallet_transactions')->insert([
                 'wallet_id' => $wallet->id,
                 'type' => 'payment',
-                'amount' => $subtotal,
+                'amount' => $totalAmountToPay,
                 'reference_code' => $order->order_code,
                 'status' => 'success',
                 'created_at' => now()
             ]);
 
+            // 7. Xóa giỏ hàng
             DB::table('cart_items')->where('cart_id', $cart->id)->delete();
 
             DB::commit();

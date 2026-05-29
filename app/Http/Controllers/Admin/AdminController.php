@@ -19,82 +19,59 @@ class AdminController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | CACHE DASHBOARD
+        | CACHE DASHBOARD (ĐÃ GIẢM TTL XUỐNG 30 GIÂY ĐỂ TRÁNH DỮ LIỆU ẢO)
+        | Hoặc bạn có thể đổi thành `Cache::rememberForever` kết hợp với Event/Observer
+        | để xóa Cache ngay lập tức mỗi khi có thay đổi DB.
         |--------------------------------------------------------------------------
         */
-        $stats = Cache::remember(
-            'admin_dashboard_stats',
-            300,
-            function () {
+        $stats = Cache::remember('admin_dashboard_stats', 30, function () {
 
-                return [
+            return [
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | THỐNG KÊ
-                    |--------------------------------------------------------------------------
-                    */
-                    'productCount' => Product::count(),
+                /*
+                |--------------------------------------------------------------------------
+                | THỐNG KÊ (ĐÃ VÁ LỖI ĐẾM SẢN PHẨM BỊ XÓA)
+                |--------------------------------------------------------------------------
+                */
+                // Đếm tất cả sản phẩm đang thực sự hiển thị
+                'productCount' => Product::where('status', 'active')->count(),
 
-                    'orderCount' => Order::count(),
+                'orderCount' => Order::count(),
 
-                    'userCount' => User::count(),
+                'userCount' => User::where('role', 'customer')->count(), // Tránh đếm nhầm Admin
 
-                    'commentCount' => DB::table('reviews')->count(),
+                'commentCount' => DB::table('reviews')->count(),
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ĐƠN HÀNG CHỜ XỬ LÝ
-                    |--------------------------------------------------------------------------
-                    */
-                    'pendingOrders' => Order::where(
-                        'status',
-                        'pending'
-                    )->count(),
+                /*
+                |--------------------------------------------------------------------------
+                | ĐƠN HÀNG CHỜ XỬ LÝ
+                |--------------------------------------------------------------------------
+                */
+                'pendingOrders' => Order::where('status', 'pending')->count(),
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | DOANH THU
-                    |--------------------------------------------------------------------------
-                    */
-                    'revenue' => Order::where(
-                        'status',
-                        'delivered'
-                    )->sum('total'),
+                /*
+                |--------------------------------------------------------------------------
+                | DOANH THU
+                |--------------------------------------------------------------------------
+                */
+                'revenue' => Order::where('status', 'delivered')->sum('total'),
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SẢN PHẨM BÁN CHẠY
-                    |--------------------------------------------------------------------------
-                    */
-                    'bestProduct' => DB::table('order_items')
-
-                        ->join(
-                            'products',
-                            'order_items.product_id',
-                            '=',
-                            'products.id'
-                        )
-
-                        ->select(
-                            'products.name',
-                            DB::raw(
-                                'SUM(order_items.quantity) as total_sold'
-                            )
-                        )
-
-                        ->groupBy(
-                            'products.id',
-                            'products.name'
-                        )
-
-                        ->orderByDesc('total_sold')
-
-                        ->first()
-                ];
-            }
-        );
-
+                /*
+                |--------------------------------------------------------------------------
+                | SẢN PHẨM BÁN CHẠY
+                |--------------------------------------------------------------------------
+                */
+                'bestProduct' => DB::table('order_items')
+                    ->join('products', 'order_items.product_id', '=', 'products.id')
+                    ->select(
+                        'products.name',
+                        DB::raw('SUM(order_items.quantity) as total_sold')
+                    )
+                    ->groupBy('products.id', 'products.name')
+                    ->orderByDesc('total_sold')
+                    ->first()
+            ];
+        });
 
         /*
         |--------------------------------------------------------------------------
@@ -102,26 +79,13 @@ class AdminController extends Controller
         |--------------------------------------------------------------------------
         */
         return view('Admin.dashboard', [
-
-            'productCount' => $stats['productCount'],
-
-            'orderCount' => $stats['orderCount'],
-
-            'userCount' => $stats['userCount'],
-
-            'revenue' => $stats['revenue'],
-
-            'bestProduct' => $stats['bestProduct'],
-
-            'commentCount' => $stats['commentCount'],
-
-            /*
-            |--------------------------------------------------------------------------
-            | BADGE ĐƠN HÀNG
-            |--------------------------------------------------------------------------
-            */
+            'productCount'  => $stats['productCount'],
+            'orderCount'    => $stats['orderCount'],
+            'userCount'     => $stats['userCount'],
+            'revenue'       => $stats['revenue'],
+            'bestProduct'   => $stats['bestProduct'],
+            'commentCount'  => $stats['commentCount'],
             'pendingOrders' => $stats['pendingOrders']
-
         ]);
     }
 

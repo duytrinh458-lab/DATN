@@ -38,44 +38,47 @@ use App\Http\Middleware\AdminMiddleware;
 
 /*
 |--------------------------------------------------------------------------
-| GLOBAL BADGE (ADMIN + USER)
+| GLOBAL BADGE (ADMIN + USER) - ĐÃ FIX LỖI SEC #7 (TỐI ƯU CACHE & CHẶN N+1)
 |--------------------------------------------------------------------------
 */
+use Illuminate\Support\Facades\Cache;
+
 View::composer('*', function ($view) {
 
     $user = Auth::user();
 
     if (!$user) {
-
         $view->with([
-            'orderPendingCount' => 0,
-            'refundPendingCount' => 0,
+            'orderPendingCount'       => 0,
+            'refundPendingCount'      => 0,
             'transactionPendingCount' => 0,
-            'commentPendingCount' => 0,
-            'newsDraftCount' => 0,
+            'commentPendingCount'     => 0,
+            'newsDraftCount'          => 0,
         ]);
-
         return;
     }
 
+
     $view->with([
+        'orderPendingCount' => Cache::remember('badge_order_pending', 30, function () {
+            return Order::where('status', 'pending')->count();
+        }),
 
-        'orderPendingCount' =>
-            Order::where('status', 'pending')->count(),
+        'refundPendingCount' => Cache::remember('badge_refund_pending', 30, function () {
+            return Refund::where('status', 'pending')->count();
+        }),
 
-        'refundPendingCount' =>
-            Refund::where('status', 'pending')->count(),
+        'transactionPendingCount' => Cache::remember('badge_transaction_pending', 30, function () {
+            return Transaction::where('status', 'pending')->count();
+        }),
 
-        'transactionPendingCount' =>
-            Transaction::where('status', 'pending')->count(),
+        'commentPendingCount' => Cache::remember('badge_comment_pending', 30, function () {
+            return Review::where('is_approved', 0)->count();
+        }),
 
-        // FIXED
-        'commentPendingCount' =>
-            Review::where('is_approved', 0)->count(),
-
-        'newsDraftCount' =>
-            News::where('status', 'draft')->count(),
-
+        'newsDraftCount' => Cache::remember('badge_news_draft', 30, function () {
+            return News::where('status', 'draft')->count();
+        }),
     ]);
 });
 

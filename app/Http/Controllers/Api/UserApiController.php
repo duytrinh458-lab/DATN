@@ -52,6 +52,7 @@ class UserApiController extends Controller
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:6',
             'phone'    => 'required',
+            'role'     => 'nullable|in:admin,customer', // 🔥 ĐÃ VÁ: Chặn nhập role bừa bãi
         ]);
 
         if ($validator->fails()) {
@@ -76,6 +77,7 @@ class UserApiController extends Controller
     }
 
     // 📌 API 64 (Tiếp): Admin cập nhật (ĐÃ VÁ: Chống Mass Assignment)
+    // 📌 API 64 (Tiếp): Admin cập nhật (ĐÃ VÁ: Chống Mass Assignment & Lỗ hổng nâng quyền)
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -83,7 +85,20 @@ class UserApiController extends Controller
             return response()->json(['status' => false, 'message' => 'Người dùng không tồn tại'], 404);
         }
 
-        // 🟢 CHỐNG MASS ASSIGNMENT: Chỉ cập nhật các trường cụ thể
+        // 🔥 ĐÃ VÁ SEC #5 VÀ LỖI TRÙNG LẶP: Thêm bộ lọc validate cho dữ liệu cập nhật
+        $validator = Validator::make($request->all(), [
+            'username' => 'nullable|string|unique:users,username,' . $id,
+            'email'    => 'nullable|email|unique:users,email,' . $id,
+            'phone'    => 'nullable|string|unique:users,phone,' . $id,
+            'role'     => 'nullable|in:admin,customer', // Khóa chặt giá trị phân quyền hợp lệ
+            'password' => 'nullable|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
+        }
+
+        // Chỉ lấy các trường an toàn sau khi đã qua bộ lọc validate
         $updateData = $request->only(['username', 'full_name', 'email', 'phone', 'role']);
         
         if ($request->filled('password')) {
@@ -95,7 +110,7 @@ class UserApiController extends Controller
         return response()->json([
             'status'  => true,
             'message' => 'Cập nhật thành công',
-            'data'    => new UserResource($user) // 🟢 Lọc dữ liệu trả về
+            'data'    => new UserResource($user) 
         ]);
     }
 
