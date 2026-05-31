@@ -157,9 +157,21 @@
 
                 </a>
 
-            </div>
+                {{-- THƯƠNG HIỆU --}}
+<a href="{{ route('admin.brands.index') }}"
+   class="{{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
 
-        </div>
+    <div class="menu-left">
+
+        <i class="fa-solid fa-tags"></i>
+
+        <span>Thương hiệu</span>
+
+    </div>
+
+</a>
+
+            </div>
 
 
         {{-- NỘI DUNG --}}

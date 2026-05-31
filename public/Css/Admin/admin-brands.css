@@ -1,0 +1,311 @@
+/* =========================================
+   BRAND PAGE
+========================================= */
+
+.brand-page{
+    width:100%;
+    padding:25px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.brand-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.brand-header h2{
+    margin:0;
+    font-size:24px;
+    font-weight:700;
+    color:#111827;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.brand-card{
+    background:#fff;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+    overflow:hidden;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.brand-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.brand-table thead tr{
+    background:#f3f4f6;
+}
+
+.brand-table th{
+    padding:14px;
+    text-align:left;
+    font-size:14px;
+    font-weight:700;
+    color:#374151;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.brand-table td{
+    padding:14px;
+    border-bottom:1px solid #e5e7eb;
+    vertical-align:middle;
+    color:#374151;
+}
+
+.brand-table tbody tr:hover{
+    background:#f9fafb;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.brand-logo{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    padding:5px;
+    background:#fff;
+}
+
+.brand-preview{
+    display:block;
+    margin-top:12px;
+    width:120px;
+    height:120px;
+    object-fit:contain;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:8px;
+    background:#fff;
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.brand-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+/* =========================================
+   BUTTON BASE
+========================================= */
+
+.brand-btn{
+    border:none;
+    outline:none;
+    cursor:pointer;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    transition:all .25s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:100px;
+}
+
+.brand-btn:hover{
+    text-decoration:none;
+}
+
+/* =========================================
+   BUTTON COLORS
+========================================= */
+
+/* Lưu */
+.brand-btn-primary{
+    background:#2563eb;
+    color:#fff;
+}
+
+.brand-btn-primary:hover{
+    background:#1d4ed8;
+    color:#fff;
+}
+
+/* Thêm */
+.brand-btn-success{
+    background:#10b981;
+    color:#fff;
+}
+
+.brand-btn-success:hover{
+    background:#059669;
+    color:#fff;
+}
+
+/* Sửa */
+.brand-btn-warning{
+    background:#f59e0b;
+    color:#fff;
+}
+
+.brand-btn-warning:hover{
+    background:#d97706;
+    color:#fff;
+}
+
+/* Xóa */
+.brand-btn-danger{
+    background:#ef4444;
+    color:#fff;
+}
+
+.brand-btn-danger:hover{
+    background:#dc2626;
+    color:#fff;
+}
+
+/* Quay lại */
+.brand-btn-secondary{
+    background:#6b7280;
+    color:#fff;
+}
+
+.brand-btn-secondary:hover{
+    background:#4b5563;
+    color:#fff;
+}
+
+/* Chi tiết */
+.brand-btn-info{
+    background:#06b6d4;
+    color:#fff;
+}
+
+.brand-btn-info:hover{
+    background:#0891b2;
+    color:#fff;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.brand-form{
+    width:100%;
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#374151;
+}
+
+.form-control{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:14px;
+    transition:.2s;
+    background:#fff;
+}
+
+.form-control:focus{
+    border-color:#2563eb;
+    outline:none;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+/* =========================================
+   FORM ACTIONS
+========================================= */
+
+.brand-form-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+}
+
+/* =========================================
+   ALERT
+========================================= */
+
+.alert-success{
+    background:#ecfdf5;
+    color:#065f46;
+    border:1px solid #a7f3d0;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+.alert-danger{
+    background:#fef2f2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+/* =========================================
+   PAGINATION
+========================================= */
+
+.pagination{
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:768px){
+
+    .brand-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .brand-card{
+        padding:15px;
+    }
+
+    .brand-table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    .brand-actions,
+    .brand-form-actions{
+        flex-direction:column;
+    }
+
+    .brand-btn{
+        width:100%;
+    }
+}

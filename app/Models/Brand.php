@@ -9,7 +9,7 @@ class Brand extends Model
     protected $table = 'brands';
     
     // 💡 ĐÃ FIX LOGIC SAI: Thêm fillable và relation cho Model Brand
-    protected $fillable = ['name', 'slug', 'logo', 'is_active'];
+    protected $fillable = ['name', 'logo'];
     
     public $timestamps = false; // Bỏ timestamps nếu DB không có
 

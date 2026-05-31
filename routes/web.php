@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\InteractionController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\BrandController;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -218,6 +219,8 @@ Route::prefix('admin')
             ->except(['show']);
 
         Route::resource('categories', CategoryController::class);
+        Route::resource('brands', BrandController::class)
+    ->except(['show']);
 
         Route::resource('news', NewsController::class);
 
@@ -347,6 +350,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/categories/{id}',
         [ProductController::class, 'byCategory'])
         ->name('user.categories.show');
+
 
     /*
     |--------------------------------------------------------------------------
