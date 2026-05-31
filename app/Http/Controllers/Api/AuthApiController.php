@@ -38,7 +38,7 @@ class AuthApiController extends Controller
             'phone' => $request->phone,
             'otp_code' => $otp,
             'type' => 'register',
-            'expires_at' => now()->addMinutes(15),
+            'expires_at' => now()->addMinutes(5),
             'created_at' => now()
         ]);
 
@@ -67,17 +67,31 @@ class AuthApiController extends Controller
             ], 401);
         }
 
+        // 🔥 ĐÃ VÁ BUG #7: Chặn đứng tài khoản bị khóa hoặc vô hiệu hóa
+        if ($user->status !== 'active') {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Tài khoản đã bị khóa'
+            ], 403);
+        }
+
+        // 🔥 ĐÃ VÁ BUG #7: Bắt buộc xác thực OTP trước khi cấp token
+        if (!$user->is_verified) {
+            return response()->json([
+                'status' => false, 
+                'message' => 'Vui lòng xác thực OTP'
+            ], 403);
+        }
+
         return response()->json([
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'data' => [
-                // 🟢 ĐÃ FIX: Sử dụng UserResource để ẩn các cột nhạy cảm
                 'user' => new UserResource($user),
                 'token' => $user->createToken('VanguardToken')->plainTextToken
             ]
         ]);
     }
-
     // 📌 3. ĐĂNG XUẤT (LOGOUT)
     public function logout(Request $request)
     {
@@ -179,7 +193,7 @@ class AuthApiController extends Controller
             'phone' => $request->phone, 
             'otp_code' => $otp, 
             'type' => 'forgot_password', 
-            'expires_at' => now()->addMinutes(15)
+            'expires_at' => now()->addMinutes(5)
         ]);
 
         return response()->json(['status' => true, 'message' => 'Đã tạo mã khôi phục và gửi về số điện thoại']);
