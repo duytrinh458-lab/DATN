@@ -35,32 +35,6 @@ class ProfileApiController extends Controller
         return response()->json(['status' => true, 'message' => 'Cập nhật hồ sơ thành công', 'data' => $user]);
     }
 
-    // 📌 API 12: Lưu device token
-    public function setDeviceToken(Request $request)
-    {
-        $request->validate(['device_token' => 'required|string']);
-        $user = User::find(Auth::id());
-        $user->device_token = $request->device_token;
-        $user->save();
-        return response()->json(['status' => true, 'message' => 'Đã lưu mã thiết bị thành công']);
-    }
-
-    // 📌 API 13: Lấy setting push
-    public function getPushSetting()
-    {
-        return response()->json(['status' => true, 'allow_push' => Auth::user()->allow_push]);
-    }
-
-    // 📌 API 14: set push setting
-    public function setPushSetting(Request $request)
-    {
-        $request->validate(['allow_push' => 'required|in:0,1']);
-        $user = User::find(Auth::id());
-        $user->allow_push = $request->allow_push;
-        $user->save();
-        return response()->json(['status' => true, 'message' => 'Đã cập nhật cài đặt thông báo']);
-    }
-
     // 📌 API change password
     public function changePassword(Request $request)
     {

@@ -1,0 +1,7 @@
+# Use this workspace to collaborate
+workspace:
+  id: a530aed0-f9d1-4a4d-8c1d-befd90515a9c
+
+localResources:
+  collections:
+    - ..\UAV_Collection.json

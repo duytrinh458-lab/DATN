@@ -58,15 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileApiController::class, 'me']);
     Route::post('/profile/update', [ProfileApiController::class, 'update']);
 
-    // Device token
-    Route::post('/profile/device-token', [ProfileApiController::class, 'setDeviceToken']);
-
-    // Notification settings
-    Route::post('/profile/notification-settings', [ProfileApiController::class, 'setPushSetting']);
-
-    // lấy setting notification
-    Route::get('/profile/notification-settings', [ProfileApiController::class, 'getPushSetting']);
-
+    
     // Address
     Route::get('/addresses', [AddressApiController::class, 'index']);
     Route::post('/addresses', [AddressApiController::class, 'store']);
