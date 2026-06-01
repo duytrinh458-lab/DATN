@@ -171,7 +171,20 @@
 
 </a>
 
+                {{-- DANH MỤC --}}
+                <a href="{{ route('admin.categories.index') }}"
+                   class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+
+                    <div class="menu-left">
+
+                        <i class="fa-solid fa-list"></i>
+
+                        <span>Danh mục</span>
+                    </div>
+                </a>
             </div>
+
+        </div>
 
 
         {{-- NỘI DUNG --}}

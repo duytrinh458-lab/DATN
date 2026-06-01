@@ -219,7 +219,7 @@
          id="edit-rating-{{ $cmt->id }}"
          style="display:none; margin-top:10px;">
 
-        <div class="edit-star-rating">
+        <div class="star-rating">
 
             @for($i = 5; $i >= 1; $i--)
 
@@ -382,6 +382,17 @@
                             <span class="spec-value">{{ $product->weight ?? 'N/A' }} <small>kg</small></span>
                         </div>
                     </div>
+
+                    <div class="spec-item">
+    <span class="material-symbols-outlined spec-icon">branding_watermark</span>
+    <div class="spec-data">
+        <span class="spec-label">Thương hiệu</span>
+        <span class="spec-value">
+            {{ $product->brand->name ?? 'N/A' }}
+        </span>
+    </div>
+</div>
+
                 </div>
 
                 <form id="purchase-form"
@@ -570,6 +581,15 @@ function saveComment(id)
         alert("Lỗi server khi cập nhật");
 
     });
+}
+
+function buyNowAction()
+{
+    const form = document.getElementById('purchase-form');
+
+    form.action = "{{ route('user.checkout.buyNow') }}";
+
+    form.submit();
 }
 
 </script>
