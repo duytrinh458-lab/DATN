@@ -216,8 +216,9 @@ class CheckoutController extends Controller
 
             'address_id'     => 'required|exists:addresses,id',
 
-            'payment_method' => 'required|in:wallet,cash'
-        ]);
+            'payment_method' => 'required|in:wallet'
+
+            ]);
 
         try {
 
@@ -351,64 +352,22 @@ class CheckoutController extends Controller
             | PAYMENT
             |--------------------------------------------------------------------------
             */
-            if ($request->payment_method === 'wallet') {
+            
 
-                /*
-                |--------------------------------------------------------------------------
-                | TRANSACTION LOG
-                |--------------------------------------------------------------------------
-                */
                 Transaction::create([
 
-                    'wallet_id'      => $wallet->id,
+    'wallet_id'      => $wallet->id,
 
-                    'type'           => 'payment',
+    'type'           => 'payment',
 
-                    'amount'         => $subtotal,
+    'amount'         => $subtotal,
 
-                    'reference_code' => $order->order_code,
+    'reference_code' => $order->order_code,
 
-                    'status'         => 'success'
-                ]);
+    'status'         => 'success'
+]);
 
-                /*
-                |--------------------------------------------------------------------------
-                | PAYMENT TABLE
-                |--------------------------------------------------------------------------
-                */
-                DB::table('payments')->insert([
-
-                    'order_id' => $order->id,
-
-                    'method'   => 'wallet',
-
-                    'status'   => 'paid',
-
-                    'amount'   => $subtotal,
-
-                    'paid_at'  => now()
-                ]);
-
-            } else {
-
-                /*
-                |--------------------------------------------------------------------------
-                | COD
-                |--------------------------------------------------------------------------
-                */
-                DB::table('payments')->insert([
-
-                    'order_id' => $order->id,
-
-                    'method'   => 'cash',
-
-                    'status'   => 'pending',
-
-                    'amount'   => $subtotal,
-
-                    'paid_at'  => null
-                ]);
-            }
+                
 
             /*
             |--------------------------------------------------------------------------

@@ -342,136 +342,61 @@ class AdminController extends Controller
 
 
             /*
-            |--------------------------------------------------------------------------
-            | THANH TOÁN
-            |--------------------------------------------------------------------------
-            */
-            elseif ($transaction->type == 'payment') {
+|--------------------------------------------------------------------------
+| THANH TOÁN
+|--------------------------------------------------------------------------
+*/
+elseif ($transaction->type == 'payment') {
 
-                if (
-                    $oldStatus == 'pending'
-                    && $newStatus == 'success'
-                ) {
+    if (
+        $oldStatus == 'pending'
+        && $newStatus == 'success'
+    ) {
 
-                    $wallet = DB::table('wallets')
+        $wallet = DB::table('wallets')
+            ->where('id', $transaction->wallet_id)
+            ->first();
 
-                        ->where(
-                            'id',
-                            $transaction->wallet_id
-                        )
+        if (
+            $wallet &&
+            $wallet->balance >= $transaction->amount
+        ) {
 
-                        ->first();
+            DB::table('wallets')
+                ->where('id', $transaction->wallet_id)
+                ->decrement(
+                    'balance',
+                    $transaction->amount
+                );
 
+        } else {
 
-                    if (
-                        $wallet->balance
-                        >=
-                        $transaction->amount
-                    ) {
+            DB::rollBack();
 
-                        DB::table('wallets')
+            return back()->with(
+                'error',
+                'Khách hàng không còn đủ tiền trong ví!'
+            );
+        }
+    }
 
-                            ->where(
-                                'id',
-                                $transaction->wallet_id
-                            )
+    elseif (
+        $oldStatus == 'success'
+        &&
+        (
+            $newStatus == 'pending'
+            || $newStatus == 'failed'
+        )
+    ) {
 
-                            ->decrement(
-                                'balance',
-                                $transaction->amount
-                            );
-
-
-                        DB::table('payments')
-
-                            ->where(
-                                'order_id',
-                                function ($q) use ($transaction) {
-
-                                    $q->select('id')
-
-                                        ->from('orders')
-
-                                        ->where(
-                                            'order_code',
-                                            $transaction->reference_code
-                                        )
-
-                                        ->limit(1);
-                                }
-                            )
-
-                            ->update([
-
-                                'status' => 'paid',
-
-                                'paid_at' => now()
-
-                            ]);
-                    }
-
-                    else {
-
-                        DB::rollBack();
-
-                        return back()->with(
-                            'error',
-                            'Khách hàng không còn đủ tiền trong ví!'
-                        );
-                    }
-                }
-
-
-                elseif (
-                    $oldStatus == 'success'
-                    &&
-                    (
-                        $newStatus == 'pending'
-                        || $newStatus == 'failed'
-                    )
-                ) {
-
-                    DB::table('wallets')
-
-                        ->where(
-                            'id',
-                            $transaction->wallet_id
-                        )
-
-                        ->increment(
-                            'balance',
-                            $transaction->amount
-                        );
-
-
-                    DB::table('payments')
-
-                        ->where(
-                            'order_id',
-                            function ($q) use ($transaction) {
-
-                                $q->select('id')
-
-                                    ->from('orders')
-
-                                    ->where(
-                                        'order_code',
-                                        $transaction->reference_code
-                                    )
-
-                                    ->limit(1);
-                            }
-                        )
-
-                        ->update([
-
-                            'status' => 'pending',
-
-                            'paid_at' => null
-
-                        ]);
-                }
-            }
+        DB::table('wallets')
+            ->where('id', $transaction->wallet_id)
+            ->increment(
+                'balance',
+                $transaction->amount
+            );
+    }
+}
 
 
             /*

@@ -413,7 +413,7 @@ class OrderApiController extends Controller
                         time(),
 
                     'status' =>
-                        'completed',
+                        'success',
 
                     'created_at' =>
                         now()
