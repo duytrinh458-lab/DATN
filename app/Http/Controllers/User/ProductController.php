@@ -13,36 +13,98 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     // ================= DANH SÁCH =================
-    public function products(Request $request)
-    {
-        $query = Product::with('images');
+public function products(Request $request)
+{
+    $query = Product::with([
+        'images',
+        'category'
+    ]);
 
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+    if ($request->filled('search')) {
+
+        $keyword = trim($request->search);
+
+        // =========================
+        // LƯU LỊCH SỬ TÌM KIẾM
+        // =========================
+        if (Auth::check()) {
+
+            $exists = DB::table('search_histories')
+                ->where('user_id', Auth::id())
+                ->where('keyword', $keyword)
+                ->where('created_at', '>=', now()->subMinutes(5))
+                ->exists();
+
+            if (!$exists) {
+
+                DB::table('search_histories')->insert([
+                    'user_id'    => Auth::id(),
+                    'keyword'    => $keyword,
+                    'created_at' => now()
+                ]);
+            }
         }
 
-        // ĐÃ SỬA: Phân trang 10 SP/trang
-        $products = $query->latest()->paginate(8);
+        // =========================
+        // SEARCH THÔNG MINH
+        // =========================
+        $words = preg_split('/\s+/', $keyword);
 
-        return view('User.products.products', compact('products'));
+        $query->where(function ($q) use ($words) {
+
+            foreach ($words as $word) {
+
+                if (empty($word)) {
+                    continue;
+                }
+
+                $q->where(function ($sub) use ($word) {
+
+                    $sub->where('name', 'like', "%{$word}%")
+                        ->orWhere('sku', 'like', "%{$word}%")
+                        ->orWhere('description', 'like', "%{$word}%");
+
+                });
+            }
+        });
     }
+
+    $products = $query
+        ->where('status', 'active')
+        ->latest()
+        ->paginate(8);
+
+    return view(
+        'User.products.products',
+        compact('products')
+    );
+}
 
     // ================= CHI TIẾT =================
     public function show($id)
-    {
-        $product = Product::with(['images', 'category'])->findOrFail($id);
+{
+    $product = Product::with([
+        'images',
+        'category'
+    ])->findOrFail($id);
 
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $id)
-            ->where('status', 'active')
-            ->limit(4)
-            ->get();
+    // TĂNG LƯỢT QUAN TÂM
+    $product->increment('search_count');
 
-        return view('User.products.product_detail', compact(
+    $relatedProducts = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $id)
+        ->where('status', 'active')
+        ->limit(4)
+        ->get();
+
+    return view(
+        'User.products.product_detail',
+        compact(
             'product',
             'relatedProducts'
-        ));
-    }
+        )
+    );
+}
 
     // ================= THÊM COMMENT =================
     public function storeComment(Request $request, $id)

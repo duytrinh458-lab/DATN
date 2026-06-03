@@ -8,7 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\UserResource;
+
+
 class AuthApiController extends Controller
 {
     // 📌 1. ĐĂNG KÝ (SIGNUP)
@@ -87,7 +88,7 @@ class AuthApiController extends Controller
             'status' => true,
             'message' => 'Đăng nhập thành công',
             'data' => [
-                'user' => new UserResource($user),
+                'user' => $user,
                 'token' => $user->createToken('VanguardToken')->plainTextToken
             ]
         ]);

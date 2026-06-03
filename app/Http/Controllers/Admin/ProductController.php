@@ -12,370 +12,154 @@ use App\Models\Brand;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    // ================= ADMIN =================
-
     public function index()
     {
-        $products = Product::with([
-                'category',
-                'images',
-                'brand'
-            ])
-            ->orderBy('id', 'desc')
+        $products = Product::with(['category','images','brand'])
+            ->orderBy('id','desc')
             ->paginate(5);
 
-        return view(
-            'Admin.products.index',
-            compact('products')
-        );
+        return view('Admin.products.index', compact('products'));
     }
-
-    // ================= CREATE =================
 
     public function create()
     {
         $categories = Category::all();
-
         $brands = Brand::all();
 
-        return view(
-            'Admin.products.create',
-            compact('categories', 'brands')
-        );
+        return view('Admin.products.create', compact('categories','brands'));
     }
-
-    // ================= STORE =================
 
     public function store(Request $request)
     {
         $request->validate([
-
-            'name' => 'required|max:255',
-
+            'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-
             'brand_id' => 'nullable|exists:brands,id',
-
             'sku' => 'required|max:50|unique:products,sku',
-
             'sale_price' => 'required|numeric|min:0',
-
             'original_price' => 'required|numeric|min:0',
-
-            'stock' => 'nullable|integer|min:0',
-
             'status' => 'required|in:active,out_of_stock,inactive',
-
-            'flight_time' => 'nullable|numeric|min:0',
-
-            'max_altitude' => 'nullable|numeric|min:0',
-
-            'camera_mp' => 'nullable|numeric|min:0',
-
-            'frequency' => 'nullable|max:50',
-
-            'weight' => 'nullable|numeric|min:0',
-
             'images' => 'required|array|min:1|max:10',
-
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
-
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
+
+        DB::beginTransaction();
 
         try {
 
-            DB::beginTransaction();
+            $product = Product::create([
+                'name' => $request->name,
+                'category_id' => $request->category_id,
+                'brand_id' => $request->brand_id,
+                'sku' => $request->sku,
+                'description' => $request->description,
+                'original_price' => $request->original_price,
+                'sale_price' => $request->sale_price,
+                'stock' => $request->stock ?? 0,
+                'is_featured' => $request->is_featured ?? 0,
+                'status' => $request->status,
+                'flight_time' => $request->flight_time,
+                'max_altitude' => $request->max_altitude,
+                'camera_mp' => $request->camera_mp,
+                'frequency' => $request->frequency,
+                'weight' => $request->weight,
+            ]);
 
-            $product = new Product();
+            // upload images
+            foreach ($request->file('images') as $index => $file) {
 
-            $product->category_id = $request->category_id;
+                $fileName = 'uav_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            $product->brand_id = $request->brand_id;
+                $file->move(public_path('uploads/products'), $fileName);
 
-            $product->name = $request->name;
-
-            $product->sku = $request->sku;
-
-            $product->description = $request->description;
-
-            $product->original_price = $request->original_price;
-
-            $product->sale_price = $request->sale_price;
-
-            $product->stock = $request->stock ?? 0;
-
-            $product->is_featured = $request->is_featured ?? 0;
-
-            $product->status = $request->status;
-
-            $product->flight_time = $request->flight_time;
-
-            $product->max_altitude = $request->max_altitude;
-
-            $product->camera_mp = $request->camera_mp;
-
-            $product->frequency = $request->frequency;
-
-            $product->weight = $request->weight;
-
-            $product->save();
-
-            // ================= UPLOAD MULTIPLE IMAGES =================
-
-            if ($request->hasFile('images')) {
-
-                foreach ($request->file('images') as $index => $file) {
-
-                    $fileName =
-                        'uav_' .
-                        time() .
-                        '_' .
-                        uniqid() .
-                        '.' .
-                        $file->getClientOriginalExtension();
-
-                    $file->move(
-                        public_path('uploads/products'),
-                        $fileName
-                    );
-
-                    ProductImage::create([
-
-                        'product_id' => $product->id,
-
-                        'image_url' =>
-                            'uploads/products/' . $fileName,
-
-                        'position' => $index + 1
-
-                    ]);
-                }
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_url' => 'uploads/products/' . $fileName,
+                    'position' => $index + 1
+                ]);
             }
 
             DB::commit();
 
-            return redirect()
-                ->route('admin.products.index')
-                ->with(
-                    'success',
-                    'Thêm sản phẩm UAV thành công!'
-                );
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Thêm sản phẩm thành công!');
 
         } catch (\Exception $e) {
-
             DB::rollback();
 
-            return back()
-                ->with(
-                    'error',
-                    'Lỗi: ' . $e->getMessage()
-                )
-                ->withInput();
+            return back()->with('error', $e->getMessage())->withInput();
         }
     }
-
-    // ================= EDIT =================
-
-    public function edit(Product $product)
-    {
-        $categories = Category::all();
-
-        $brands = Brand::all();
-
-        $product->load([
-            'images',
-            'brand',
-            'category'
-        ]);
-
-        return view(
-            'Admin.products.edit',
-            compact(
-                'product',
-                'categories',
-                'brands'
-            )
-        );
-    }
-
-    // ================= UPDATE =================
 
     public function update(Request $request, Product $product)
     {
         $request->validate([
-
-            'name' => 'required|max:255',
-
+            'name' => 'required|string|max:255',
+            'sku' => 'required|max:50|unique:products,sku,' . $product->id,
             'category_id' => 'required|exists:categories,id',
-
-            'brand_id' => 'nullable|exists:brands,id',
-
-            'sku' =>
-                'required|max:50|unique:products,sku,' .
-                $product->id,
-
-            'sale_price' => 'required|numeric|min:0',
-
-            'original_price' => 'required|numeric|min:0',
-
-            'stock' => 'nullable|integer|min:0',
-
-            'status' => 'required|in:active,out_of_stock,inactive',
-
-            'flight_time' => 'nullable|numeric|min:0',
-
-            'max_altitude' => 'nullable|numeric|min:0',
-
-            'camera_mp' => 'nullable|numeric|min:0',
-
-            'frequency' => 'nullable|max:50',
-
-            'weight' => 'nullable|numeric|min:0',
-
-            'images' => 'nullable|array|max:10',
-
-            'images.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
-
+            'status' => 'required|in:active,out_of_stock,inactive'
         ]);
+
+        DB::beginTransaction();
 
         try {
 
-            DB::beginTransaction();
+            $product->update($request->only([
+                'name','sku','category_id','brand_id',
+                'description','original_price','sale_price',
+                'stock','is_featured','status',
+                'flight_time','max_altitude','camera_mp','frequency','weight'
+            ]));
 
-            $product->category_id = $request->category_id;
-
-            $product->brand_id = $request->brand_id;
-
-            $product->name = $request->name;
-
-            $product->sku = $request->sku;
-
-            $product->description = $request->description;
-
-            $product->original_price = $request->original_price;
-
-            $product->sale_price = $request->sale_price;
-
-            $product->stock = $request->stock ?? 0;
-
-            $product->is_featured = $request->is_featured ?? 0;
-
-            $product->status = $request->status;
-
-            $product->flight_time = $request->flight_time;
-
-            $product->max_altitude = $request->max_altitude;
-
-            $product->camera_mp = $request->camera_mp;
-
-            $product->frequency = $request->frequency;
-
-            $product->weight = $request->weight;
-
-            $product->save();
-
-            // ================= UPDATE MULTIPLE IMAGES =================
-
+            // update images nếu có
             if ($request->hasFile('images')) {
 
-                $oldImages = ProductImage::where(
-                    'product_id',
-                    $product->id
-                )->get();
-
-                foreach ($oldImages as $img) {
-
-                    if (
-                        File::exists(
-                            public_path($img->image_url)
-                        )
-                    ) {
-                        File::delete(
-                            public_path($img->image_url)
-                        );
+                foreach ($product->images as $img) {
+                    if (File::exists(public_path($img->image_url))) {
+                        File::delete(public_path($img->image_url));
                     }
-
                     $img->delete();
                 }
 
                 foreach ($request->file('images') as $index => $file) {
 
-                    $fileName =
-                        'uav_' .
-                        time() .
-                        '_' .
-                        uniqid() .
-                        '.' .
-                        $file->getClientOriginalExtension();
+                    $fileName = 'uav_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-                    $file->move(
-                        public_path('uploads/products'),
-                        $fileName
-                    );
+                    $file->move(public_path('uploads/products'), $fileName);
 
                     ProductImage::create([
-
                         'product_id' => $product->id,
-
-                        'image_url' =>
-                            'uploads/products/' . $fileName,
-
+                        'image_url' => 'uploads/products/' . $fileName,
                         'position' => $index + 1
-
                     ]);
                 }
             }
 
             DB::commit();
 
-            return redirect()
-                ->route('admin.products.index')
-                ->with(
-                    'success',
-                    'Cập nhật sản phẩm UAV thành công!'
-                );
+            return redirect()->route('admin.products.index')
+                ->with('success','Cập nhật thành công!');
 
         } catch (\Exception $e) {
-
             DB::rollback();
-
-            return back()
-                ->with(
-                    'error',
-                    'Lỗi: ' . $e->getMessage()
-                )
-                ->withInput();
+            return back()->with('error',$e->getMessage());
         }
     }
 
-    // ================= DELETE =================
-
     public function destroy(Product $product)
     {
+        DB::beginTransaction();
+
         try {
 
-            DB::beginTransaction();
-
-            $images = ProductImage::where(
-                'product_id',
-                $product->id
-            )->get();
-
-            foreach ($images as $img) {
-
-                if (
-                    File::exists(
-                        public_path($img->image_url)
-                    )
-                ) {
-                    File::delete(
-                        public_path($img->image_url)
-                    );
+            foreach ($product->images as $img) {
+                if (File::exists(public_path($img->image_url))) {
+                    File::delete(public_path($img->image_url));
                 }
-
                 $img->delete();
             }
 
@@ -383,21 +167,11 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()
-                ->route('admin.products.index')
-                ->with(
-                    'success',
-                    'Đã xóa sản phẩm UAV!'
-                );
+            return back()->with('success','Đã xóa sản phẩm');
 
         } catch (\Exception $e) {
-
             DB::rollback();
-
-            return back()->with(
-                'error',
-                'Lỗi: ' . $e->getMessage()
-            );
+            return back()->with('error',$e->getMessage());
         }
     }
 }
