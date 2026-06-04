@@ -570,3 +570,48 @@ body{
         display:none;
     }
 }
+/* Vị trí ghim cố định ở góc phải bên dưới */
+.zalo-floating-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+}
+
+/* Vỏ bọc icon và hiệu ứng bay bay */
+.zalo-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: white; 
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Đổ bóng cho nút nổi bật */
+    animation: bay-bay 2s infinite ease-in-out; /* Gọi hiệu ứng bay bay */
+    transition: transform 0.3s ease;
+}
+
+/* Kích thước ảnh icon Zalo bên trong */
+.zalo-icon-wrapper img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+/* Hiệu ứng phóng to khi người dùng trỏ chuột vào */
+.zalo-icon-wrapper:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    animation: none; /* Tạm dừng bay bay khi đang trỏ chuột */
+}
+
+/* Nơi tạo ra hiệu ứng bay bay (nhún lên xuống) */
+@keyframes bay-bay {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px); /* Bay lên 12px */
+    }
+}

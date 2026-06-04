@@ -14,9 +14,7 @@
         
         <div class="vg-header-panel">
             <h1 class="vg-page-title">HỒ SƠ</h1>
-            <div class="vg-status">
-                <span class="status-dot"></span> BẢO MẬT CẤP ĐỘ 5
-            </div>
+            
         </div>
 
         <div class="profile-grid">

@@ -143,6 +143,14 @@ navToggle.addEventListener('click', () => {
 </script>
 
 @stack('scripts')
-
+<!-- Nút Zalo trôi góc phải bên dưới -->
+<div class="zalo-floating-btn">
+    <!-- Nhớ thay SĐT_CỦA_BẠN bằng số điện thoại thật (ví dụ: 0987654321) -->
+    <a href="https://zalo.me/0342626836" target="_blank" rel="noopener noreferrer">
+        <div class="zalo-icon-wrapper">
+            <img src="images/zalo-icon.png" alt="Chat Zalo">
+        </div>
+    </a>
+</div>
 </body>
 </html>
