@@ -67,13 +67,13 @@
                 <label>Ảnh</label>
 
                 {{-- HIỂN THỊ ẢNH CŨ --}}
-                @if($news->thumbnail)
-                    <div style="margin-bottom:10px;">
-                        <img src="{{ asset('storage/' . $news->thumbnail) }}"
-                             width="120"
-                             style="border-radius:8px;">
-                    </div>
-                @endif
+               @if($news->thumbnail)
+    <div style="margin-bottom:10px;">
+        <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+             width="120"
+             style="border-radius:8px;">
+    </div>
+@endif
 
                 <input type="file"
                        name="thumbnail"

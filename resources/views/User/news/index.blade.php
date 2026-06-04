@@ -23,17 +23,26 @@
                     <a href="{{ route('user.news.show', $item->id) }}" class="news-link">
 
                         <div class="news-image">
-                            @if($item->thumbnail)
-                                <img src="{{ asset('storage/' . $item->thumbnail) }}" 
-                                     alt="{{ $item->title }}"
-                                     onerror="this.onerror=null; this.src='{{ asset($item->thumbnail) }}';">
-                            @else
-                                <div class="news-image-placeholder">
-                                    <span class="material-symbols-outlined">satellite_alt</span>
-                                </div>
-                            @endif
-                            <div class="news-image-overlay"></div>
-                        </div>
+    @php
+        $thumbnail = $item->thumbnail;
+
+        // fallback nếu DB chỉ lưu "news01.jpg"
+        $path = file_exists(storage_path('app/public/' . $thumbnail))
+            ? asset('storage/' . $thumbnail)
+            : asset('storage/news/' . $thumbnail);
+    @endphp
+
+    @if(!empty($thumbnail))
+        <img src="{{ $path }}"
+             alt="{{ $item->title }}">
+    @else
+        <div class="news-image-placeholder">
+            <span class="material-symbols-outlined">satellite_alt</span>
+        </div>
+    @endif
+
+    <div class="news-image-overlay"></div>
+</div>
 
                         <div class="news-content">
                             <h3 class="news-title" title="{{ $item->title }}">

@@ -18,25 +18,26 @@
         </a>
     </div>
 
-
     <div class="news-card">
 
         <h2>{{ $news->title }}</h2>
 
         <p>
             <b>Trạng thái:</b>
-            {{ $news->status }}
+            <span>
+                {{ $news->status == 1 ? 'Đã đăng' : 'Nháp' }}
+            </span>
         </p>
 
         <p>
             <b>Ngày đăng:</b>
-            {{ $news->published_at ?? $news->created_at }}
+            {{ optional($news->published_at ?? $news->created_at)->format('d/m/Y H:i') }}
         </p>
 
-        @if($news->thumbnail)
-            <img src="{{ asset('storage/' . $news->thumbnail) }}"
-                 style="max-width:300px; border-radius:10px;">
-        @endif
+        @if(!empty($news->thumbnail))
+    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+         style="max-width:500px; border-radius:10px; display: block; margin: 0 auto;">
+@endif
 
         <hr>
 

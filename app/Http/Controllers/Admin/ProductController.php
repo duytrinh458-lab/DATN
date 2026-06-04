@@ -150,6 +150,14 @@ class ProductController extends Controller
         }
     }
 
+    public function edit(Product $product)
+{
+    $categories = Category::all();
+    $brands = Brand::all();
+
+    return view('Admin.products.edit', compact('product', 'categories', 'brands'));
+}
+
     public function destroy(Product $product)
     {
         DB::beginTransaction();

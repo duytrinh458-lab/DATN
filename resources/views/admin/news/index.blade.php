@@ -73,8 +73,8 @@
 
                             @if($item->thumbnail)
 
-                                <img src="{{ asset('storage/' . $item->thumbnail) }}"
-                                     class="news-image">
+                                <img src="{{ asset('storage/news/' . $item->thumbnail) }}"
+     class="news-image">
 
                             @else
 

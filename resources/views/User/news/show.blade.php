@@ -20,15 +20,16 @@
             </a>
         </div>
 
-        {{-- BẢI VIẾT --}}
+        {{-- BÀI VIẾT --}}
         <article class="vg-article-card">
             
-            {{-- HEADER BÀI VIẾT --}}
+            {{-- HEADER --}}
             <header class="article-header">
                 <div class="article-meta">
                     <span class="meta-tag">
                         <span class="material-symbols-outlined icon-xs">radar</span> TÍN HIỆU VANGUARD
                     </span>
+
                     <span class="meta-date">
                         <span class="material-symbols-outlined icon-xs">schedule</span>
                         {{ $news->published_at ? \Carbon\Carbon::parse($news->published_at)->format('H:i - d/m/Y') : 'Đang giải mã' }}
@@ -38,21 +39,19 @@
                 <h1 class="article-title">{{ $news->title }}</h1>
             </header>
 
-            {{-- ẢNH THUMBNAIL CHÍNH --}}
-            @if($news->thumbnail)
+            {{-- ẢNH THUMBNAIL --}}
+            @if(!empty($news->thumbnail))
                 <div class="article-hero-image">
-                    <img src="{{ asset('storage/' . $news->thumbnail) }}" alt="{{ $news->title }}">
+                    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+                         alt="{{ $news->title }}">
                     <div class="image-scanner-line"></div>
                 </div>
             @endif
 
-            {{-- NỘI DUNG (RICH TEXT) --}}
+            {{-- NỘI DUNG --}}
             <div class="article-content vg-rich-text">
                 {!! $news->content !!}
             </div>
-
-            {{-- FOOTER BÀI VIẾT --}}
-            
 
         </article>
     </div>
