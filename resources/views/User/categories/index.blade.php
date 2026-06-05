@@ -21,7 +21,7 @@
     <div class="categories-grid">
 
         @forelse($categories as $cat)
-            <a href="{{ route('user.categories.show', $cat->id) }}" class="category-card">
+            <a href="{{ route('user.categories.show', $cat->slug) }}" class="category-card">
 
                 <div class="category-icon">
                     <span class="material-symbols-outlined">precision_manufacturing</span>

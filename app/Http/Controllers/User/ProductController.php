@@ -172,24 +172,5 @@ public function products(Request $request)
         return back()->with('success', 'Đã xóa bình luận');
     }
 
-    // ================= DANH MỤC =================
-    public function categories()
-    {
-        $categories = Category::orderBy('id', 'desc')->get();
-        return view('User.categories.index', compact('categories'));
-    }
-
-    public function byCategory($id)
-    {
-        $category = Category::findOrFail($id);
-
-        // ĐÃ SỬA: Phân trang 10 SP/trang cho danh mục
-        $products = Product::with('images')
-            ->where('category_id', $id)
-            ->where('status', 'active')
-            ->orderBy('id', 'desc')
-            ->paginate(8);
-
-        return view('User.categories.show', compact('category', 'products'));
-    }
+    
 }

@@ -18,6 +18,7 @@ use App\Http\Controllers\AuthController;
 // USER
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\CategoryController as UserCategoryController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\ProductController;
@@ -299,7 +300,7 @@ Route::prefix('admin')
 
 /*
 |--------------------------------------------------------------------------
-| USER
+| USER routes
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
@@ -340,15 +341,13 @@ Route::middleware(['auth'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | CATEGORIES
+    | CATEGORIES User
     |--------------------------------------------------------------------------
     */
-    Route::get('/categories',
-        [ProductController::class, 'categories'])
+     Route::get('/categories', [UserCategoryController::class, 'categories'])
         ->name('user.categories');
 
-    Route::get('/categories/{id}',
-        [ProductController::class, 'byCategory'])
+    Route::get('/categories/{slug}', [UserCategoryController::class, 'byCategory'])
         ->name('user.categories.show');
 
 

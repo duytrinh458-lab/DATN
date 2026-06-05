@@ -81,6 +81,27 @@
 
             <div class="comments-section glass-panel">
 
+            <div class="product-description-box">
+
+    <div class="description-header">
+        <span class="material-symbols-outlined">description</span>
+        <span>Mô tả sản phẩm</span>
+    </div>
+
+    <div class="description-content collapsed" id="productDescription">
+        {{ $product->description }}
+    </div>
+
+    <button type="button"
+            class="description-toggle"
+            onclick="toggleDescription()">
+        <span id="toggleText">Xem thêm</span>
+        <span id="toggleIcon">▼</span>
+    </button>
+
+</div>
+
+
                 <h3 class="comment-title">Bình luận</h3>
 
                 @auth
@@ -391,7 +412,11 @@
             {{ $product->brand->name ?? 'N/A' }}
         </span>
     </div>
+
 </div>
+
+
+    
 
                 </div>
 
@@ -590,6 +615,26 @@ function buyNowAction()
     form.action = "{{ route('user.checkout.buyNow') }}";
 
     form.submit();
+}
+
+function toggleDescription()
+{
+    const desc = document.getElementById('productDescription');
+    const text = document.getElementById('toggleText');
+    const icon = document.getElementById('toggleIcon');
+
+    desc.classList.toggle('collapsed');
+
+    if(desc.classList.contains('collapsed'))
+    {
+        text.innerText = 'Xem thêm';
+        icon.innerText = '▼';
+    }
+    else
+    {
+        text.innerText = 'Thu gọn';
+        icon.innerText = '▲';
+    }
 }
 
 </script>
