@@ -78,7 +78,7 @@ class AdminController extends Controller
         | RETURN VIEW
         |--------------------------------------------------------------------------
         */
-        return view('Admin.dashboard', [
+        return view('admin.dashboard', [
             'productCount'  => $stats['productCount'],
             'orderCount'    => $stats['orderCount'],
             'userCount'     => $stats['userCount'],
@@ -462,7 +462,7 @@ public function refunds()
 
     $pendingOrders = Order::where('status', 'pending')->count();
 
-    return view('Admin.refunds.index', compact(
+    return view('admin.refunds.index', compact(
         'refunds',
         'pendingOrders',
         'pendingRefunds'

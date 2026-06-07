@@ -1,6 +1,7 @@
 /* ====================================================
    TRANG CHỦ - VANGUARD COMMAND HUD (BẢN FULL ĐÃ TINH CHỈNH)
 ==================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 :root {
     --core-cyan: #00FFFF; 
     --glow-blue: #00BFFF; 
@@ -22,6 +23,7 @@
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+    min-width: 0; /* cho phép shrink đúng cách */
 }
 
 .banner-overlay {
@@ -38,7 +40,7 @@
 }
 
 .mission-tag {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 11px;
     letter-spacing: 0.4em;
     color: var(--secondary);
@@ -48,7 +50,7 @@
 
 /* ĐÃ THU NHỎ CHỮ BANNER VỪA VẶN HƠN */
 .glitch-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(2rem, 5vw, 4rem); 
     font-weight: 800;
     line-height: 1.1;
@@ -146,7 +148,7 @@
 
 .hero-card-value {
     font-size: 24px;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     color: #fff;
     font-weight: 700;
 }
@@ -171,7 +173,7 @@
 }
 
 .stat-value {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 2.5rem; 
     font-weight: 800;
     color: var(--on-surface);
@@ -225,7 +227,7 @@
     font-size: 32px;
     margin: 5px 0 0;
     text-shadow: 0 0 15px rgba(0, 191, 255, 0.4);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     text-transform: uppercase;
 }
 
@@ -264,6 +266,7 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     flex-direction: column;
+    min-width: 0; /* tránh grid overflow */
 }
 
 .product-spec-card:hover {
@@ -339,7 +342,7 @@
 .card-info h3 {
     margin: 0 0 10px;
     font-size: 16px;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     color: #e0f7fa;
     transition: color 0.3s;
     text-transform: uppercase;
@@ -508,7 +511,7 @@
 
 .news-text-box .news-title {
     color: #e0f7fa;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
     margin: 0 0 10px;
     line-height: 1.4;
@@ -530,3 +533,110 @@
 
 @media (max-width: 1024px) { .news-grid-home { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .news-grid-home { grid-template-columns: 1fr; } }
+
+/* ================= MOBILE FIXES ================= */
+
+/* Tablet (768px) */
+@media (max-width: 768px) {
+    /* Banner: giảm padding, ẩn hero-panel thống kê bên phải */
+    .home-banner {
+        padding: 80px 5% 40px;
+        height: auto;
+        min-height: 60vh;
+        align-items: flex-start;
+    }
+
+    .hero-panel {
+        display: none;
+    }
+
+    /* Stats matrix: wrap 2 cột thay vì 4 ngang */
+    .stats-matrix {
+        flex-wrap: wrap;
+        padding: 2rem 5%;
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        flex: 1 1 40%;
+    }
+
+    /* Section header: stack dọc khi hẹp */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .tech-title {
+        font-size: 24px;
+    }
+
+    /* Featured products padding */
+    .featured-products {
+        margin: 48px auto;
+        padding: 0 16px;
+    }
+}
+
+/* Mobile nhỏ (480px) */
+@media (max-width: 480px) {
+    /* Banner: padding top tránh navbar */
+    .home-banner {
+        padding: 100px 4% 32px;
+        min-height: auto;
+    }
+
+    /* Tiêu đề banner dùng clamp sẵn có nhưng đảm bảo xuống dòng tốt */
+    .glitch-title {
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .hero-description {
+        font-size: 13px;
+        margin-bottom: 2rem;
+        max-width: 100%;
+    }
+
+    /* CTA buttons: xếp dọc, full width */
+    .cta-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .btn-primary-glow,
+    .btn-outline-tech {
+        text-align: center;
+        justify-content: center;
+        padding: 14px 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Stats: 1 cột */
+    .stats-matrix {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem 4%;
+    }
+
+    .stat-card {
+        flex: none;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    /* News card: giảm chiều cao ảnh */
+    .news-img-box {
+        height: 180px;
+    }
+
+    /* Image wrapper product card */
+    .image-wrapper {
+        height: 180px;
+    }
+}

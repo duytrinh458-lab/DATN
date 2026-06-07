@@ -43,6 +43,13 @@
 
             <li><a href="{{ route('user.news.index') }}" class="{{ request()->routeIs('user.news*') ? 'active' : '' }}">Tin tức</a></li>
 
+            <!-- Thêm vào cuối nav-links -->
+<li class="nav-mobile-logout">
+    <form method="POST" action="/logout">
+        @csrf
+        <button type="submit">Đăng xuất</button>
+    </form>
+</li>
         </ul>
 
         <div class="auth-group">

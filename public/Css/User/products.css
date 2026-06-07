@@ -23,7 +23,7 @@
 .filter-sidebar {
     background: rgba(2, 5, 10, 0.6);
     border: 1px solid var(--border);
-    padding: 20px;
+    padding: 16px 20px 20px;
     border-radius: 6px;
     backdrop-filter: blur(10px);
     margin-bottom: 40px;
@@ -33,7 +33,7 @@
 .search-row {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .search-title {
@@ -56,17 +56,18 @@
 
 .search-form input {
     width: 100%;
-    height: 44px;
-    padding: 0 20px;
+    height: 40px;
+    padding: 0 16px;
     border-radius: 4px;
     border: 1px solid var(--border);
     background: rgba(0, 0, 0, 0.5);
     color: var(--core-cyan);
     outline: none;
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'DM Sans', sans-serif;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     transition: 0.3s;
+    box-sizing: border-box;
 }
 
 .search-form input::placeholder {
@@ -80,15 +81,19 @@
 }
 
 .btn-scan {
+    height: 40px;
     background: rgba(28, 169, 201, 0.1);
     border: 1px solid var(--border);
     color: var(--text-nav);
     font-weight: 800;
-    padding: 0 25px;
+    font-size: 13px;
+    padding: 0 20px;
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Syne', sans-serif;
     transition: 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .btn-scan:hover {
@@ -344,3 +349,265 @@
     .search-row { flex-direction: column; align-items: flex-start; }
 }
 @media(max-width:600px) { .product-grid{grid-template-columns:1fr;} }
+/* =========================================================
+   MOBILE FIX — SEARCH, PAGINATION, FILTER TOGGLE
+========================================================= */
+
+/* --- Search bar mobile --- */
+@media(max-width:600px) {
+    .search-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-title {
+        font-size: 12px;
+    }
+
+    .search-form {
+        width: 100%;
+    }
+
+    .search-form input {
+        font-size: 13px;
+        padding: 0 12px;
+    }
+
+    .btn-scan {
+        height: 44px;
+        padding: 0 16px;
+        font-size: 13px;
+    }
+}
+
+/* --- Pagination: ẩn các trang giữa trên mobile, chỉ show ... --- */
+@media(max-width:600px) {
+    .pagination-matrix .pagination {
+        gap: 3px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination-matrix .page-item .page-link {
+        padding: 6px 10px;
+        font-size: 12px;
+        min-width: 34px;
+        text-align: center;
+    }
+
+    /* Ẩn các trang ở giữa — chỉ giữ: prev, trang 1-3, ..., 3 trang cuối, next */
+    /* JS sẽ xử lý logic "..." — CSS chỉ đảm bảo không overflow */
+    .pagination-matrix {
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+}
+
+/* --- Filter Toggle Button --- */
+.btn-filter-toggle {
+    display: none; /* ẩn trên desktop */
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 44px;
+    padding: 0 16px;
+    background: rgba(28, 169, 201, 0.1);
+    border: 1px solid var(--border);
+    color: var(--text-nav);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-filter-toggle:hover,
+.btn-filter-toggle.active {
+    background: rgba(0, 255, 255, 0.12);
+    border-color: var(--core-cyan);
+    color: var(--core-cyan);
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+}
+
+.btn-filter-toggle .filter-icon {
+    font-size: 18px;
+}
+
+/* =========================================================
+   FILTER TOGGLE & FILTER PANEL
+========================================================= */
+/* ---- Filter Panel ---- */
+.btn-filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 44px;
+    padding: 0 16px;
+    background: rgba(28,169,201,0.1);
+    border: 1px solid rgba(28,169,201,0.4);
+    color: #e0f7fa;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.btn-filter-toggle:hover,
+.btn-filter-toggle.active {
+    background: rgba(0,255,255,0.12);
+    border-color: #00FFFF;
+    color: #00FFFF;
+    box-shadow: 0 0 12px rgba(0,255,255,0.2);
+}
+.btn-filter-toggle .material-symbols-outlined { font-size: 18px; }
+
+/* Panel wrapper */
+.filter-panel {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+}
+.filter-panel.open {
+    max-height: 300px;
+    opacity: 1;
+    padding-top: 16px;
+}
+
+.filter-panel-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(28,169,201,0.2);
+    align-items: flex-end;
+}
+
+.filter-group { display: flex; flex-direction: column; gap: 8px; }
+
+.filter-group-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #00BFFF;
+    text-transform: uppercase;
+}
+.filter-group-title .material-symbols-outlined { font-size: 14px; }
+
+/* Dropdown select */
+.filter-select {
+    height: 38px;
+    padding: 0 32px 0 12px;
+    background: rgba(0,0,0,0.5) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300FFFF' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+    border: 1px solid rgba(28,169,201,0.4);
+    color: #e0f7fa;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    appearance: none;
+    cursor: pointer;
+    transition: 0.25s;
+    min-width: 160px;
+}
+.filter-select:focus {
+    outline: none;
+    border-color: #00FFFF;
+    box-shadow: 0 0 10px rgba(0,255,255,0.2);
+}
+.filter-select option { background: #111827; color: #e0f7fa; }
+
+/* Range slider giá */
+.price-range-wrap { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+.price-range-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #00FFFF;
+    font-family: 'DM Sans', sans-serif;
+}
+.price-range-label span { opacity: 0.7; font-size: 11px; color: #5e8a9c; }
+
+input[type=range].price-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, #00FFFF var(--pct, 50%), rgba(28,169,201,0.25) var(--pct, 50%));
+    outline: none;
+    cursor: pointer;
+}
+input[type=range].price-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #00FFFF;
+    box-shadow: 0 0 8px rgba(0,255,255,0.5);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+input[type=range].price-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+/* Nút áp dụng */
+.btn-apply-filter {
+    height: 38px;
+    padding: 0 20px;
+    background: rgba(0,255,255,0.1);
+    border: 1px solid #00FFFF;
+    color: #00FFFF;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s;
+    font-family: 'DM Sans', sans-serif;
+    align-self: flex-end;
+}
+.btn-apply-filter:hover {
+    background: #00FFFF;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0,255,255,0.4);
+}
+
+@media(max-width: 768px) {
+    .filter-panel-inner { flex-direction: column; gap: 16px; }
+    .filter-select, .price-range-wrap { min-width: 100%; width: 100%; }
+}
+
+/* Nút xóa filter */
+.btn-clear-filter {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 38px;
+    padding: 0 16px;
+    background: rgba(255, 107, 129, 0.08);
+    border: 1px solid rgba(255, 107, 129, 0.4);
+    color: #ff8ea1;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.25s;
+    text-decoration: none;
+    white-space: nowrap;
+    align-self: flex-end;
+}
+.btn-clear-filter .material-symbols-outlined { font-size: 16px; }
+.btn-clear-filter:hover {
+    background: rgba(255, 107, 129, 0.18);
+    border-color: #ff6b81;
+    color: #ff6b81;
+    box-shadow: 0 0 12px rgba(255, 107, 129, 0.2);
+}

@@ -56,6 +56,10 @@ body{
     font-family:var(--font-body);
 
     min-height:100vh;
+
+    /* Khóa cứng: không co nhỏ hơn 360px */
+    min-width:360px;
+    overflow-x:hidden;
 }
 
 /* ===================================================
@@ -519,6 +523,35 @@ body{
    RESPONSIVE
 =================================================== */
 
+/* Màn vừa (1200px): thu nhỏ padding nav, ẩn text wallet */
+@media(max-width:1200px){
+
+    .navbar{
+        padding:0 16px;
+    }
+
+    .nav-links a{
+        padding:8px 10px;
+        font-size:13px;
+    }
+
+    .wallet-amount{
+        display:none;
+    }
+
+    .wallet-btn{
+        padding:0 10px;
+    }
+
+    .btn-logout span:last-child{
+        display:none;
+    }
+
+    .btn-logout{
+        padding:0 12px;
+    }
+}
+
 @media(max-width:950px){
 
     .nav-toggle{
@@ -566,8 +599,29 @@ body{
         display:none;
     }
 
-    .btn-logout span:last-child{
+    /* Ẩn hẳn nút đăng xuất và divider — chuyển vào hamburger menu */
+    .btn-logout{
         display:none;
+    }
+
+    .divider-v{
+        display:none;
+    }
+
+    /* Thu nhỏ icon buttons cho vừa mobile */
+    .icon-btn{
+        width:36px;
+        height:36px;
+        border-radius:10px;
+    }
+
+    .wallet-btn{
+        padding:0 10px;
+        width:auto;
+    }
+
+    .auth-group{
+        gap:6px;
     }
 }
 /* Vị trí ghim cố định ở góc phải bên dưới */
