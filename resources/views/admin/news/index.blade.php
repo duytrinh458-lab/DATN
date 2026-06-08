@@ -204,24 +204,12 @@
     </div>
 
 
-    {{-- PAGINATION --}}
-    <div class="pagination-wrapper">
-
-        @if ($news->lastPage() > 1)
-
-            {{ $news->onEachSide(1)->links() }}
-
-        @else
-
-            <ul>
-                <li class="active">
-                    <span>1</span>
-                </li>
-            </ul>
-
-        @endif
-
-    </div>
+     {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($news, 'links'))
+        {{ $news->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
 </div>
 

@@ -229,12 +229,12 @@
 
         </div>
 
-        {{-- PHÂN TRANG --}}
-        <div class="pagination-wrapper">
-            {{ $users->onEachSide(1)->links() }}
-        </div>
-
-    </div>
+         {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($users, 'links'))
+        {{ $users->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
 </div>
 

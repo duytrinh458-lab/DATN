@@ -68,9 +68,12 @@
             </tbody>
         </table>
 
-        <div class="pagination-wrapper">
-    {{ $transactions->onEachSide(1)->links() }}
-</div>
+         {{-- PHÂN TRANG --}}
+            <div class="pagination-wrapper">
+                @if(method_exists($transactions, 'links'))
+                    {{ $transactions->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+                @endif
+            </div>
     </div>
 </div>
 @endsection

@@ -222,35 +222,12 @@
     </div>
 
 
-    {{-- PAGINATION --}}
-    <div class="pagination-wrapper">
-
-        @if($products->hasPages())
-
-            {{ $products->onEachSide(1)->links() }}
-
-        @else
-
-            {{-- luôn hiện pagination dù chỉ có 1 trang --}}
-            <nav role="navigation">
-
-                <ul>
-
-                    <li class="active">
-
-                        <span>
-                            1
-                        </span>
-
-                    </li>
-
-                </ul>
-
-            </nav>
-
-        @endif
-
-    </div>
+    {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($products, 'links'))
+        {{ $products->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
 </div>
 

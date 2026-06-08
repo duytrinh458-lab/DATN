@@ -107,6 +107,13 @@
 
     </div>
 
+     {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($brands, 'links'))
+        {{ $brands->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
+
 </div>
 
 @endsection

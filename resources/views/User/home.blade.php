@@ -139,9 +139,10 @@
 
                     <div class="news-image">
                         @if($news->thumbnail)
-                            <img src="{{ asset('storage/' . $news->thumbnail) }}" 
-                                 alt="{{ $news->title }}"
-                                 onerror="this.onerror=null; this.src='{{ asset('images/default-news.jpg') }}';">
+    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+         alt="{{ $news->title }}"
+         onerror="this.onerror=null; this.src='{{ asset('images/default-news.jpg') }}';">
+
                         @else
                             <div class="news-image-placeholder">
                                 <span class="material-symbols-outlined">satellite_alt</span>

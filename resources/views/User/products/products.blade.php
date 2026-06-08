@@ -176,7 +176,7 @@
 </div>
 
 @push('scripts')
-<script src="{{ asset('Js/products-mobile.js') }}"></script>
+<script src="{{ asset('js/products-mobile.js') }}"></script>
 <script>
 /* ---- Filter toggle ---- */
 const btnToggle   = document.getElementById('btnFilterToggle');

@@ -321,12 +321,12 @@
 
         </div>
 
-        {{-- PAGINATION --}}
-        <div class="pagination-box">
-
-            {{ $refunds->onEachSide(1)->links() }}
-
-        </div>
+         {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($refunds, 'links'))
+        {{ $refunds->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
     </div>
 

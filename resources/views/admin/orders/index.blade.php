@@ -278,28 +278,12 @@
     </div>
 
 
-    {{-- PHÂN TRANG --}}
-    <div class="pagination-wrapper">
-
-        @if ($orders->lastPage() > 1)
-
-            {{ $orders->onEachSide(1)->links() }}
-
-        @else
-
-            <ul>
-
-                <li class="active">
-
-                    <span>1</span>
-
-                </li>
-
-            </ul>
-
-        @endif
-
-    </div>
+     {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($orders, 'links'))
+        {{ $orders->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
 </div>
 

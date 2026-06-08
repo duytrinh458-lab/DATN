@@ -548,6 +548,57 @@ body{
     color:#fff !important;
 }
 
+.sidebar-home-btn{
+    width:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+
+    padding:12px 16px;
+    margin-bottom:12px;
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #facc15,
+            #eab308
+        ) !important;
+
+    color:#111827 !important;
+
+    text-decoration:none;
+
+    font-size:14px;
+    font-weight:700;
+
+    transition:0.25s ease;
+}
+
+.sidebar-home-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:
+    linear-gradient(
+        135deg,
+        #f8ea6a,
+        #d8fa15,
+        #b9f54a
+    ) !important;
+
+    box-shadow:
+        0 10px 20px rgba(250,204,21,0.35);
+}
+
+.sidebar-home-btn i{
+    color:#111827 !important;
+}
+
 /* =========================================
    MAIN
 ========================================= */
@@ -653,25 +704,70 @@ body{
 /* =========================================
    MOBILE
 ========================================= */
-@media(max-width:768px){
+@media (max-width: 768px) {
 
-    :root{
-        --sidebar-w:100%;
+    /* Sidebar ẩn mặc định, trượt từ trái */
+    .admin-sidebar {
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
     }
 
-    .admin-sidebar{
-        width:100%;
+    .admin-sidebar.open {
+        transform: translateX(0);
     }
 
-    .admin-body{
-        margin-left:0;
+    /* Overlay tối phía sau sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 199;
     }
 
-    .admin-topbar{
-        padding:0 16px;
+    .sidebar-overlay.open {
+        display: block;
     }
 
-    .admin-main{
-        padding:18px;
+    /* Content chiếm full */
+    .admin-body {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .admin-topbar {
+        padding: 0 16px;
+    }
+
+    .admin-main {
+        padding: 16px 14px;
+    }
+
+    /* Hamburger button */
+    .sidebar-toggle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 10px;
+        background: #f1f5f9;
+        color: #0f172a;
+        font-size: 18px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+}
+
+@media (min-width: 769px) {
+    .sidebar-toggle-btn {
+        display: none;
+    }
+
+    .sidebar-overlay {
+        display: none !important;
     }
 }

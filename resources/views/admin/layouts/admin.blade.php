@@ -8,6 +8,7 @@
 
     <title>@yield('title', 'Admin — UAV Store')</title>
 
+    <link rel="stylesheet" href="{{ asset('css/Admin/admin-responsive.css') }}">
     <link rel="stylesheet"
           href="{{ asset('Css/Admin/admin-layout.css') }}">
 
@@ -19,6 +20,10 @@
 </head>
 
 <body>
+
+{{-- OVERLAY (mobile) --}}
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 
 {{-- SIDEBAR --}}
 <aside class="admin-sidebar">
@@ -157,19 +162,21 @@
 
                 </a>
 
+
                 {{-- THƯƠNG HIỆU --}}
-<a href="{{ route('admin.brands.index') }}"
-   class="{{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
+                <a href="{{ route('admin.brands.index') }}"
+                   class="{{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
 
-    <div class="menu-left">
+                    <div class="menu-left">
 
-        <i class="fa-solid fa-tags"></i>
+                        <i class="fa-solid fa-tags"></i>
 
-        <span>Thương hiệu</span>
+                        <span>Thương hiệu</span>
 
-    </div>
+                    </div>
 
-</a>
+                </a>
+
 
                 {{-- DANH MỤC --}}
                 <a href="{{ route('admin.categories.index') }}"
@@ -180,8 +187,11 @@
                         <i class="fa-solid fa-list"></i>
 
                         <span>Danh mục</span>
+
                     </div>
+
                 </a>
+
             </div>
 
         </div>
@@ -294,26 +304,38 @@
     </div>
 
 
+    {{-- FOOTER --}}
+<div class="sidebar-footer">
+
+    {{-- HOME --}}
+    <a href="{{ route('home') }}"
+       class="sidebar-home-btn"
+       target="_blank">
+
+        <i class="fa-solid fa-house"></i>
+
+        <span>Về Website</span>
+
+    </a>
+
     {{-- LOGOUT --}}
-    <div class="sidebar-footer">
+    <form action="{{ route('logout') }}"
+          method="POST">
 
-        <form action="{{ route('logout') }}"
-              method="POST">
+        @csrf
 
-            @csrf
+        <button type="submit"
+                class="sidebar-logout-btn">
 
-            <button type="submit"
-                    class="sidebar-logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
 
-                <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Đăng xuất</span>
 
-                <span>Đăng xuất</span>
+        </button>
 
-            </button>
+    </form>
 
-        </form>
-
-    </div>
+</div>
 
 </aside>
 
@@ -324,18 +346,23 @@
     {{-- TOPBAR --}}
     <header class="admin-topbar">
 
-        <div class="topbar-title">
+        <div style="display:flex; align-items:center; gap:14px;">
 
-            @yield('title', 'Dashboard')
+            {{-- HAMBURGER (chỉ hiện trên mobile) --}}
+            <button class="sidebar-toggle-btn" id="sidebarToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="topbar-title">
+                @yield('title', 'Dashboard')
+            </div>
 
         </div>
 
         <div class="topbar-right">
 
             <div class="admin-user">
-
                 {{ auth()->user()->full_name ?? 'Admin' }}
-
             </div>
 
         </div>
@@ -607,6 +634,28 @@ document.addEventListener('DOMContentLoaded', function () {
     loadBadges();
 
     setInterval(loadBadges, 5000);
+
+
+    /* =========================================
+       HAMBURGER TOGGLE (mobile)
+    ========================================= */
+    const sidebarToggle  = document.getElementById('sidebarToggle');
+    const adminSidebar   = document.querySelector('.admin-sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    if (sidebarToggle) {
+
+        sidebarToggle.addEventListener('click', function () {
+            adminSidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        });
+
+        sidebarOverlay.addEventListener('click', function () {
+            adminSidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        });
+
+    }
 
 });
 

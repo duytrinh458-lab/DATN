@@ -57,6 +57,13 @@
         </table>
     </div>
 
+     {{-- PHÂN TRANG --}}
+<div class="pagination-wrapper">
+    @if(method_exists($categories, 'links'))
+        {{ $categories->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
+
 </div>
 
 @endsection
