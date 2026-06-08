@@ -166,11 +166,12 @@
     </section>
 
     {{-- PHÂN TRANG --}}
-    <div class="pagination-matrix">
-        @if(method_exists($products, 'links'))
-            {{ $products->appends(request()->query())->links('pagination::bootstrap-4') }}
-        @endif
-    </div>
+    {{-- CODE MỚI: Đã ép thu gọn và gọi đúng file bạn vừa dán đè --}}
+<div class="pagination-matrix">
+    @if(method_exists($products, 'links'))
+        {{ $products->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
 </div>
 

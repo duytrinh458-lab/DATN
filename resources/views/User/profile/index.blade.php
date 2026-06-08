@@ -6,6 +6,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('Css/User/profile.css') }}">
+    
+    {{-- FIX LỖI CHỮ TÀNG HÌNH TRONG DROPDOWN TỈNH/HUYỆN/XÃ --}}
+    <style>
+        .tech-input option {
+            background-color: #141b2d;
+            color: #ffffff;
+            padding: 10px;
+        }
+        .tech-input option:hover {
+            background-color: #00ff88;
+            color: #000000;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -14,7 +27,6 @@
         
         <div class="vg-header-panel">
             <h1 class="vg-page-title">HỒ SƠ</h1>
-            
         </div>
 
         <div class="profile-grid">
@@ -151,8 +163,8 @@
                         
                         <div class="input-row" style="display: flex; gap: 15px;">
                             <div class="mb-4 flex-1">
-                                <label class="form-label-vg" for="full_name">Tên người nhận</label>
-                                <input type="text" id="full_name" name="full_name" class="tech-input" value="{{ old('full_name', $user->full_name) }}" required>
+                                <label class="form-label-vg" for="addr_full_name">Tên người nhận</label>
+                                <input type="text" id="addr_full_name" name="full_name" class="tech-input" value="{{ old('full_name', $user->full_name) }}" required>
                             </div>
 
                             <div class="mb-4 flex-1">
@@ -163,17 +175,24 @@
 
                         <div class="mb-4">
                             <label class="form-label-vg" for="province">Tỉnh / Thành phố</label>
-                            <input type="text" id="province" name="province" class="tech-input" value="{{ old('province') }}" required>
+                            <select id="province" name="province" class="tech-input" required>
+                                <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                            </select>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label-vg" for="district">Quận / Huyện</label>
-                            <input type="text" id="district" name="district" class="tech-input" value="{{ old('district') }}" required>
+                            <select id="district" name="district" class="tech-input" required disabled>
+                                <option value="">-- Chọn Quận / Huyện --</option>
+                            </select>
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label-vg" for="city">Xã / Phường</label>
-                            <input type="text" id="city" name="city" class="tech-input" value="{{ old('city') }}" required>
+                            {{-- ĐÃ ĐỔI name="city" THÀNH name="ward" ĐỂ KHỚP VỚI DATABASE BẢNG ADDRESSES --}}
+                            <select id="city" name="ward" class="tech-input" required disabled>
+                                <option value="">-- Chọn Xã / Phường --</option>
+                            </select>
                         </div>
 
                         <div class="mb-4">
@@ -191,6 +210,7 @@
         </div>
     </div>
 </div>
+
 <div id="vg-delete-modal" class="vg-modal-overlay">
     <div class="vg-modal-box">
         <div class="vg-modal-glow"></div>
@@ -207,27 +227,167 @@
 
 @push('scripts')
 <script>
-/* =========================================
-   HỆ THỐNG XÁC NHẬN XÓA (DELETE MODAL)
-========================================== */
+/* =========================================================
+   HỆ THỐNG GỌI API ĐỊA CHÍ TỰ ĐỘNG (ASYNC CASCADE DROPDOWN)
+========================================================= */
+
+async function loadProvinces(selectedName = null) {
+    try {
+        const response = await fetch('https://provinces.open-api.vn/api/p/');
+        const provinces = await response.json();
+        const provinceSelect = document.getElementById('province');
+        
+        provinceSelect.innerHTML = '<option value="">-- Chọn Tỉnh / Thành phố --</option>';
+        let targetCode = null;
+
+        provinces.forEach(p => {
+            let opt = document.createElement('option');
+            opt.value = p.name;
+            opt.dataset.code = p.code;
+            opt.textContent = p.name;
+            if (selectedName && p.name === selectedName) {
+                opt.selected = true;
+                targetCode = p.code;
+            }
+            provinceSelect.appendChild(opt);
+        });
+        return targetCode;
+    } catch (e) {
+        console.error('Lỗi tải danh sách tỉnh:', e);
+        return null;
+    }
+}
+
+async function loadDistricts(provinceCode, selectedName = null) {
+    const districtSelect = document.getElementById('district');
+    const citySelect = document.getElementById('city');
+    
+    districtSelect.innerHTML = '<option value="">-- Chọn Quận / Huyện --</option>';
+    districtSelect.disabled = true;
+    citySelect.innerHTML = '<option value="">-- Chọn Xã / Phường --</option>';
+    citySelect.disabled = true;
+
+    if (!provinceCode) return null;
+
+    try {
+        const response = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+        const data = await response.json();
+        let targetCode = null;
+
+        data.districts.forEach(d => {
+            let opt = document.createElement('option');
+            opt.value = d.name;
+            opt.dataset.code = d.code;
+            opt.textContent = d.name;
+            if (selectedName && d.name === selectedName) {
+                opt.selected = true;
+                targetCode = d.code;
+            }
+            districtSelect.appendChild(opt);
+        });
+        districtSelect.disabled = false;
+        return targetCode;
+    } catch (e) {
+        console.error('Lỗi tải danh sách huyện:', e);
+        return null;
+    }
+}
+
+async function loadWards(districtCode, selectedName = null) {
+    const citySelect = document.getElementById('city');
+    citySelect.innerHTML = '<option value="">-- Chọn Xã / Phường --</option>';
+    citySelect.disabled = true;
+
+    if (!districtCode) return;
+
+    try {
+        const response = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        const data = await response.json();
+
+        data.wards.forEach(w => {
+            let opt = document.createElement('option');
+            opt.value = w.name;
+            opt.textContent = w.name;
+            if (selectedName && w.name === selectedName) {
+                opt.selected = true;
+            }
+            citySelect.appendChild(opt);
+        });
+        citySelect.disabled = false;
+    } catch (e) {
+        console.error('Lỗi tải danh sách xã:', e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+    await loadProvinces();
+
+    document.getElementById('province').addEventListener('change', async function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const code = selectedOption ? selectedOption.dataset.code : null;
+        await loadDistricts(code);
+    });
+
+    document.getElementById('district').addEventListener('change', async function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const code = selectedOption ? selectedOption.dataset.code : null;
+        await loadWards(code);
+    });
+});
+
+async function editAddress(id) {
+    try {
+        const response = await fetch(`{{ url('profile/address') }}/${id}/json`);
+        if (!response.ok) throw new Error('Không tìm thấy route JSON');
+        const data = await response.json();
+        
+        const form = document.getElementById('addressForm');
+        
+        document.getElementById('addr_full_name').value = data.full_name ?? '';
+        document.getElementById('addr_phone').value = data.phone ?? '';
+        document.getElementById('street').value = data.street ?? '';
+        
+        const provinceCode = await loadProvinces(data.province);
+        const districtCode = await loadDistricts(provinceCode, data.district);
+        await loadWards(districtCode, data.city);
+
+        form.action = `{{ url('profile/address') }}/${id}`;
+
+        let methodInput = form.querySelector('input[name="_method"]');
+        if (!methodInput) {
+            methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            form.appendChild(methodInput);
+        }
+        methodInput.value = 'PUT';
+
+        const btn = document.getElementById('submitAddressBtn');
+        btn.innerHTML = '<span class="material-symbols-outlined">update</span> CẬP NHẬT Địa Chỉ';
+        
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        form.closest('.vg-card').style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
+        setTimeout(() => { form.closest('.vg-card').style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)'; }, 1000);
+    } catch (error) {
+        console.error(error);
+        alert('Không thể tải dữ liệu địa chỉ!');
+    }
+}
+
 let currentDeleteAddressId = null;
 
-// Hàm mở hộp thoại
 function openDeleteModal(id) {
     currentDeleteAddressId = id;
     document.getElementById('vg-delete-modal').classList.add('active');
 }
 
-// Hàm đóng hộp thoại
 function closeDeleteModal() {
     document.getElementById('vg-delete-modal').classList.remove('active');
     currentDeleteAddressId = null;
 }
 
-// Hàm thực thi lệnh Xóa
 function executeDelete() {
     if (currentDeleteAddressId) {
-        // Tìm đúng cái Form mang ID của địa chỉ đó và ép nó submit
         let form = document.getElementById('delete-address-form-' + currentDeleteAddressId);
         if (form) {
             form.submit();
@@ -235,7 +395,6 @@ function executeDelete() {
     }
 }
 
-/* PREVIEW AVATAR */
 function previewAvatar(event) {
     const reader = new FileReader();
     reader.onload = function () {
@@ -245,55 +404,5 @@ function previewAvatar(event) {
         reader.readAsDataURL(event.target.files[0]);
     }
 }
-
-/* EDIT ADDRESS */
-function editAddress(id) {
-    fetch(`{{ url('profile/address') }}/${id}/json`)
-        .then(response => {
-            if (!response.ok) throw new Error('Không tìm thấy route JSON');
-            return response.json();
-        })
-        .then(data => {
-            const form = document.getElementById('addressForm');
-            
-            // Đổ dữ liệu người nhận
-            document.getElementById('full_name').value = data.full_name ?? '';
-            document.getElementById('addr_phone').value = data.phone ?? '';
-            
-            // Đổ dữ liệu tọa độ
-            document.getElementById('province').value = data.province ?? '';
-            document.getElementById('district').value = data.district ?? '';
-            
-            // Đổ dữ liệu Xã/Phường vào ô mang id 'city'
-            document.getElementById('city').value = data.city ?? '';
-            
-            document.getElementById('street').value = data.street ?? '';
-
-            form.action = `{{ url('profile/address') }}/${id}`;
-
-            let methodInput = form.querySelector('input[name="_method"]');
-            if (!methodInput) {
-                methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                form.appendChild(methodInput);
-            }
-            methodInput.value = 'PUT';
-
-            const btn = document.getElementById('submitAddressBtn');
-            btn.innerHTML = '<span class="material-symbols-outlined">update</span> CẬP NHẬT Địa Chỉ';
-            
-            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            form.closest('.vg-card').style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.4)';
-            setTimeout(() => { form.closest('.vg-card').style.boxShadow = '0 10px 30px rgba(0,0,0,0.5)'; }, 1000);
-        })
-        .catch(error => {
-            console.error(error);
-            alert('Không thể tải dữ liệu địa chỉ!');
-        });
-}
-
 </script>
 @endpush
-
-

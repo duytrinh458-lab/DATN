@@ -1,0 +1,1391 @@
+/* ============================================================
+   VANGUARD UAV STORE — RESPONSIVE MOBILE CSS
+   File: public/css/responsive.css
+   Cách dùng: thêm <link rel="stylesheet" href="/css/responsive.css">
+   vào cuối thẻ <head> trong layouts/app.blade.php (sau tất cả CSS khác)
+   ============================================================
+   Breakpoints:
+   - xs: 320px   (điện thoại nhỏ cũ)
+   - sm: 375px   (iPhone SE, iPhone 12/13 mini)
+   - md: 414px   (iPhone Plus / Pro Max)
+   - lg: 768px   (tablet dọc)
+   - xl: 1024px  (tablet ngang / laptop nhỏ)
+   ============================================================ */
+
+/* ============================================================
+   0. GLOBAL RESET & BASE — ngăn overflow ngang trên mọi trang
+   ============================================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;      /* Ngăn iOS tự phóng to chữ khi xoay màn hình */
+    -webkit-tap-highlight-color: transparent;
+}
+
+img, video, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Đảm bảo tất cả input/textarea/select không vượt màn hình */
+input, textarea, select, button {
+    max-width: 100%;
+    font-size: 16px; /* iOS không zoom khi font >= 16px */
+}
+
+/* ============================================================
+   1. HEADER & NAVBAR
+   ============================================================ */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 0 16px;
+        height: 64px;
+    }
+
+    .wallet-btn {
+        padding: 0 10px;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 14px;
+        height: 60px;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    /* Logo nhỏ lại */
+    .logo {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+
+    /* Auth group thu gọn */
+    .auth-group {
+        gap: 6px;
+    }
+
+    /* Icon button nhỏ hơn, dễ tap */
+    .icon-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+    }
+
+    .icon-btn .material-symbols-outlined {
+        font-size: 20px;
+    }
+
+    /* Ẩn divider dọc */
+    .divider-v {
+        display: none;
+    }
+
+    /* Logout chỉ còn icon */
+    .btn-logout {
+        height: 38px;
+        padding: 0 10px;
+        gap: 0;
+    }
+
+    /* Wallet chỉ còn icon */
+    .wallet-amount {
+        display: none;
+    }
+
+    /* Mobile nav dropdown */
+    .nav-links {
+        top: 60px;
+        padding: 16px 14px;
+        gap: 4px;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        /* Đủ lớn cho ngón tay */
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+@media (max-width: 375px) {
+    .logo {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    .icon-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .btn-logout {
+        height: 34px;
+        padding: 0 8px;
+    }
+}
+
+/* ============================================================
+   2. FOOTER
+   ============================================================ */
+@media (max-width: 768px) {
+    .site-footer {
+        padding: 28px 16px 20px;
+        margin-top: 40px;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        font-size: 11px;
+        padding-top: 12px;
+        margin-top: 16px;
+    }
+}
+
+/* ============================================================
+   3. TOAST NOTIFICATION
+   ============================================================ */
+@media (max-width: 768px) {
+    .vg-toast {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;          /* full width trên mobile */
+        padding: 14px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
+
+    #vanguard-toast {
+        right: 12px;
+        left: 12px;
+        min-width: unset;
+        width: calc(100% - 24px);
+        font-size: 13px;
+    }
+
+    #vanguard-toast.show {
+        top: 70px;           /* dưới navbar 60px */
+    }
+}
+
+/* ============================================================
+   4. HOME PAGE
+   ============================================================ */
+
+/* --- Banner --- */
+@media (max-width: 1024px) {
+    .home-banner {
+        height: 70vh;
+        padding: 0 5%;
+    }
+
+    .hero-panel {
+        display: none; /* ẩn panel số liệu phải trên tablet nhỏ */
+    }
+}
+
+@media (max-width: 768px) {
+    .home-banner {
+        height: auto;
+        min-height: 75vh;
+        padding: 80px 20px 40px;
+        flex-direction: column;
+        justify-content: flex-end;
+        background-position: center top;
+    }
+
+    /* Đảm bảo overlay che phủ tốt hơn để text đọc được */
+    .banner-overlay {
+        background: linear-gradient(180deg, rgba(2,5,10,0.5) 0%, rgba(2,5,10,0.85) 100%);
+    }
+
+    .mission-tag {
+        font-size: 10px;
+        letter-spacing: 0.25em;
+    }
+
+    .glitch-title {
+        font-size: clamp(1.6rem, 7vw, 2.5rem);
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .hero-description {
+        font-size: 13px;
+        margin-bottom: 2rem;
+        max-width: 100%;
+    }
+
+    .cta-group {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .btn-primary-glow,
+    .btn-outline-tech {
+        text-align: center;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 12px;
+    }
+
+    .hero-panel {
+        display: none;
+    }
+}
+
+/* --- Stats Matrix --- */
+@media (max-width: 768px) {
+    .stats-matrix {
+        flex-wrap: wrap;
+        gap: 0;
+        padding: 0;
+    }
+
+    .stat-card {
+        flex: 0 0 50%;
+        padding: 20px 16px;
+        border-bottom: 1px solid rgba(28,169,201,0.2);
+    }
+
+    .stat-card:nth-child(odd) {
+        border-right: 1px solid rgba(28,169,201,0.2);
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 10px;
+    }
+
+    .stat-bar {
+        margin-top: 0.8rem;
+    }
+}
+
+@media (max-width: 375px) {
+    .stat-card {
+        flex: 0 0 100%;
+        border-right: none !important;
+    }
+}
+
+/* --- Section Header & Featured Products --- */
+@media (max-width: 768px) {
+    .featured-products {
+        margin: 40px auto;
+        padding: 0 14px;
+    }
+
+    .section-header {
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .tech-title {
+        font-size: 22px;
+    }
+
+    .section-link {
+        font-size: 12px;
+        padding: 7px 14px;
+    }
+}
+
+/* --- Product Grid (Home & Products page) --- */
+@media (max-width: 1200px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .product-spec-card {
+        /* Card nhỏ hơn trên mobile nhỏ */
+    }
+
+    .image-wrapper {
+        height: 160px;
+    }
+
+    .card-info {
+        padding: 12px;
+    }
+
+    .card-info h3 {
+        font-size: 13px;
+    }
+
+    .price {
+        font-size: 15px;
+    }
+
+    .btn-buy-now {
+        font-size: 11px;
+        height: 36px;
+        letter-spacing: 0;
+    }
+
+    .btn-buy-hud {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 375px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .image-wrapper {
+        height: 200px;
+    }
+}
+
+/* --- News Grid Home --- */
+@media (max-width: 1024px) {
+    .news-grid-home {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .news-grid-home {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .news-img-box {
+        height: 200px;
+    }
+
+    .news-text-box .news-title {
+        font-size: 14px;
+    }
+}
+
+/* ============================================================
+   5. PRODUCTS PAGE
+   ============================================================ */
+@media (max-width: 768px) {
+    .product-container-vanguard {
+        padding: 20px 14px 60px;
+    }
+
+    .filter-sidebar {
+        padding: 14px;
+        margin-bottom: 24px;
+    }
+
+    .search-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .search-title {
+        font-size: 12px;
+    }
+
+    .search-form {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .search-form input {
+        height: 44px;
+        font-size: 15px;
+        padding: 0 14px;
+    }
+
+    .btn-scan {
+        flex-shrink: 0;
+        padding: 0 16px;
+        height: 44px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-container-vanguard {
+        padding: 16px 12px 50px;
+    }
+
+    /* Pagination trên mobile */
+    .pagination-matrix .page-item .page-link {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
+/* ============================================================
+   6. PRODUCT DETAIL PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .vanguard-detail-container {
+        padding: 90px 16px 50px;
+    }
+
+    .product-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .gallery-col,
+    .control-panel-col {
+        grid-column: span 12;
+    }
+}
+
+@media (max-width: 768px) {
+    .vanguard-detail-container {
+        padding: 76px 12px 40px;
+    }
+
+    .vanguard-breadcrumb {
+        font-size: 10px;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .info-card {
+        padding: 20px 16px;
+    }
+
+    .product-title {
+        font-size: 1.5rem;
+        letter-spacing: 0;
+    }
+
+    .product-price {
+        font-size: 1.4rem;
+        padding: 8px 14px;
+    }
+
+    .product-spec-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .spec-item {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .spec-icon {
+        font-size: 22px !important;
+    }
+
+    .spec-value {
+        font-size: 14px;
+    }
+
+    .button-stack {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn-buy-now,
+    .btn-add-to-cart {
+        padding: 14px;
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+
+    .main-frame {
+        aspect-ratio: 4/3;
+    }
+
+    .comments-section {
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    .comment-title {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+
+    .comment-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+}
+
+@media (max-width: 414px) {
+    .product-spec-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .product-title {
+        font-size: 1.3rem;
+    }
+
+    .thumb-swiper .swiper-slide {
+        width: 56px !important;
+        height: 50px;
+    }
+}
+
+/* ============================================================
+   7. CART PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .cart-flex-wrapper {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .summary-card-inner {
+        position: static;    /* bỏ sticky trên mobile */
+        border-radius: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .vanguard-cart-page {
+        padding: 80px 14px 40px;
+    }
+
+    .cart-header {
+        margin-bottom: 24px;
+    }
+
+    .cart-header h2 {
+        font-size: 2rem;
+        letter-spacing: -1px;
+    }
+
+    .cart-item-module {
+        padding: 16px;
+        gap: 14px;
+        border-radius: 16px;
+    }
+
+    .item-img-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    .item-name {
+        font-size: 1rem;
+    }
+
+    .item-sku {
+        font-size: 10px;
+    }
+
+    .quantity-hud {
+        margin-top: 8px;
+    }
+
+    /* Summary card */
+    .summary-card-inner {
+        padding: 24px 20px;
+        border-radius: 20px;
+    }
+
+    .total-price-display {
+        font-size: 2rem;
+    }
+
+    .btn-checkout-vanguard {
+        padding: 16px;
+        font-size: 14px;
+    }
+
+    /* Select all bar */
+    .select-all-bar {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 414px) {
+    .cart-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .cart-item-module {
+        /* Stack image and info vertically on very small screens */
+        flex-wrap: wrap;
+    }
+
+    .item-img-box {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+/* ============================================================
+   8. CHECKOUT PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .checkout-viewport {
+        padding: 90px 16px 50px;
+    }
+
+    .checkout-container {
+        padding: 28px 20px;
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkout-viewport {
+        padding: 76px 12px 40px;
+    }
+
+    .checkout-container {
+        padding: 20px 16px;
+        border-radius: 14px;
+    }
+
+    .checkout-title {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+    }
+
+    .checkout-subtitle {
+        font-size: 9px;
+        letter-spacing: 3px;
+    }
+
+    .checkout-box {
+        padding: 20px 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+    }
+
+    .checkout-box h4 {
+        font-size: 11px;
+        margin-bottom: 18px;
+    }
+
+    /* 2-col grid → 1 col */
+    .shipping-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+
+    .form-control {
+        padding: 12px 14px;
+        font-size: 15px;    /* tránh zoom iOS */
+        border-radius: 8px;
+    }
+
+    /* Checkout items list */
+    .hud-item-row {
+        padding: 10px 0;
+        gap: 10px;
+    }
+
+    .hud-item-row img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .hud-item-info .name {
+        font-size: 13px;
+    }
+
+    .grand-total {
+        font-size: 1.5rem;
+    }
+
+    /* Confirm button */
+    .btn-confirm {
+        padding: 18px;
+        font-size: 14px;
+        border-radius: 12px;
+        gap: 8px;
+    }
+
+    /* Sticky HUD */
+    .sticky-hud {
+        position: static;
+    }
+
+    /* Payment methods */
+    .payment-method {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .payment-content .icon {
+        font-size: 22px;
+    }
+
+    .payment-content .title {
+        font-size: 14px;
+    }
+
+    .payment-content .desc {
+        font-size: 11px;
+    }
+
+    /* Address card */
+    .address-card {
+        font-size: 14px;
+        padding: 14px 16px;
+    }
+
+    .address-card strong {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 375px) {
+    .checkout-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* ============================================================
+   9. ORDERS PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .orders-viewport {
+        padding: 20px 16px 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .orders-viewport {
+        padding: 16px 12px 50px;
+    }
+
+    .orders-title {
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+
+    .orders-subtitle {
+        font-size: 10px;
+        letter-spacing: 4px;
+    }
+
+    .orders-header {
+        margin-bottom: 28px;
+    }
+
+    /* Order card stack vertically */
+    .order-card {
+        flex-direction: column;
+        border-radius: 14px;
+    }
+
+    .order-image {
+        width: 100%;
+        min-width: unset;
+        height: 160px;
+        margin: 0;
+        border-radius: 14px 14px 0 0;
+        border: none;
+        border-bottom: 2px solid rgba(0, 234, 255, 0.3);
+    }
+
+    .order-main {
+        padding: 16px;
+    }
+
+    .order-header-row {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+    }
+
+    .order-code {
+        font-size: 14px;
+    }
+
+    .order-date {
+        font-size: 11px;
+    }
+
+    /* Info grid: 1 col trên mobile */
+    .order-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .info-box {
+        padding: 10px;
+    }
+
+    .order-total-value {
+        font-size: 16px;
+    }
+
+    .order-info-value {
+        font-size: 13px;
+    }
+
+    /* Actions: horizontal bottom strip */
+    .order-actions {
+        width: 100%;
+        flex-direction: row;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        border-radius: 0 0 14px 14px;
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .btn-view,
+    .btn-cancel-order {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 11px;
+    }
+
+    /* Status badge */
+    .status-badge {
+        font-size: 9px;
+        padding: 5px 10px;
+    }
+}
+
+@media (max-width: 414px) {
+    .order-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .orders-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================================
+   10. PROFILE PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .profile-viewport {
+        padding: 90px 16px 50px;
+    }
+}
+
+@media (max-width: 850px) {
+    .profile-viewport {
+        padding: 76px 14px 40px;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Bỏ sticky trên mobile */
+    .sticky-card,
+    .right-profile-column {
+        position: static;
+        height: auto;
+    }
+
+    .vg-page-title {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+    }
+
+    .vg-header-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .vg-card {
+        padding: 20px 16px;
+    }
+
+    /* Avatar */
+    .avatar-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    /* Input row → stack */
+    .input-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .tech-input {
+        padding: 11px 13px;
+        font-size: 15px;
+    }
+
+    .btn-vg-solid,
+    .btn-vg-outline {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Address list */
+    .coord-item {
+        padding: 14px 16px;
+    }
+
+    .coord-header {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .coord-actions {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .btn-action {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+/* ============================================================
+   11. WALLET PAGE
+   ============================================================ */
+@media (max-width: 1024px) {
+    .vpay-viewport {
+        margin: 80px auto 40px;
+    }
+}
+
+@media (max-width: 900px) {
+    .vpay-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vpay-viewport {
+        margin: 72px auto 30px;
+        padding: 0 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .vpay-header {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+
+    .vpay-title {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+
+    .vpay-card {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+    }
+
+    .amount-display .amount {
+        font-size: 2.5rem;
+    }
+
+    .action-tabs {
+        gap: 8px;
+    }
+
+    .tab-btn {
+        padding: 10px 8px;
+        font-size: 12px;
+        letter-spacing: 0;
+    }
+
+    .tech-input {
+        font-size: 15px;
+        padding: 13px;
+    }
+
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-outline,
+    .btn-solid,
+    .btn-danger {
+        padding: 13px;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Transaction list */
+    .tx-item {
+        flex-wrap: wrap;
+        gap: 4px;
+        padding-bottom: 12px;
+    }
+
+    .tx-right {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tx-amount {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================================
+   12. AUTH PAGES (Login / Register / Forgot)
+   ============================================================ */
+@media (max-width: 900px) {
+    .auth-brand {
+        display: none;
+    }
+
+    .auth-wrapper {
+        min-height: 100vh;
+        align-items: flex-start;
+    }
+
+    .auth-form-panel {
+        padding: 24px 16px;
+        align-items: flex-start;
+        padding-top: 40px;
+    }
+
+    .auth-box {
+        padding: 28px 20px;
+        border-radius: 20px;
+        max-width: 100%;
+    }
+
+    .auth-box h2 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-form-panel {
+        padding: 24px 14px;
+        min-height: 100vh;
+    }
+
+    .auth-box {
+        padding: 24px 16px;
+        border-radius: 16px;
+    }
+
+    .auth-box h2 {
+        font-size: 26px;
+        margin-bottom: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 52px;
+        font-size: 16px; /* Quan trọng: tránh iOS zoom */
+        border-radius: 14px;
+        padding: 0 16px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        height: 52px;
+        font-size: 14px;
+        border-radius: 14px;
+    }
+
+    .step-indicator {
+        gap: 8px;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .step {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .step-num {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .auth-links {
+        font-size: 14px;
+        margin-top: 20px;
+    }
+
+    .divider {
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 375px) {
+    .auth-box h2 {
+        font-size: 22px;
+    }
+
+    .auth-form-panel {
+        padding: 20px 12px;
+    }
+}
+
+/* ============================================================
+   13. MODALS (dùng chung nhiều trang)
+   ============================================================ */
+@media (max-width: 768px) {
+    .vg-modal-box {
+        width: calc(100% - 32px);
+        max-width: 100%;
+        padding: 24px 20px;
+        border-radius: 14px;
+        margin: 0 16px;
+    }
+
+    .vg-modal-overlay {
+        padding: 20px 0;
+        align-items: flex-end;  /* modal trượt từ dưới lên trên mobile */
+    }
+
+    .vg-modal-overlay .vg-modal-box {
+        border-radius: 20px 20px 0 0;
+        width: 100%;
+        margin: 0;
+        padding: 24px 20px 32px;
+    }
+
+    .vg-modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-modal-cancel,
+    .btn-modal-confirm {
+        flex: unset;
+        width: 100%;
+        padding: 14px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+
+    .vg-modal-title {
+        font-size: 16px;
+    }
+
+    .vg-modal-text {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    /* Orders page modal */
+    .vg-modal-box {
+        width: calc(100vw - 32px);
+        max-width: 460px;
+    }
+}
+
+/* ============================================================
+   14. ADMIN PAGES — Responsive cơ bản
+   ============================================================ */
+@media (max-width: 1024px) {
+    /* Admin layout */
+    .admin-sidebar {
+        width: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Admin content wrapper khi sidebar ẩn */
+    .admin-content {
+        padding: 16px 14px;
+    }
+
+    /* Admin tables */
+    .admin-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.admin-table {
+        min-width: 600px; /* bảng scroll ngang, không bị crush */
+    }
+
+    /* Admin header */
+    .admin-header-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+
+    .admin-page-title {
+        font-size: 1.2rem;
+    }
+}
+
+/* ============================================================
+   15. GENERAL UTILITY — áp dụng mọi trang
+   ============================================================ */
+
+/* Touch-friendly tap targets (tối thiểu 44px) */
+@media (max-width: 768px) {
+    a, button, [role="button"],
+    input[type="submit"], input[type="button"],
+    label[for], .btn, .tab-btn, .btn-action {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Ngoại trừ inline text link */
+    p a, .nav-links a, .auth-links a,
+    .footer-col a, .vanguard-breadcrumb a {
+        min-height: unset;
+        display: inline;
+    }
+}
+
+/* Container padding chuẩn */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 14px;
+        padding-right: 14px;
+        max-width: 100%;
+    }
+}
+
+/* Chữ không bị tràn */
+@media (max-width: 768px) {
+    h1, h2, h3, h4, h5, h6 {
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    p, span, label {
+        overflow-wrap: break-word;
+    }
+}
+
+/* Ẩn scrollbar ngang không mong muốn */
+@media (max-width: 768px) {
+    .pagination-matrix .pagination,
+    .action-tabs,
+    .step-indicator {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .pagination-matrix .pagination::-webkit-scrollbar,
+    .action-tabs::-webkit-scrollbar,
+    .step-indicator::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Safe area cho iPhone với notch/Dynamic Island */
+@supports (padding: max(0px)) {
+    @media (max-width: 768px) {
+        .mission-header {
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .site-footer {
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
+        }
+
+        .vg-toast,
+        #vanguard-toast {
+            bottom: max(16px, env(safe-area-inset-bottom));
+        }
+    }
+}
+
+/* ============================================================
+   16. PRINT — không in header/footer dư
+   ============================================================ */
+@media print {
+    .mission-header,
+    .site-footer,
+    .nav-toggle,
+    .btn-logout,
+    .auth-group {
+        display: none !important;
+    }
+}
+.nav-links {
+    top: 60px;
+    padding: 16px 14px;
+    gap: 4px;
+}
+@media (max-width: 768px) {
+    .vg-modal-box {
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+    }
+    .vg-modal-overlay.active .vg-modal-box { /* Giả định khi modal mở có class .active */
+        transform: translateY(0);
+    }
+}

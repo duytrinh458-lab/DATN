@@ -231,8 +231,27 @@
 }
 
 /* =========================
-   PAGINATION VANGUARD
+   PAGINATION VANGUARD (ĐÃ TỐI ƯU)
 ========================= */
+
+/* CONTAINER CHA: Giúp các ô xếp hàng ngang và xóa dấu chấm tròn */
+.pagination-wrapper ul, 
+.vanguard-pagination {
+    display: flex !important;          /* Ép buộc dàn hàng ngang */
+    flex-direction: row !important;    /* Đảm bảo chạy theo chiều ngang */
+    list-style: none !important;       /* Xóa bỏ dấu chấm tròn đầu dòng */
+    padding-left: 0 !important;
+    gap: 10px !important;              /* Khoảng cách giữa các ô số */
+    justify-content: center !important;/* Căn giữa toàn bộ thanh phân trang */
+    margin: 0 auto !important;
+}
+/* Đảm bảo các ô con bên trong không bị phá vỡ cấu trúc */
+.pagination-wrapper ul li,
+.vanguard-pagination .page-item {
+    display: block !important;
+    margin: 0 !important;
+}
+/* ĐỊNH DẠNG CHUNG CỦA CÁC Ô NÚT BẤM */
 .page-item .page-link,
 .page-item span.page-link {
     min-width: 40px;
@@ -252,6 +271,7 @@
     transition: all 0.3s ease;
 }
 
+/* HIỆU ỨNG HOVER KHÔNG GIAN */
 .page-item .page-link:hover {
     background: rgba(0, 234, 255, 0.15);
     border-color: #00eaff;
@@ -260,6 +280,7 @@
     box-shadow: 0 4px 12px rgba(0, 234, 255, 0.2);
 }
 
+/* TRANG HIỆN TẠI ĐANG XEM (ACTIVE) */
 .page-item.active .page-link,
 .page-item.active span.page-link {
     background: #00eaff;
@@ -268,10 +289,25 @@
     box-shadow: 0 0 15px rgba(0, 234, 255, 0.4);
 }
 
+/* NÚT BỊ VÔ HIỆU HÓA (DISABLED) */
 .page-item.disabled .page-link,
 .page-item.disabled span.page-link {
     background: #020e1a;
     border-color: #102a45;
     color: #475569;
     pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Ô ĐẶC BIỆT KIỂU HUD (Hiển thị dạng chữ X / Y) */
+.page-item .page-link.page-number-hud {
+    width: auto !important; /* Cho phép giãn rộng theo chữ */
+    padding: 0 20px;       /* Tạo khoảng cách thở 2 bên */
+    letter-spacing: 1px;
+}
+
+/* Căn chỉnh kích thước icon mũi tên Google bên trong nút */
+.page-link .material-symbols-outlined {
+    font-size: 20px;
+    line-height: 1;
 }

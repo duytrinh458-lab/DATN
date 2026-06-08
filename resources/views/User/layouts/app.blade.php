@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>@yield('title', 'UAV Store')</title>
 
     {{-- Fonts --}}
@@ -14,16 +14,14 @@
 
     {{-- Main CSS --}}
     <link rel="stylesheet" href="{{ asset('Css/User/style.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
     @stack('styles')
 </head>
 
 <body>
 
 <header class="mission-header">
-
     <nav class="navbar">
-
         <div class="logo-group">
             <a href="{{ url('/home') }}" class="logo">
                 UAVStore
@@ -32,28 +30,21 @@
         </div>
 
         <ul class="nav-links" id="navLinks">
-
             <li><a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">Trang chủ</a></li>
-
             <li><a href="{{ route('user.products') }}" class="{{ request()->routeIs('user.products') ? 'active' : '' }}">Sản phẩm</a></li>
-
             <li><a href="{{ route('user.categories') }}" class="{{ request()->routeIs('user.categories*') ? 'active' : '' }}">Danh mục</a></li>
-
             <li><a href="{{ url('/orders') }}" class="{{ request()->is('orders*') ? 'active' : '' }}">Đơn hàng</a></li>
-
             <li><a href="{{ route('user.news.index') }}" class="{{ request()->routeIs('user.news*') ? 'active' : '' }}">Tin tức</a></li>
 
-            <!-- Thêm vào cuối nav-links -->
-<li class="nav-mobile-logout">
-    <form method="POST" action="/logout">
-        @csrf
-        <button type="submit">Đăng xuất</button>
-    </form>
-</li>
+            <li class="nav-mobile-logout">
+                <form method="POST" action="/logout">
+                    @csrf
+                    <button type="submit">Đăng xuất</button>
+                </form>
+            </li>
         </ul>
 
         <div class="auth-group">
-
             <a href="{{ url('/cart') }}" class="icon-btn">
                 <span class="material-symbols-outlined">shopping_cart</span>
             </a>
@@ -63,13 +54,10 @@
             </a>
 
             <a href="{{ url('/wallet') }}" class="icon-btn wallet-btn">
-
                 <span class="material-symbols-outlined">account_balance_wallet</span>
-
                 <span class="wallet-amount">
                     {{ number_format($walletBalance ?? 0, 0, ',', '.') }}VND
                 </span>
-
             </a>
 
             <div class="divider-v"></div>
@@ -81,15 +69,12 @@
                     Đăng xuất
                 </button>
             </form>
-
         </div>
 
         <button class="nav-toggle" id="navToggle">
             <span class="material-symbols-outlined">menu</span>
         </button>
-
     </nav>
-
 </header>
 
 <main class="content-viewport">
@@ -97,41 +82,31 @@
 </main>
 
 <footer class="site-footer">
-
     <div class="footer-inner">
-
         <div class="footer-col">
             <h4>UAV Store</h4>
             <p>Hệ thống thương mại điện tử UAV hiện đại thế hệ mới.</p>
         </div>
 
         <div class="footer-col">
-
             <h4>Điều hướng</h4>
-
             <a href="{{ url('/home') }}">Trang chủ</a>
             <a href="{{ route('user.products') }}">Sản phẩm</a>
             <a href="{{ route('user.news.index') }}">Tin tức</a>
             <a href="{{ url('/orders') }}">Đơn hàng</a>
-
         </div>
 
         <div class="footer-col">
-
             <h4>Hỗ trợ</h4>
-
             <p>Hotline: 0342626836</p>
             <p>Email: trinhduy@gmail.com</p>
-
         </div>
-
     </div>
 
     <div class="footer-bottom">
         <span>© 2026 UAV Store</span>
         <span>Version 3.0</span>
     </div>
-
 </footer>
 
 {{-- ================= TOAST SYSTEM ================= --}}
@@ -139,25 +114,28 @@
 
 {{-- ================= SCRIPTS ================= --}}
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // BƯỚC 4: Tối ưu hóa xử lý đóng/mở Hamburger Menu an toàn hơn
+    const navToggle = document.getElementById('navToggle');
+    const navLinks  = document.getElementById('navLinks');
 
-const navToggle = document.getElementById('navToggle');
-const navLinks  = document.getElementById('navLinks');
-
-navToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('show');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+    }
 });
-
 </script>
 
 @stack('scripts')
-<!-- Nút Zalo trôi góc phải bên dưới -->
+
 <div class="zalo-floating-btn">
-    <!-- Nhớ thay SĐT_CỦA_BẠN bằng số điện thoại thật (ví dụ: 0987654321) -->
     <a href="https://zalo.me/0342626836" target="_blank" rel="noopener noreferrer">
         <div class="zalo-icon-wrapper">
             <img src="images/zalo-icon.png" alt="Chat Zalo">
         </div>
     </a>
 </div>
+
 </body>
 </html>

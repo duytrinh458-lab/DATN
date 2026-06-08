@@ -73,12 +73,10 @@
                 </div>
             @endforelse
         </div>
-
+        
         <div class="pagination-wrapper">
-            @if($news->lastPage() > 1)
-                {{ $news->links() }}
-            @else
-                
+            @if(method_exists($news, 'links') && $news->lastPage() > 1)
+                {{ $news->onEachSide(1)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
             @endif
         </div>
 

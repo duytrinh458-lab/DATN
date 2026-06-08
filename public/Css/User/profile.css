@@ -386,4 +386,13 @@ textarea.tech-input { resize: vertical; min-height: 80px; }
     background: #ff4757; color: #fff; box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); 
 }
 
-
+.tech-input option {
+            background-color: #141b2d; /* Màu nền tối phù hợp với giao diện Vanguard */
+            color: #ffffff;            /* Ép chữ hiển thị màu trắng rõ ràng */
+            padding: 10px;
+        }
+        /* Fix thêm cho một số trình duyệt nếu bị đè màu khi hover chuột */
+        .tech-input option:hover {
+            background-color: #00ff88;
+            color: #000000;
+        }
