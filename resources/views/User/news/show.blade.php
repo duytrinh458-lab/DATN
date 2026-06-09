@@ -42,7 +42,7 @@
             {{-- ẢNH THUMBNAIL --}}
             @if(!empty($news->thumbnail))
                 <div class="article-hero-image">
-                    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+                    <img src="{{ asset('storage/' . $news->thumbnail) }}" alt="{{ $news->title }}">
                          alt="{{ $news->title }}">
                     <div class="image-scanner-line"></div>
                 </div>

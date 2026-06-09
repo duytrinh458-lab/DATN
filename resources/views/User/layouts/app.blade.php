@@ -39,10 +39,7 @@
             <li class="nav-mobile-logout">
                 <form method="POST" action="/logout">
                     @csrf
-                    <button type="submit" class="sidebar-logout-btn">
-                        <span class="material-symbols-outlined">logout</span>
-                        Đăng xuất
-                    </button>
+                    <button type="submit">Đăng xuất</button>
                 </form>
             </li>
         </ul>
@@ -135,10 +132,11 @@ document.addEventListener('DOMContentLoaded', function () {
 <div class="zalo-floating-btn">
     <a href="https://zalo.me/0342626836" target="_blank" rel="noopener noreferrer">
         <div class="zalo-icon-wrapper">
-            <img src="images/zalo-icon.png" alt="Chat Zalo">
+            <img src="{{ asset('images/zalo-icon.png') }}" alt="Chat Zalo">
         </div>
     </a>
 </div>
+
 
 </body>
 </html>
