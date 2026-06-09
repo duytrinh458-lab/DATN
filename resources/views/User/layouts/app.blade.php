@@ -39,7 +39,10 @@
             <li class="nav-mobile-logout">
                 <form method="POST" action="/logout">
                     @csrf
-                    <button type="submit">Đăng xuất</button>
+                    <button type="submit" class="sidebar-logout-btn">
+                        <span class="material-symbols-outlined">logout</span>
+                        Đăng xuất
+                    </button>
                 </form>
             </li>
         </ul>

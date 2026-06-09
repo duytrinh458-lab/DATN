@@ -18,95 +18,111 @@
     <div class="category-detail-layout">
 
         {{-- ===== SIDEBAR LỌC ===== --}}
-        <aside class="filter-sidebar">
-            <form method="GET" id="filter-form">
+<div class="filter-sidebar">
 
-                <div class="filter-block">
-                    <div class="filter-block-title">Sắp xếp</div>
-                    <select name="sort" class="filter-select" onchange="document.getElementById('filter-form').submit()">
-                        <option value="default"  {{ request('sort','default')=='default'  ? 'selected':'' }}>Mặc định</option>
-                        <option value="price_asc" {{ request('sort')=='price_asc'  ? 'selected':'' }}>Giá tăng dần</option>
-                        <option value="price_desc"{{ request('sort')=='price_desc' ? 'selected':'' }}>Giá giảm dần</option>
-                        <option value="newest"    {{ request('sort')=='newest'     ? 'selected':'' }}>Mới nhất</option>
-                        <option value="popular"   {{ request('sort')=='popular'    ? 'selected':'' }}>Phổ biến nhất</option>
-                    </select>
-                </div>
+    {{-- SEARCH ROW --}}
+    <div class="search-row">
+        <label class="search-title">
+            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">radar</span>
+            TÌM KIẾM
+        </label>
 
-                {{-- GIÁ --}}
-                <div class="filter-block">
-                    <div class="filter-block-title">Khoảng giá (₫)</div>
-                    <div class="filter-range-row">
-                        <input type="number" name="price_min" class="filter-input"
-                            placeholder="Từ" value="{{ request('price_min') }}"
-                            min="0" max="{{ $priceRange->max_price }}">
-                        <span class="filter-range-sep">—</span>
-                        <input type="number" name="price_max" class="filter-input"
-                            placeholder="Đến" value="{{ request('price_max') }}"
-                            min="0" max="{{ $priceRange->max_price }}">
-                    </div>
-                </div>
+        <form action="{{ route('user.categories.show', $category->slug) }}" method="GET" class="search-form" id="filterForm">
+            {{-- Giữ lại filter khi search --}}
+            <input type="hidden" name="sort"       value="{{ request('sort') }}">
+            <input type="hidden" name="price_min"  value="{{ request('price_min') }}">
+            <input type="hidden" name="price_max"  value="{{ request('price_max') }}">
+            <input type="hidden" name="brand_id"   value="{{ request('brand_id') }}">
+            <input type="hidden" name="flight_min" value="{{ request('flight_min') }}">
+            <input type="hidden" name="camera_min" value="{{ request('camera_min') }}">
+            <input type="hidden" name="weight_max" value="{{ request('weight_max') }}">
 
-                {{-- BRAND --}}
-                @if($brands->count())
-                <div class="filter-block">
-                    <div class="filter-block-title">Thương hiệu</div>
-                    @foreach($brands as $brand)
-                    <label class="filter-checkbox">
-                        <input type="radio" name="brand_id" value="{{ $brand->id }}"
-                            {{ request('brand_id') == $brand->id ? 'checked' : '' }}>
-                        <span>{{ $brand->name }}</span>
-                    </label>
-                    @endforeach
-                    @if(request('brand_id'))
-                    <a href="{{ request()->fullUrlWithoutQuery(['brand_id']) }}" class="filter-clear-link">Bỏ chọn</a>
-                    @endif
-                </div>
-                @endif
+            <input type="text"
+                   name="search"
+                   placeholder="Nhập tên UAV cần tìm..."
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn-scan">Tìm Kiếm</button>
+        </form>
 
-                {{-- THỜI GIAN BAY --}}
-                <div class="filter-block">
-                    <div class="filter-block-title">Thời gian bay tối thiểu</div>
-                    <div class="filter-spec-row">
-                        <input type="number" name="flight_min" class="filter-input"
-                            placeholder="Phút" value="{{ request('flight_min') }}" min="0">
-                        <span class="filter-unit">phút</span>
-                    </div>
-                </div>
+        {{-- NÚT ẨN/HIỆN BỘ LỌC --}}
+        <button class="btn-filter-toggle" id="btnFilterToggle" type="button">
+            <span class="material-symbols-outlined filter-icon">tune</span>
+            <span class="filter-label">Bộ lọc</span>
+        </button>
+    </div>
 
-                {{-- CAMERA --}}
-                <div class="filter-block">
-                    <div class="filter-block-title">Camera tối thiểu</div>
-                    <div class="filter-spec-row">
-                        <input type="number" name="camera_min" class="filter-input"
-                            placeholder="MP" value="{{ request('camera_min') }}" min="0" step="0.1">
-                        <span class="filter-unit">MP</span>
-                    </div>
-                </div>
+    {{-- FILTER PANEL --}}
+    <div class="filter-panel open" id="filterPanel">
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-sort-amount-down"></i> SẮP XẾP
+            </div>
+            <select class="filter-select">
+                <option value="default">Mặc định</option>
+                <option value="price-asc">Giá tăng dần</option>
+                <option value="price-desc">Giá giảm dần</option>
+            </select>
+        </div>
 
-                {{-- CÂN NẶNG --}}
-                <div class="filter-block">
-                    <div class="filter-block-title">Trọng lượng tối đa</div>
-                    <div class="filter-spec-row">
-                        <input type="number" name="weight_max" class="filter-input"
-                            placeholder="kg" value="{{ request('weight_max') }}" min="0" step="0.1">
-                        <span class="filter-unit">kg</span>
-                    </div>
-                </div>
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-money-bill-wave"></i> KHOẢNG GIÁ ($)
+            </div>
+            <div class="filter-range-row">
+                <input type="number" class="filter-input" placeholder="Từ">
+                <span style="color: rgba(0,255,255,0.5);">—</span>
+                <input type="number" class="filter-input" placeholder="Đến">
+            </div>
+        </div>
 
-                {{-- CÒN HÀNG --}}
-                <div class="filter-block">
-                    <label class="filter-checkbox">
-                        <input type="checkbox" name="in_stock" value="1"
-                            {{ request('in_stock') ? 'checked' : '' }}>
-                        <span>Chỉ hiện còn hàng</span>
-                    </label>
-                </div>
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-award"></i> THƯƠNG HIỆU
+            </div>
+            <select class="filter-select">
+                <option value="">-- Tất cả thương hiệu --</option>
+                <option value="dji">DJI</option>
+                <option value="autel">Autel Robotics</option>
+            </select>
+        </div>
 
-                <button type="submit" class="filter-btn-apply">Áp dụng</button>
-                <a href="{{ route('user.categories.show', $category->slug) }}" class="filter-btn-reset">Xoá bộ lọc</a>
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-plane"></i> THỜI GIAN BAY TỐI THIỂU
+            </div>
+            <div class="filter-spec-row">
+                <input type="number" class="filter-input" placeholder="Phút">
+                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">phút</span>
+            </div>
+        </div>
 
-            </form>
-        </aside>
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-camera"></i> CAMERA TỐI THIỂU
+            </div>
+            <div class="filter-spec-row">
+                <input type="number" class="filter-input" placeholder="MP">
+                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">MP</span>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-group-title">
+                <i class="fas fa-hourglass-half"></i> TRỌNG LƯỢNG TỐI ĐA
+            </div>
+            <div class="filter-spec-row">
+                <input type="number" class="filter-input" placeholder="kg">
+                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">kg</span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-apply-filter">ÁP DỤNG</button>
+        <a href="#" class="btn-clear-filter">Xóa bộ lọc</a>
+
+    </div>
+</div>
+
+</div>
 
         {{-- ===== PRODUCT GRID ===== --}}
         <div class="product-container-vanguard">
@@ -185,10 +201,38 @@
 
             {{-- PAGINATION --}}
             <div class="pagination-wrap">
-                {{ $products->links() }}
-            </div>
+    @if(method_exists($products, 'links'))
+        {{ $products->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+const btnToggle   = document.getElementById('btnFilterToggle');
+const filterPanel = document.getElementById('filterPanel');
+ 
+function setPanel(open) {
+    filterPanel.classList.toggle('open', open);
+    btnToggle.classList.toggle('active', open);
+    btnToggle.querySelector('.filter-label').textContent = open ? 'Ẩn lọc' : 'Bộ lọc';
+    btnToggle.querySelector('.filter-icon').textContent  = open ? 'close'  : 'tune';
+}
+ 
+btnToggle.addEventListener('click', function () {
+    setPanel(!filterPanel.classList.contains('open'));
+});
+ 
+// Tự mở lại nếu đang có filter active
+const hasFilter = {{ (request('sort') || request('price_min') || request('price_max') || request('brand_id') || request('flight_min') || request('camera_min') || request('weight_max')) ? 'true' : 'false' }};
+if (hasFilter) setPanel(true);
+ 
+function applyFilters() {
+    document.getElementById('filter-form').submit();
+}
+</script>
+@endpush
 @endsection

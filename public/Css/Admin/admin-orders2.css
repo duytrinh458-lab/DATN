@@ -641,102 +641,63 @@ textarea:focus{
 }
 
 
-/* =========================
-   PAGINATION
-========================= */
-
-.pagination-wrapper{
-    display:flex;
-    justify-content:center;
-    margin-top:35px;
+/* ===== PAGINATION ===== */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 16px;
 }
 
-.pagination-wrapper nav{
-    display:flex;
-    justify-content:center;
-    width:100%;
+.pagination-wrapper .pagination {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.pagination-wrapper ul{
-    display:flex;
-    align-items:center;
-    gap:8px;
-
-    list-style:none;
-    padding:0;
-    margin:0;
-
-    flex-wrap:wrap;
+.pagination-wrapper .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2d3e;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
 }
 
-.pagination-wrapper li{
-    list-style:none;
+.pagination-wrapper .page-item .page-link:hover {
+    background: #2aaa79;
+    color: #ffffff;
 }
 
-/* item */
-.pagination-wrapper a,
-.pagination-wrapper span{
-    width:42px;
-    height:42px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    background:#1f2937;
-    border:1px solid #2b3545;
-
-    border-radius:6px;
-
-    color:#e5e7eb;
-    text-decoration:none;
-
-    font-size:14px;
-    font-weight:600;
-
-    transition:all .2s ease;
+/* Trang đang active */
+.pagination-wrapper .page-item.active .page-link {
+    background: #ecff41;
+    color: #000000;
+    font-weight: 700;
 }
 
-/* hover */
-.pagination-wrapper a:hover{
-    background:#374151;
-    border-color:#4b5563;
-    color:#fff;
+/* Nút disabled */
+.pagination-wrapper .page-item.disabled .page-link {
+    background: #576cd4;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
-/* active */
-.pagination-wrapper .active span{
-    background:#dc2626;
-    border-color:#dc2626;
-    color:#fff;
-}
-
-/* disabled */
-.pagination-wrapper .disabled span{
-    background:#1f2937;
-    border-color:#2b3545;
-    color:#6b7280;
-
-    opacity:1;
-    cursor:not-allowed;
-}
-
-/* hide previous next */
-.pagination-wrapper li:first-child,
-.pagination-wrapper li:last-child{
-    display:none;
-}
-
-/* hide showing text */
-.pagination-wrapper p,
-.pagination-wrapper .text-sm{
-    display:none !important;
-}
-
-/* svg */
-.pagination-wrapper svg{
-    width:16px;
-    height:16px;
+/* Ẩn prev / next */
+.pagination-wrapper .page-item:first-child,
+.pagination-wrapper .page-item:last-child {
+    display: none;
 }
 
 

@@ -472,94 +472,63 @@ textarea.form-control{
     flex-wrap:wrap;
 }
 
-/* =========================
-   PAGINATION
-========================= */
-
-.pagination-wrapper{
-    margin-top:28px;
-    display:flex;
-    justify-content:center;
+/* ===== PAGINATION ===== */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 16px;
 }
 
-.pagination-wrapper nav{
-    width:100%;
-    display:flex;
-    justify-content:center;
+.pagination-wrapper .pagination {
+    display: flex;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-/* hide text */
-.pagination-wrapper p,
-.pagination-wrapper .text-sm,
-.pagination-wrapper .text-gray-700{
-    display:none !important;
+.pagination-wrapper .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    border: none;
+    background: #2a2d3e;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
 }
 
-.pagination-wrapper ul{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-
-    list-style:none;
-    padding:0;
-    margin:0;
-
-    flex-wrap:wrap;
+.pagination-wrapper .page-item .page-link:hover {
+    background: #2aaa79;
+    color: #ffffff;
 }
 
-.pagination-wrapper li{
-    list-style:none;
+/* Trang đang active */
+.pagination-wrapper .page-item.active .page-link {
+    background: #ecff41;
+    color: #000000;
+    font-weight: 700;
 }
 
-.pagination-wrapper a,
-.pagination-wrapper span{
-    width:42px;
-    height:42px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:12px;
-
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-
-    color:#334155;
-    text-decoration:none;
-
-    font-size:14px;
-    font-weight:700;
-
-    transition:.2s ease;
+/* Nút disabled */
+.pagination-wrapper .page-item.disabled .page-link {
+    background: #576cd4;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
-.pagination-wrapper a:hover{
-    background:#e0f2fe;
-    border-color:#93c5fd;
-    color:#2563eb;
-    transform:translateY(-2px);
-}
-
-.pagination-wrapper .active span{
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-    border-color:#2563eb;
-    color:#fff;
-    box-shadow:0 8px 18px rgba(37,99,235,.22);
-}
-
-.pagination-wrapper .disabled span{
-    background:#f1f5f9;
-    border-color:#e2e8f0;
-    color:#94a3b8;
-    cursor:not-allowed;
-}
-
-/* hide prev next */
-.pagination-wrapper li:first-child,
-.pagination-wrapper li:last-child{
-    display:none !important;
+/* Ẩn prev / next */
+.pagination-wrapper .page-item:first-child,
+.pagination-wrapper .page-item:last-child {
+    display: none;
 }
 
 /* =========================

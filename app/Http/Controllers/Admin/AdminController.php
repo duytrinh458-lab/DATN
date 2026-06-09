@@ -184,7 +184,7 @@ class AdminController extends Controller
                 'wallet_transactions.created_at'
             )
 
-            ->paginate(10);
+            ->paginate(5);
 
 
         /*
