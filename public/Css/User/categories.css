@@ -185,9 +185,6 @@
     box-shadow:0 0 15px rgba(0,255,255,.15);
 }
 
-/* =========================================================
-   FIX SHOW PAGE -> TOP SEARCH + FILTER LAYOUT
-========================================================= */
 
 /* bỏ layout 2 cột */
 .category-detail-layout {
@@ -196,211 +193,305 @@
     gap: 18px;
 }
 
-/* ẨN sidebar nếu còn tồn tại */
-.filter-sidebar {
-    width: 100%;
+/* =========================================================
+   FIX SHOW PAGE -> TOP SEARCH + FILTER LAYOUT
+========================================================= */
+
+/* FILTER WRAPPER */
+.filter-sidebar{
+    max-width:1280px;
+    margin:0 auto;
+    background:rgba(2,5,10,.6);
+    border:1px solid var(--border);
+    padding:16px 20px 20px;
+    border-radius:6px;
+    backdrop-filter:blur(10px);
+    box-shadow:inset 0 0 20px rgba(28,169,201,.1);
 }
 
-/* =========================
-   SEARCH ROW (TOP BAR STYLE)
-========================= */
-
-.search-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 14px 16px;
-    border-radius: 10px;
-
-    background: rgba(2,5,10,.75);
-    border: 1px solid rgba(0,255,255,.2);
-    backdrop-filter: blur(10px);
+/* SEARCH ROW */
+.search-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-/* TITLE */
-.search-title {
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #00FFFF;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+.search-title{
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:2px;
+    text-transform:uppercase;
+
+    color:var(--core-cyan);
+
+    font-family:'Syne',sans-serif;
+
+    text-shadow:0 0 10px rgba(0,255,255,.4);
 }
 
-/* SEARCH FORM */
-.search-form {
-    display: flex;
-    flex: 1;
-    gap: 10px;
-    min-width: 260px;
+.search-form{
+    flex:1;
+    display:flex;
+    gap:10px;
 }
 
-.search-form input {
-    flex: 1;
-    height: 42px;
-    padding: 0 12px;
+.search-form input{
+    width:100%;
+    height:40px;
+    padding:0 16px;
 
-    border-radius: 6px;
-    border: 1px solid rgba(0,255,255,.2);
+    border-radius:4px;
+    border:1px solid var(--border);
 
-    background: #02060a;
-    color: #fff;
+    background:rgba(0,0,0,.5);
+    color:var(--core-cyan);
+
+    font-size:13px;
+    font-family:'DM Sans',sans-serif;
+
+    outline:none;
+    transition:.3s;
+    box-sizing:border-box;
 }
 
-.search-form input:focus {
-    outline: none;
-    border-color: #00FFFF;
+.search-form input::placeholder{
+    color:#5e8a9c;
 }
 
-/* BUTTON */
-.btn-scan {
-    height: 42px;
-    padding: 0 16px;
-
-    border-radius: 6px;
-    border: 1px solid rgba(0,255,255,.2);
-
-    background: rgba(0,191,255,.08);
-    color: #e0f7fa;
-
-    font-weight: 700;
-    cursor: pointer;
-    transition: .3s;
+.search-form input:focus{
+    border-color:var(--core-cyan);
+    box-shadow:0 0 15px rgba(0,255,255,.2);
+    background:rgba(28,169,201,.05);
 }
 
-.btn-scan:hover {
-    border-color: #00FFFF;
-    color: #00FFFF;
+.btn-scan{
+    height:40px;
+    padding:0 20px;
+
+    border-radius:4px;
+    border:1px solid var(--border);
+
+    background:rgba(28,169,201,.1);
+    color:var(--text-nav);
+
+    font-size:13px;
+    font-weight:800;
+
+    cursor:pointer;
+    transition:.3s;
+
+    white-space:nowrap;
+    flex-shrink:0;
 }
 
-/* FILTER TOGGLE BUTTON */
-.btn-filter-toggle {
-    height: 42px;
-    padding: 0 16px;
-
-    border-radius: 6px;
-    border: 1px solid rgba(0,255,255,.2);
-
-    background: rgba(0,191,255,.08);
-    color: #fff;
-
-    cursor: pointer;
+.btn-scan:hover{
+    background:var(--core-cyan);
+    color:#000;
+    border-color:var(--core-cyan);
+    box-shadow:0 0 15px var(--glow-blue);
 }
 
-.btn-filter-toggle:hover {
-    border-color: #00FFFF;
-    color: #00FFFF;
+/* FILTER TOGGLE */
+.btn-filter-toggle{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    height:40px;
+    padding:0 16px;
+
+    background:rgba(28,169,201,.1);
+    border:1px solid var(--border);
+
+    color:var(--text-nav);
+
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:1px;
+
+    border-radius:4px;
+
+    cursor:pointer;
+    transition:.25s;
+
+    white-space:nowrap;
+    flex-shrink:0;
 }
 
-/* =========================
-   FILTER PANEL (TOP DROP STYLE)
-========================= */
-
-.filter-panel {
-    margin-top: 10px;
-
-    background: rgba(2,5,10,.75);
-    border: 1px solid rgba(0,255,255,.2);
-    border-radius: 10px;
-
-    backdrop-filter: blur(10px);
-
-    max-height: 0;
-    overflow: hidden;
-
-    transition: all .35s ease;
+.btn-filter-toggle:hover,
+.btn-filter-toggle.active{
+    background:rgba(0,255,255,.12);
+    border-color:var(--core-cyan);
+    color:var(--core-cyan);
+    box-shadow:0 0 12px rgba(0,255,255,.2);
 }
 
-
-
-/* =========================
-   FILTER GROUPS
-========================= */
-
-.filter-group-title {
-    font-size: 11px;
-    font-weight: 800;
-    color: #00FFFF;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
+.btn-filter-toggle .material-symbols-outlined,
+.btn-filter-toggle .filter-icon{
+    font-size:18px;
 }
 
-.filter-input,
-.filter-select {
-    width: 100%;
-    height: 40px;
+/* PANEL */
+.filter-panel{
+    overflow:hidden;
+    max-height:0;
+    opacity:0;
 
-    background: #111827;
-    color: #fff;
-
-    border: 1px solid rgba(0,255,255,.2);
-    border-radius: 6px;
-
-    padding: 0 10px;
+    transition:
+        max-height .35s ease,
+        opacity .25s ease,
+        padding .25s ease;
 }
 
-.filter-input:focus,
-.filter-select:focus {
-    outline: none;
-    border-color: #00FFFF;
+.filter-panel.open{
+    max-height:1000px;
+    opacity:1;
+    padding-top:16px;
 }
 
-/* RANGE */
+/* GRID */
+.filter-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px 24px;
+
+    padding-top:16px;
+
+    border-top:1px solid rgba(28,169,201,.2);
+}
+
+.filter-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.filter-group-title{
+    display:flex;
+    align-items:center;
+    gap:5px;
+
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:2px;
+
+    color:var(--glow-blue);
+    text-transform:uppercase;
+}
+
+/* SELECT */
+.filter-select{
+    height:38px;
+    width:100%;
+
+    padding:0 32px 0 12px;
+
+    border:1px solid var(--border);
+    border-radius:4px;
+
+    background:rgba(0,0,0,.5);
+    color:var(--text-nav);
+
+    appearance:none;
+    box-sizing:border-box;
+}
+
+.filter-select:focus{
+    outline:none;
+    border-color:var(--core-cyan);
+    box-shadow:0 0 10px rgba(0,255,255,.2);
+}
+
+/* INPUT */
+.filter-input{
+    height:38px;
+    width:100%;
+
+    padding:0 12px;
+
+    border-radius:4px;
+    border:1px solid var(--border);
+
+    background:rgba(0,0,0,.5);
+    color:var(--core-cyan);
+
+    outline:none;
+    box-sizing:border-box;
+}
+
+.filter-input::placeholder{
+    color:#5e8a9c;
+}
+
+.filter-input:focus{
+    border-color:var(--core-cyan);
+    box-shadow:0 0 10px rgba(0,255,255,.2);
+}
+
 .filter-range-row,
-.filter-spec-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+.filter-spec-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
 }
 
-/* Khi mở panel lọc */
-.filter-panel.open {
-    max-height: 1000px;
-    padding: 20px;
+.filter-range-row .filter-input,
+.filter-spec-row .filter-input{
+    flex:1;
 }
 
-/* Biến khung chứa thành lưới 2 cột */
-.filter-panel-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Chia đôi màn hình bằng nhau */
-    gap: 20px 40px; /* Khoảng cách hàng là 20px, khoảng cách giữa 2 cột là 40px */
+/* ACTIONS */
+.filter-actions{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:20px;
 }
 
-/* =========================
-   BUTTONS FILTER
-========================= */
+.btn-apply-filter{
+    width:140px;
+    height:42px;
 
-.btn-apply-filter {
-    grid-column: span 2; 
-    width: 100%;
-    height: 42px;
-    border: none;
-    border-radius: 6px;
-    background: rgba(0,255,255,.12);
-    color: #00FFFF;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:rgba(0,255,255,.1);
+    border:1px solid var(--core-cyan);
+
+    color:var(--core-cyan);
+
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+
+    border-radius:6px;
 }
 
-.btn-apply-filter:hover {
-    background: #00FFFF;
-    color: #000;
-}
+.btn-clear-filter{
+    width:140px;
+    height:42px;
 
-/* Ép nút "XÓA BỘ LỌC" trải dài hết 2 cột */
-.btn-clear-filter {
-    grid-column: span 2;
-    display: block;
-    margin-top: 5px;
-    text-align: center;
-    color: #ff8ea1;
-    text-decoration: none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    text-decoration:none;
+
+    background:rgba(255,107,129,.08);
+    border:1px solid rgba(255,107,129,.4);
+
+    color:#ff8ea1;
+
+    font-size:13px;
+    font-weight:800;
+    text-transform:uppercase;
+
+    border-radius:6px;
 }
 
 /* =========================
@@ -614,76 +705,106 @@
 }
 
 /* =========================================================
-   RESPONSIVE FIX - TOP FILTER LAYOUT
+   RESPONSIVE
 ========================================================= */
 
-/* desktop lớn */
-@media (max-width: 1400px) {
-    .product-grid {
-        grid-template-columns: repeat(3, 1fr);
+/* Laptop */
+@media (max-width: 1400px){
+
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
     }
+
 }
 
-/* tablet */
-@media (max-width: 992px) {
+/* Tablet */
+@media (max-width: 992px){
 
-    /* bỏ layout 2 cột (nếu còn) */
-    .category-detail-layout {
-        display: flex;
-        flex-direction: column;
+    .category-detail-layout{
+        display:flex;
+        flex-direction:column;
     }
 
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
     }
+
 }
 
-/* mobile lớn */
-@media (max-width: 768px) {
+/* Mobile */
+@media (max-width: 768px){
 
-    .filter-panel-inner {
-        grid-template-columns: 1fr; 
-    }
-    /* search + filter stack */
-    .search-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+    /* Search bar xuống hàng */
+    .search-row{
+        flex-direction:column;
+        align-items:stretch;
+        gap:10px;
     }
 
-    .search-form {
-        width: 100%;
-        flex-direction: column;
+    .search-form{
+        width:100%;
+        flex-direction:column;
+    }
+
+    .search-form input{
+        width:100%;
     }
 
     .btn-scan,
-    .btn-filter-toggle {
-        width: 100%;
+    .btn-filter-toggle{
+        width:100%;
+    }
+
+    /* Filter 2 cột -> 1 cột */
+    .filter-grid{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .filter-actions{
+        flex-direction:column;
+        align-items:stretch;
     }
 
     .btn-apply-filter,
-    .btn-clear-filter {
-        grid-column: span 1;
+    .btn-clear-filter{
+        width:100%;
     }
 
-    .filter-select {
-        width: 100%;
-    }
 }
 
-/* mobile nhỏ */
-@media (max-width: 576px) {
+/* Mobile nhỏ */
+@media (max-width: 576px){
 
-    .product-grid {
-        grid-template-columns: 1fr;
+    .categories-viewport{
+        padding:70px 20px;
     }
 
-    .product-actions {
-        flex-direction: column;
+    .categories-title{
+        font-size:2rem;
+    }
+
+    .product-grid{
+        grid-template-columns:1fr;
+    }
+
+    .product-actions{
+        flex-direction:column;
     }
 
     .btn-buy,
-    .btn-cart {
-        width: 100%;
+    .btn-cart{
+        width:100%;
     }
+
+    .pagination{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .pagination .page-link{
+        padding:6px 10px;
+        font-size:12px;
+    }
+
 }

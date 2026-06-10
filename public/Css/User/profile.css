@@ -250,6 +250,24 @@ textarea.tech-input { resize: vertical; min-height: 80px; }
 .btn-vg-outline.cyan { background: transparent; color: #00eaff; border: 1px solid #00eaff; }
 .btn-vg-outline.cyan:hover { background: rgba(0, 234, 255, 0.1); }
 
+
+/* NÚT XÓA AVATAR */
+.btn-vg-outline.danger {
+    background: transparent;
+    color: #ff4757;
+    border: 1px solid #ff4757;
+}
+
+.btn-vg-outline.danger:hover {
+    background: rgba(255, 2, 23, 0.466);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.35);
+}
+
+.btn-vg-outline.danger .material-symbols-outlined {
+    font-size: 18px;
+}
+
 /* ================= ALERTS ================= */
 .alert-vg {
     padding: 15px;

@@ -10,106 +10,127 @@
 
 <div class="product-container-vanguard">
 
-    <aside class="filter-sidebar">
-        {{-- SEARCH ROW --}}
-        <div class="search-row">
-            <label class="search-title">
-                <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">radar</span>
-                TÌM KIẾM
-            </label>
+{{-- SEARCH ROW --}}
+    <div class="search-row">
+        <!-- <label class="search-title">
+            TÌM KIẾM
+        </label> -->
 
-            <form action="{{ route('user.products') }}" method="GET" class="search-form" id="filterForm">
-                {{-- Giữ lại filter khi search --}}
-                <input type="hidden" name="category" value="{{ request('category') }}">
-                <input type="hidden" name="sort"     value="{{ request('sort') }}">
-                <input type="hidden" name="price_max" id="priceMaxHidden" value="{{ request('price_max', 100000000) }}">
+        <form action="{{ route('user.products') }}" method="GET" class="search-form" id="filterForm">
+            <input type="hidden" name="sort"       value="{{ request('sort') }}">
+            <input type="hidden" name="price_min"  value="{{ request('price_min') }}">
+            <input type="hidden" name="price_max"  value="{{ request('price_max') }}">
+            <input type="hidden" name="brand_id"   value="{{ request('brand_id') }}">
+            <input type="hidden" name="flight_min" value="{{ request('flight_min') }}">
+            <input type="hidden" name="camera_min" value="{{ request('camera_min') }}">
+            <input type="hidden" name="weight_max" value="{{ request('weight_max') }}">
 
-                <input type="text"
-                       name="search"
-                       placeholder="Nhập tên UAV cần tìm..."
-                       value="{{ request('search') }}">
-                <button type="submit" class="btn-scan">Tìm Kiếm</button>
-            </form>
+            <input type="text"
+                   name="search"
+                   placeholder="Nhập tên UAV cần tìm..."
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn-scan">Tìm Kiếm
+            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:4px;">radar</span>
 
-            {{-- NÚT ẨN/HIỆN BỘ LỌC --}}
-            <button class="btn-filter-toggle" id="btnFilterToggle" type="button">
-                <span class="material-symbols-outlined filter-icon">tune</span>
-                <span class="filter-label">Bộ lọc</span>
             </button>
-        </div>
+        </form>
 
-        {{-- FILTER PANEL --}}
-        <div class="filter-panel" id="filterPanel">
-            <div class="filter-panel-inner">
+        <button class="btn-filter-toggle" id="btnFilterToggle" type="button">
+            <span class="material-symbols-outlined filter-icon">tune</span>
+            <span class="filter-label">Bộ lọc</span>
+        </button>
+    </div>
 
-                {{-- DANH MỤC --}}
-                <div class="filter-group">
-                    <div class="filter-group-title">
-                        <span class="material-symbols-outlined">category</span>
-                        DANH MỤC
-                    </div>
-                    <select class="filter-select" id="filterCategory" onchange="applyFilters()">
-                        <option value="">Tất cả danh mục</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
+    {{-- FILTER PANEL --}}
+    <div class="filter-panel open" id="filterPanel">
+
+        <div class="filter-grid">
+
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-sort-amount-down"></i> SẮP XẾP
                 </div>
+                <select class="filter-select" name="sort" form="filterForm">
+                    <option value="default">Mặc định</option>
+                    <option value="price-asc"  {{ request('sort') == 'price-asc'  ? 'selected' : '' }}>Giá tăng dần</option>
+                    <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                </select>
+            </div>
 
-                {{-- GIÁ (range slider) --}}
-                <div class="filter-group">
-                    <div class="filter-group-title">
-                        <span class="material-symbols-outlined">payments</span>
-                        GIÁ TỐI ĐA
-                    </div>
-                    <div class="price-range-wrap">
-                        <div class="price-range-label">
-                            <span>0đ</span>
-                            <strong id="priceDisplay">{{ number_format(request('price_max', 100000000), 0, ',', '.') }}đ</strong>
-                            <span>100tr</span>
-                        </div>
-                        <input type="range"
-                               class="price-slider"
-                               id="priceSlider"
-                               min="0"
-                               max="100000000"
-                               step="1000000"
-                               value="{{ request('price_max', 100000000) }}">
-                    </div>
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-award"></i> THƯƠNG HIỆU
                 </div>
+                <select class="filter-select" name="brand_id" form="filterForm">
+                    <option value="">-- Tất cả thương hiệu --</option>
+                    <option value="dji"   {{ request('brand_id') == 'dji'   ? 'selected' : '' }}>DJI</option>
+                    <option value="autel" {{ request('brand_id') == 'autel' ? 'selected' : '' }}>Autel Robotics</option>
+                </select>
+            </div>
 
-                {{-- SẮP XẾP --}}
-                <div class="filter-group">
-                    <div class="filter-group-title">
-                        <span class="material-symbols-outlined">sort</span>
-                        SẮP XẾP
-                    </div>
-                    <select class="filter-select" id="filterSort" onchange="applyFilters()">
-                        <option value=""         {{ request('sort') == ''           ? 'selected' : '' }}>Mặc định</option>
-                        <option value="price_asc"  {{ request('sort') == 'price_asc'  ? 'selected' : '' }}>Giá tăng dần</option>
-                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Giá giảm dần</option>
-                        <option value="newest"     {{ request('sort') == 'newest'     ? 'selected' : '' }}>Mới nhất</option>
-                    </select>
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-money-bill-wave"></i> KHOẢNG GIÁ ($)
                 </div>
+                <div class="filter-range-row">
+                    <input type="number" class="filter-input" name="price_min" form="filterForm"
+                           placeholder="Từ" value="{{ request('price_min') }}">
+                    <span style="color: rgba(0,255,255,0.5);">—</span>
+                    <input type="number" class="filter-input" name="price_max" form="filterForm"
+                           placeholder="Đến" value="{{ request('price_max') }}">
+                </div>
+            </div>
 
-                {{-- NÚT ÁP DỤNG --}}
-                <button class="btn-apply-filter" onclick="applyFilters()">
-                    ÁP DỤNG
-                </button>
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-plane"></i> THỜI GIAN BAY TỐI THIỂU
+                </div>
+                <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="flight_min" form="filterForm"
+                           placeholder="Phút" value="{{ request('flight_min') }}">
+                    <!-- <span class="unit-label">phút</span> -->
+                </div>
+            </div>
 
-                {{-- NÚT XÓA LỌC (chỉ hiện khi đang có filter) --}}
-                @if(request('category') || request('sort') || request('price_max') || request('search'))
-                <a href="{{ route('user.products') }}" class="btn-clear-filter">
-                    <span class="material-symbols-outlined">close</span>
-                    XÓA LỌC
-                </a>
-                @endif
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-camera"></i> CAMERA TỐI THIỂU
+                </div>
+                <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="camera_min" form="filterForm"
+                           placeholder="MP" value="{{ request('camera_min') }}">
+                    <!-- <span class="unit-label">MP</span> -->
+                </div>
+            </div>
 
+        <div class="filter-group">
+            <div class="filter-group-title">
+                    <i class="fas fa-hourglass-half"></i> TRỌNG LƯỢNG TỐI ĐA
+            </div>
+            <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="weight_max" form="filterForm"
+                           placeholder="kg" value="{{ request('weight_max') }}">
+                    <!-- <span class="unit-label">kg</span> -->
             </div>
         </div>
-    </aside>
+
+        </div> {{-- end filter-grid --}}
+
+                <div class="filter-actions">
+                    <button type="submit"
+                            form="filterForm"
+                            class="btn-apply-filter">
+                        ÁP DỤNG
+                    </button>
+
+                    <a href="{{ route('user.products') }}"
+                    class="btn-clear-filter">
+                        XÓA LỌC
+                    </a>
+                </div>
+    </div> {{-- end .product-container-vanguard --}}
+
+
 
     {{-- GRID SẢN PHẨM --}}
     <section class="product-grid">
@@ -176,7 +197,7 @@
 </div>
 
 @push('scripts')
-<script src="{{ asset('js/products-mobile.js') }}"></script>
+<!-- <script src="{{ asset('js/products-mobile.js') }}"></script> -->
 <script>
 /* ---- Filter toggle ---- */
 const btnToggle   = document.getElementById('btnFilterToggle');
@@ -185,8 +206,6 @@ const filterPanel = document.getElementById('filterPanel');
 function setPanel(open) {
     filterPanel.classList.toggle('open', open);
     btnToggle.classList.toggle('active', open);
-    btnToggle.querySelector('.filter-label').textContent = open ? 'Ẩn lọc' : 'Bộ lọc';
-    btnToggle.querySelector('.filter-icon').textContent  = open ? 'close'   : 'tune';
 }
 
 btnToggle.addEventListener('click', function () {

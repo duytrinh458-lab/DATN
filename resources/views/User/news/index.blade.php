@@ -17,6 +17,34 @@
             <p class="news-subtitle">CẬP NHẬT CÔNG NGHỆ UAV & TÌNH HÌNH CHIẾN SỰ MỚI NHẤT</p>
         </div>
 
+        <div class="search-row">
+
+            <label class="search-title">
+                <span class="material-symbols-outlined"
+                    style="font-size:18px;vertical-align:middle;margin-right:4px;">
+                    search
+                </span>
+                TÌM KIẾM TIN TỨC
+            </label>
+
+            <form action="{{ route('user.news.index') }}"
+                method="GET"
+                class="search-form">
+
+                <input type="text"
+                    name="search"
+                    placeholder="Nhập tiêu đề tin tức..."
+                    value="{{ request('search') }}">
+
+                <button type="submit" class="btn-scan">
+                    Tìm Kiếm
+                </button>
+
+            </form>
+
+        </div>
+
+
         <div class="news-grid">
             @forelse($news as $item)
                 <div class="news-card">

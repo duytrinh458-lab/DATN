@@ -15,10 +15,7 @@
     </div>
     <div class="categories-subtitle">DANH MỤC SẢN PHẨM</div>
 
-    <div class="category-detail-layout">
-
-        {{-- ===== SIDEBAR LỌC ===== --}}
-<div class="filter-sidebar">
+    <div class="filter-sidebar">
 
     {{-- SEARCH ROW --}}
     <div class="search-row">
@@ -28,7 +25,6 @@
         </label>
 
         <form action="{{ route('user.categories.show', $category->slug) }}" method="GET" class="search-form" id="filterForm">
-            {{-- Giữ lại filter khi search --}}
             <input type="hidden" name="sort"       value="{{ request('sort') }}">
             <input type="hidden" name="price_min"  value="{{ request('price_min') }}">
             <input type="hidden" name="price_max"  value="{{ request('price_max') }}">
@@ -44,7 +40,6 @@
             <button type="submit" class="btn-scan">Tìm Kiếm</button>
         </form>
 
-        {{-- NÚT ẨN/HIỆN BỘ LỌC --}}
         <button class="btn-filter-toggle" id="btnFilterToggle" type="button">
             <span class="material-symbols-outlined filter-icon">tune</span>
             <span class="filter-label">Bộ lọc</span>
@@ -53,76 +48,100 @@
 
     {{-- FILTER PANEL --}}
     <div class="filter-panel open" id="filterPanel">
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-sort-amount-down"></i> SẮP XẾP
-            </div>
-            <select class="filter-select">
-                <option value="default">Mặc định</option>
-                <option value="price-asc">Giá tăng dần</option>
-                <option value="price-desc">Giá giảm dần</option>
-            </select>
-        </div>
 
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-money-bill-wave"></i> KHOẢNG GIÁ ($)
-            </div>
-            <div class="filter-range-row">
-                <input type="number" class="filter-input" placeholder="Từ">
-                <span style="color: rgba(0,255,255,0.5);">—</span>
-                <input type="number" class="filter-input" placeholder="Đến">
-            </div>
-        </div>
+        <div class="filter-grid">
 
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-award"></i> THƯƠNG HIỆU
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-sort-amount-down"></i> SẮP XẾP
+                </div>
+                <select class="filter-select" name="sort" form="filterForm">
+                    <option value="default">Mặc định</option>
+                    <option value="price-asc"  {{ request('sort') == 'price-asc'  ? 'selected' : '' }}>Giá tăng dần</option>
+                    <option value="price-desc" {{ request('sort') == 'price-desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                </select>
             </div>
-            <select class="filter-select">
-                <option value="">-- Tất cả thương hiệu --</option>
-                <option value="dji">DJI</option>
-                <option value="autel">Autel Robotics</option>
-            </select>
-        </div>
 
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-plane"></i> THỜI GIAN BAY TỐI THIỂU
-            </div>
-            <div class="filter-spec-row">
-                <input type="number" class="filter-input" placeholder="Phút">
-                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">phút</span>
-            </div>
-        </div>
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-award"></i> THƯƠNG HIỆU
+                </div>
+                <select class="filter-select" name="brand_id" form="filterForm">
+                    <option value="">-- Tất cả thương hiệu --</option>
 
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-camera"></i> CAMERA TỐI THIỂU
+                    @foreach($brands as $brand)
+                        <option value="{{ $brand->id }}"
+                            {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
+                            {{ $brand->name }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            <div class="filter-spec-row">
-                <input type="number" class="filter-input" placeholder="MP">
-                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">MP</span>
-            </div>
-        </div>
 
-        <div class="filter-group">
-            <div class="filter-group-title">
-                <i class="fas fa-hourglass-half"></i> TRỌNG LƯỢNG TỐI ĐA
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-money-bill-wave"></i> KHOẢNG GIÁ ($)
+                </div>
+                <div class="filter-range-row">
+                    <input type="number" class="filter-input" name="price_min" form="filterForm"
+                           placeholder="Từ" value="{{ request('price_min') }}">
+                    <span style="color: rgba(0,255,255,0.5);">—</span>
+                    <input type="number" class="filter-input" name="price_max" form="filterForm"
+                           placeholder="Đến" value="{{ request('price_max') }}">
+                </div>
             </div>
-            <div class="filter-spec-row">
-                <input type="number" class="filter-input" placeholder="kg">
-                <span class="unit-label" style="color: #7fa2b0; font-size: 13px;">kg</span>
+
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-plane"></i> THỜI GIAN BAY TỐI THIỂU
+                </div>
+                <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="flight_min" form="filterForm"
+                           placeholder="Phút" value="{{ request('flight_min') }}">
+                    <!-- <span class="unit-label">phút</span> -->
+                </div>
             </div>
-        </div>
 
-        <button type="submit" class="btn-apply-filter">ÁP DỤNG</button>
-        <a href="#" class="btn-clear-filter">Xóa bộ lọc</a>
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-camera"></i> CAMERA TỐI THIỂU
+                </div>
+                <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="camera_min" form="filterForm"
+                           placeholder="MP" value="{{ request('camera_min') }}">
+                    <!-- <span class="unit-label">MP</span> -->
+                </div>
+            </div>
 
+            <div class="filter-group">
+                <div class="filter-group-title">
+                    <i class="fas fa-hourglass-half"></i> TRỌNG LƯỢNG TỐI ĐA
+                </div>
+                <div class="filter-spec-row">
+                    <input type="number" class="filter-input" name="weight_max" form="filterForm"
+                           placeholder="kg" value="{{ request('weight_max') }}">
+                    <!-- <span class="unit-label">kg</span> -->
+                </div>
+            </div>
+
+        </div> {{-- end filter-grid --}}
+
+                        <div class="filter-actions">
+                    <button type="submit"
+                            form="filterForm"
+                            class="btn-apply-filter">
+                        ÁP DỤNG
+                    </button>
+
+                    <a href="{{ route('user.categories.show', $category->slug) }}"
+                    class="btn-clear-filter">
+                        XÓA LỌC
+                    </a>
+                </div>
     </div>
-</div>
+</div> {{-- end .category-detail-layout --}}
 
-</div>
+
 
         {{-- ===== PRODUCT GRID ===== --}}
         <div class="product-container-vanguard">
