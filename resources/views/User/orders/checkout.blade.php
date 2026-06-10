@@ -23,7 +23,7 @@
                 
                 <div style="flex: 1.2; min-width: 350px;">
                     <div class="checkout-box">
-                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">location_on</span> TỌA ĐỘ GIAO HÀNG</h4>
+                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">location_on</span> ĐỊA CHỈ GIAO HÀNG</h4>
                         
                         @if($defaultAddress)
                             <div class="address-card">
@@ -40,19 +40,19 @@
                         @else
                             <div class="address-warning">
                                 <span class="material-symbols-outlined" style="font-size: 30px; margin-bottom: 10px; display:block;">warning</span>
-                                <strong>CHƯA XÁC ĐỊNH TỌA ĐỘ!</strong><br>
-                                Vui lòng truy cập <a href="{{ route('user.profile.index') }}">Hồ sơ</a> để thiết lập điểm rơi.
+                                <strong>CHƯA XÁC ĐỊNH ĐỊA CHỈ GIAO HÀNG</strong><br>
+                                Vui lòng truy cập <a href="{{ route('user.profile.index') }}">Hồ sơ</a> để thiết lập địa chỉ giao hàng mặc định trước khi đặt hàng.
                             </div>
                         @endif
                     </div>
 
                     <div class="checkout-box">
-                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">speaker_notes</span> CHỈ THỊ CHIẾN THUẬT (TÙY CHỌN)</h4>
+                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">speaker_notes</span> GHI CHÚ</h4>
                         <textarea name="note" class="form-control vg-textarea" placeholder="Nhập yêu cầu đặc biệt khi giao UAV (VD: Cần bảo mật đóng gói, Giao vào giờ hành chính...)" rows="3"></textarea>
                     </div>
 
                     <div class="checkout-box">
-                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">account_balance_wallet</span> KÊNH THANH TOÁN</h4>
+                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">account_balance_wallet</span>HÌNH THỨC THANH TOÁN</h4>
                         
                         <div class="vg-payment-options">
                             <label class="payment-method">
@@ -82,7 +82,7 @@
 
                 <div style="flex: 0.8; min-width: 320px;">
                     <div class="checkout-box sticky-hud">
-                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">receipt_long</span> TÓM TẮT ĐIỀU ĐỘNG</h4>
+                        <h4><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 5px; font-size: 18px;">receipt_long</span> TÓM TẮT ĐƠN HÀNG</h4>
                         
                         @if(isset($checkoutItems) && count($checkoutItems) > 0)
                             <div class="checkout-items-list" style="margin-bottom: 20px; max-height: 350px; overflow-y: auto; padding-right: 10px;">

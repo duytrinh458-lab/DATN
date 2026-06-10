@@ -26,9 +26,9 @@
             {{-- HEADER --}}
             <header class="article-header">
                 <div class="article-meta">
-                    <span class="meta-tag">
+                    {{-- <span class="meta-tag">
                         <span class="material-symbols-outlined icon-xs">radar</span> TÍN HIỆU VANGUARD
-                    </span>
+                    </span> --}}
 
                     <span class="meta-date">
                         <span class="material-symbols-outlined icon-xs">schedule</span>
@@ -42,7 +42,7 @@
             {{-- ẢNH THUMBNAIL --}}
             @if(!empty($news->thumbnail))
                 <div class="article-hero-image">
-                    <img src="{{ asset('storage/' . $news->thumbnail) }}" alt="{{ $news->title }}">
+                    <img src="{{ asset('storage/news/' . $news->thumbnail) }}" alt="{{ $news->title }}">
                     <div class="image-scanner-line"></div>
                 </div>
             @endif

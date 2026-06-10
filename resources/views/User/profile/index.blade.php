@@ -50,6 +50,9 @@
                             <label class="form-label-vg">(Avatar)</label>
                             <div class="avatar-wrapper">
                                 <div class="avatar-radar">
+                                    {{-- <img id="avatarPreview"
+                                        src="{{ $user->avatar ? asset('uploads/avatars/' . $user->avatar) : asset('uploads/avatars/avatar-default.jpg') }}"
+                                        class="avatar-img" alt="Avatar"> --}}
                                     <img id="avatarPreview"
                                          src="{{ $user->avatar ? asset($user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->full_name) }}"
                                          class="avatar-img" alt="Avatar">
