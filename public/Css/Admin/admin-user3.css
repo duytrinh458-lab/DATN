@@ -393,6 +393,178 @@
 }
 
 /* =========================================================
+   USER DETAIL - INFO CARD
+========================================================= */
+
+.info-card,
+.action-card{
+    padding:24px;
+}
+
+.user-avatar-section{
+    text-align:center;
+    margin-bottom:24px;
+    padding-bottom:24px;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.user-avatar-section .avatar-wrapper{
+    width:80px;
+    height:80px;
+    margin:0 auto 14px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#f1f5f9;
+    border:2px solid #cbd5e1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.user-avatar-img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.avatar-fallback{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#e0f2fe;
+    color:#0369a1;
+    font-size:28px;
+    font-weight:900;
+}
+
+.user-display-name{
+    margin:0 0 10px;
+    font-size:18px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+/* =========================================================
+   INFO LIST
+========================================================= */
+
+.info-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.info-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-bottom:12px;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.info-item:last-child{
+    border-bottom:none;
+    padding-bottom:0;
+}
+
+.info-label{
+    font-size:13px;
+    font-weight:700;
+    color:#64748b;
+}
+
+.info-value{
+    font-size:14px;
+    font-weight:700;
+    color:#0f172a;
+    text-align:right;
+}
+
+/* =========================================================
+   ACTION CARD HEADER
+========================================================= */
+
+.card-header{
+    margin-bottom:18px;
+    padding-bottom:14px;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.card-title{
+    margin:0;
+    font-size:16px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+/* =========================================================
+   FORM FOOTER
+========================================================= */
+
+.form-footer{
+    margin-top:6px;
+}
+
+.btn-update i{
+    margin-right:6px;
+}
+
+/* =========================================================
+   DANGER ZONE
+========================================================= */
+
+.danger-zone{
+    margin-top:28px;
+    padding-top:20px;
+    border-top:1px solid #f1f5f9;
+}
+
+.danger-zone h4{
+    margin:0 0 6px;
+    font-size:14px;
+    font-weight:900;
+    color:#dc2626;
+}
+
+.danger-zone p{
+    margin:0 0 14px;
+    font-size:13px;
+    color:#64748b;
+}
+
+.btn-delete-link{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:10px;
+    border:1px solid #fecaca;
+    background:#fef2f2;
+    color:#dc2626;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.btn-delete-link:hover{
+    background:#fee2e2;
+    transform:translateY(-2px);
+}
+
+/* =========================================================
+   USER ID (header)
+========================================================= */
+
+.user-id{
+    font-weight:800;
+    color:#0f172a;
+}
+
+/* =========================================================
    MOBILE
 ========================================================= */
 

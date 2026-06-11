@@ -48,7 +48,7 @@
 
                         @if($brand->logo)
 
-                            <img src="{{ asset('storage/' . $brand->logo) }}"
+                            <img src="{{ asset('storage/brands/' . $brand->logo) }}"
                                  class="brand-logo">
 
                         @endif

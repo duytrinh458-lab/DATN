@@ -114,6 +114,12 @@
                                     Đã đăng
                                 </span>
 
+                            @elseif($item->status == 'scheduled')
+
+                                <span class="status scheduled">
+                                    Lên lịch
+                                </span>
+
                             @elseif($item->status == 'draft')
 
                                 <span class="status inactive">

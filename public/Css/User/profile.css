@@ -415,3 +415,35 @@ textarea.tech-input { resize: vertical; min-height: 80px; }
             background-color: #00ff88;
             color: #000000;
         }
+
+.vg-toast {
+    position: fixed;
+    top: 100px;
+    left: 30px;
+    transform: translateX(-150px);
+    background: #141b2d;
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 14px 22px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    opacity: 0;
+    pointer-events: none;   /* THÊM DÒNG NÀY */
+    transition: all 0.3s ease;
+    z-index: 9999;
+    width: max-content;
+    max-width: 90vw;
+    height: fit-content;
+    max-height: 5vh;
+}
+.vg-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;   /* THÊM DÒNG NÀY */
+}
+        

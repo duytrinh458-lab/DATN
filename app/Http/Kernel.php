@@ -59,4 +59,11 @@ class Kernel extends HttpKernel
         // 💡 ĐÃ THÊM MỚI: Đăng ký Middleware bắt buộc đổi mật khẩu lần đầu
         'check.first.login' => \App\Http\Middleware\CheckFirstLogin::class,
     ];
+
+    // app/Console/Kernel.php
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('news:publish-scheduled')->everyMinute();
+}
+
 }

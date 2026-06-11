@@ -184,6 +184,11 @@ body{
     color:#166534;
 }
 
+.status.scheduled{
+    background:#ffd11985;
+    color:#4e35db;
+}
+
 .status.inactive{
     background:#fee2e2;
     color:#991b1b;

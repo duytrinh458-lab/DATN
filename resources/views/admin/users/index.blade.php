@@ -121,11 +121,9 @@
                                                  class="user-avatar">
 
                                         @else
-
-                                            <div class="avatar-circle">
-                                                {{ strtoupper(substr($user->full_name,0,1)) }}
-                                            </div>
-
+                                            <img src="{{ asset('uploads/avatars/avatar-default.jpg') }}"
+                                                alt="{{ $user->full_name }}"
+                                                class="user-avatar">
                                         @endif
 
                                     </div>

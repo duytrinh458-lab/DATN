@@ -23,105 +23,56 @@ class NewsController extends Controller
     }
 
     public function store(Request $request)
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | VALIDATE
-        |--------------------------------------------------------------------------
-        */
-        $request->validate([
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+        'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'status' => 'required|in:draft,published,hidden,scheduled',
+        'published_at' => 'nullable|date|after_or_equal:now',
+    ], [
+        'published_at.after_or_equal' => 'Ngày đăng không được nhỏ hơn thời điểm hiện tại.',
+    ]);
 
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+    // Logic xử lý status dựa trên published_at
+    $publishedAt = $request->published_at;
+    $status = $request->status;
 
-            'content' => [
-                'required',
-                'string',
-            ],
+    if ($publishedAt) {
+        $publishedAtCarbon = \Carbon\Carbon::parse($publishedAt);
 
-            'status' => [
-                'required',
-                'in:draft,published,hidden',
-            ],
-
-            'thumbnail' => [
-                'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-            ],
-
-            'published_at' => [
-                'nullable',
-                'date',
-            ],
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | AUTO CREATE UNIQUE SLUG
-        |--------------------------------------------------------------------------
-        */
-        $baseSlug = Str::slug($request->title);
-
-        $slug = $baseSlug;
-
-        $count = 1;
-
-        while (
-            News::where('slug', $slug)->exists()
-        ) {
-
-            $slug = $baseSlug . '-' . $count;
-
-            $count++;
+        if ($publishedAtCarbon->isFuture()) {
+            // Nếu chọn đăng trong tương lai -> tạm để là 'scheduled' (hoặc giữ draft)
+            // và chờ scheduler tự động chuyển sang published
+            $status = 'scheduled';
+        } else {
+            // Nếu thời gian <= hiện tại -> đăng ngay
+            $status = 'published';
+            $publishedAt = now();
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | UPLOAD THUMBNAIL
-        |--------------------------------------------------------------------------
-        */
-        $thumbnail = null;
-
-        if ($request->hasFile('thumbnail')) {
-
-            $thumbnail = $request->file('thumbnail')
-                ->store('news', 'public');
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | CREATE NEWS
-        |--------------------------------------------------------------------------
-        */
-        News::create([
-
-            'title' => $request->title,
-
-            'slug' => $slug,
-
-            'thumbnail' => $thumbnail,
-
-            'content' => $request->content,
-
-            'status' => $request->status ?? 'draft',
-
-            'published_at' => $request->published_at
-                ? Carbon::parse($request->published_at)
-                : null,
-        ]);
-
-        return redirect()
-            ->route('admin.news.index')
-            ->with(
-                'success',
-                'Thêm tin tức thành công'
-            );
     }
+
+    // Xử lý thumbnail
+    $thumbnailPath = null;
+    if ($request->hasFile('thumbnail')) {
+        $file = $request->file('thumbnail');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/news'), $filename);
+        $thumbnailPath = 'uploads/news/' . $filename;
+    }
+
+    News::create([
+        'title' => $request->title,
+        'slug' => \Illuminate\Support\Str::slug($request->title) . '-' . uniqid(),
+        'content' => $request->content,
+        'thumbnail' => $thumbnailPath,
+        'status' => $status,
+        'published_at' => $publishedAt,
+    ]);
+
+    return redirect()->route('admin.news.index')
+                      ->with('success', 'Thêm tin tức thành công!');
+}
 
     public function show($id)
     {

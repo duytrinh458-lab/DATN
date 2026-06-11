@@ -148,6 +148,11 @@
                         Xuất bản
                     </option>
 
+                    <option value="scheduled"
+                        {{ old('status') == 'scheduled' ? 'selected' : '' }}>
+                        Lên lịch
+                    </option>
+
                     <option value="hidden"
                         {{ old('status') == 'hidden' ? 'selected' : '' }}>
                         Ẩn
@@ -173,7 +178,8 @@
                 <input type="datetime-local"
                        name="published_at"
                        class="form-control @error('published_at') is-invalid @enderror"
-                       value="{{ old('published_at') ? str_replace(' ', 'T', old('published_at')) : '' }}">
+                       value="{{ old('published_at') ? str_replace(' ', 'T', old('published_at')) : '' }}"
+                       min="{{ now()->format('Y-m-d\TH:i') }}">
 
                 @error('published_at')
                     <small class="text-danger">

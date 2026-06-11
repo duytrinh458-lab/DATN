@@ -240,6 +240,13 @@
         </div>
     </div>
 </div>
+
+
+<div id="vg-toast" class="vg-toast">
+    <span class="material-symbols-outlined">check_circle</span>
+    <span id="vg-toast-text">Đã xóa ảnh đại diện, vui lòng đồng bộ lại dữ liệu</span>
+</div>
+
 @endsection
 
 @push('scripts')
@@ -441,6 +448,18 @@ function removeAvatar() {
     
     // 4. Ẩn nút xóa đi ngay lập tức (không cho xóa nữa)
     document.getElementById('btnDeleteAvatar').classList.add('hide');
+
+    showToast("Đã xóa ảnh đại diện. Nhấn ĐỒNG BỘ DỮ LIỆU để lưu thay đổi.");
+}
+
+function showToast(message) {
+    const toast = document.getElementById('vg-toast');
+    const text = document.getElementById('vg-toast-text');
+    text.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2500);
 }
 </script>
 @endpush
