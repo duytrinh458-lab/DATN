@@ -139,9 +139,12 @@
 
                     <div class="news-image">
                         @if($news->thumbnail)
-    <img src="{{ asset($news->thumbnail) }}"
-         alt="{{ $news->title }}"
-         onerror="this.onerror=null; this.src='{{ asset('images/default-news.jpg') }}';">
+                            <img
+                            src="{{ str_contains($news->thumbnail, '/')
+                                ? asset($news->thumbnail)
+                                : asset('storage/news/'.$news->thumbnail) }}"
+                            alt="{{ $news->title }}"
+                            onerror="this.src='{{ asset('images/default-news.jpg') }}'">
 
                         @else
                             <div class="news-image-placeholder">
