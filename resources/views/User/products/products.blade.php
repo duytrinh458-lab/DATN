@@ -180,7 +180,7 @@
             @empty
                 <div class="no-product">
                     <span class="material-symbols-outlined" style="font-size:40px;margin-bottom:10px;display:block;">warning</span>
-                    >> SYSTEM_ALERT: KHÔNG TÌM THẤY UAV NÀO TRONG KHO DỮ LIỆU.
+                    KHÔNG TÌM THẤY UAV NÀO TRONG KHO DỮ LIỆU
                 </div>
             @endforelse
         @endisset

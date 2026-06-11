@@ -163,9 +163,8 @@
                 <div class="empty-icon-wrapper">
                     <span class="material-symbols-outlined">flight_takeoff</span>
                 </div>
-                <h3>NO MISSION DATA</h3>
-                <p>Chưa có chiến dịch nào được triển khai.</p>
-                <a href="{{ route('user.products') }}" class="btn-primary-glow">ĐẾN KHO UAV</a>
+                <h3>Chưa có đơn hàng nào</h3>
+                <a href="{{ route('user.products') }}" class="btn-primary-glow">Đến mua sản phẩm</a>
             </div>
         @endif
 

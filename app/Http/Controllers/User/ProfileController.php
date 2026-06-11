@@ -62,13 +62,24 @@ class ProfileController extends Controller
         $user = User::findOrFail(Auth::id());
 
         $request->validate([
-
             'full_name' => 'required|string|max:255',
-
             'phone'     => 'nullable|string|max:20',
-
             'avatar'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | XỬ LÝ XÓA AVATAR (MỚI THÊM VÀO ĐÂY)
+        |--------------------------------------------------------------------------
+        */
+        if ($request->input('delete_avatar') == 1) {
+            // Nếu có file ảnh cũ trong thư mục, tiến hành xóa file vật lý đi
+            if ($user->avatar && File::exists(public_path($user->avatar))) {
+                File::delete(public_path($user->avatar));
+            }
+            // Đặt lại trường avatar trong database thành null
+            $user->avatar = null;
+        }
 
         /*
         |--------------------------------------------------------------------------

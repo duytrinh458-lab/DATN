@@ -68,18 +68,14 @@ body{
 
 .mission-header{
 
-    position:sticky;
-
+    position:fixed;
     top:0;
-
+    left: 0;         /* Thêm dòng này */
+    width: 100%;     /* Thêm dòng này */
     z-index:999;
-
     backdrop-filter:blur(18px);
-
     background:rgba(17,24,39,0.82);
-
     border-bottom:1px solid rgba(255,255,255,0.08);
-
     box-shadow:
         0 4px 20px rgba(0,0,0,0.18);
 }
@@ -348,7 +344,7 @@ body{
 .content-viewport{
 
     min-height:calc(100vh - 72px);
-
+padding-top: 72px; /* THÊM DÒNG NÀY để bù lại khoảng trống của menu */
 
 }
 
@@ -738,3 +734,4 @@ body{
         transform: translateY(-12px); /* Bay lên 12px */
     }
 }
+

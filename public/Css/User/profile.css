@@ -82,13 +82,14 @@
 }
 
 /* CARD FORM (THẺ BÊN PHẢI) */
+/* CARD FORM (THẺ BÊN PHẢI) */
 .sticky-card {
+    position: -webkit-sticky; /* Hỗ trợ thêm cho Safari */
     position: sticky;
-    top: 120px; /* Khoảng cách cách mép trên màn hình khi cuộn chuột */
+    top: 120px; /* GIỮ CÁI NÀY: Khi cuộn, nó sẽ cách mép trên màn hình 120px (bằng vai với khoảng trống padding) */
     
-    /* ÉP SÁT LÊN TRÊN CÙNG ĐỂ BẰNG VỚI BẢNG BÊN TRÁI */
+    /* XÓA BỎ top: 0 ! */
     margin-top: 0 !important; 
-    top: 0; /* Nếu không cuộn thì nó nằm ở vị trí 0 của cột */
     
     height: fit-content;
     

@@ -77,7 +77,7 @@
 
         <aside class="cart-summary-vanguard">
             <div class="summary-card-inner">
-                <div class="summary-title">Ngân sách huy động</div>
+                <div class="summary-title">TỔNG KẾT ĐƠN HÀNG</div>
                 
                 <div class="summary-row">
                     <span>ĐÃ CHỌN (<span id="selected-count">0</span>)</span>
@@ -99,7 +99,7 @@
                 </button>
                 
                 <a href="{{ route('user.products') }}" style="display: block; text-align: center; margin-top: 20px; font-size: 10px; font-weight: 900; text-decoration: none; color: inherit; opacity: 0.5;">
-                    ← TIẾP TỤC ĐIỀU ĐỘNG THIẾT BỊ
+                    ← TIẾP TỤC MUA SẮM
                 </a>
             </div>
         </aside>

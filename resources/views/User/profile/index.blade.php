@@ -45,21 +45,35 @@
                     <form action="{{ route('user.profile.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
-                        {{-- AVATAR SCANNER --}}
+                        {{-- AVATAR SCANNER — ĐÃ THÊM LÔGIC ẢNH MẶC ĐỊNH VÀ NÚT XÓA --}}
+                        @php
+                            // Bạn hãy thay đổi đường dẫn file ảnh mặc định của bạn tại đây
+                            $defaultAvatar = asset('uploads/avatars/avatar-default.jpg'); 
+                            $hasAvatar = !empty($user->avatar);
+                        @endphp
                         <div class="avatar-scanner-box">
                             <label class="form-label-vg">(Avatar)</label>
                             <div class="avatar-wrapper">
                                 <div class="avatar-radar">
-                                    {{-- <img id="avatarPreview"
-                                        src="{{ $user->avatar ? asset('uploads/avatars/' . $user->avatar) : asset('uploads/avatars/avatar-default.jpg') }}"
-                                        class="avatar-img" alt="Avatar"> --}}
                                     <img id="avatarPreview"
-                                         src="{{ $user->avatar ? asset($user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->full_name) }}"
-                                         class="avatar-img" alt="Avatar">
+                                        src="{{ $hasAvatar ? asset($user->avatar) : $defaultAvatar }}"
+                                        class="avatar-img" alt="Avatar">
                                 </div>
-                                <div class="avatar-upload-zone">
-                                    <label for="avatar" class="btn-vg-outline cyan btn-sm">TẢI LÊN ẢNH MỚI</label>
+                                <div class="avatar-upload-zone" style="display: flex; flex-direction: column; gap: 8px;">
+                                    <label for="avatar" class="btn-vg-outline cyan btn-sm" style="cursor: pointer; text-align: center; margin: 0;">TẢI LÊN ẢNH MỚI</label>
                                     <input type="file" id="avatar" name="avatar" accept="image/*" class="hide" onchange="previewAvatar(event)">
+                                    
+                                    {{-- Nút xóa ảnh: Tự động dùng class 'hide' có sẵn của bạn để ẩn đi nếu đang là ảnh mặc định --}}
+                                    <button type="button" id="btnDeleteAvatar" 
+                                            class="btn-vg-outline btn-sm {{ !$hasAvatar ? 'hide' : '' }}" 
+                                            onclick="removeAvatar()" 
+                                            style="border-color: var(--danger); color: var(--danger); background: transparent; cursor: pointer;">
+                                        XÓA ẢNH HIỆN TẠI
+                                    </button>
+                                    
+                                    {{-- Input ẩn đóng vai trò báo hiệu gửi lên Controller --}}
+                                    <input type="hidden" name="delete_avatar" id="delete_avatar" value="0">
+
                                     <div class="upload-hint">Định dạng hỗ trợ: JPG, PNG. Tối đa 2MB.</div>
                                 </div>
                             </div>
@@ -397,15 +411,36 @@ function executeDelete() {
         }
     }
 }
-
+const defaultAvatarUrl = "{{ $defaultAvatar }}";
 function previewAvatar(event) {
     const reader = new FileReader();
     reader.onload = function () {
         document.getElementById('avatarPreview').src = reader.result;
+        
+        // Khi người dùng chọn ảnh mới: Hiện lại nút xóa và hủy lệnh xóa trên server
+        document.getElementById('btnDeleteAvatar').classList.remove('hide');
+        document.getElementById('delete_avatar').value = "0";
     };
     if(event.target.files[0]) {
         reader.readAsDataURL(event.target.files[0]);
     }
+}
+function removeAvatar() {
+    console.log("-> Đã kích hoạt hàm removeAvatar thành công!");
+    
+    // 1. Đổi ảnh hiển thị trên giao diện về ảnh mặc định cục bộ
+    console.log("-> Ảnh mặc định sẽ đổi thành:", defaultAvatarUrl);
+    document.getElementById('avatarPreview').src = defaultAvatarUrl;
+    
+    // 2. Xóa dữ liệu file cũ đang chờ trong input file (nếu có)
+    document.getElementById('avatar').value = "";
+    
+    // 3. Đổi giá trị flag thành 1 để báo server xóa ảnh trong database
+    document.getElementById('delete_avatar').value = "1";
+    console.log("-> Giá trị delete_avatar hiện tại là:", document.getElementById('delete_avatar').value);
+    
+    // 4. Ẩn nút xóa đi ngay lập tức (không cho xóa nữa)
+    document.getElementById('btnDeleteAvatar').classList.add('hide');
 }
 </script>
 @endpush
