@@ -35,7 +35,7 @@
         </p>
 
         @if(!empty($news->thumbnail))
-    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+    <img src="{{ asset($news->thumbnail) }}"
          style="max-width:500px; border-radius:10px; display: block; margin: 0 auto;">
 @endif
 

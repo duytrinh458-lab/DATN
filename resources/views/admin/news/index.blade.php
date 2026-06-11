@@ -73,8 +73,14 @@
 
                             @if($item->thumbnail)
 
-                                <img src="{{ asset('storage/news/' . $item->thumbnail) }}"
-     class="news-image">
+                                @php
+                                    $image = str_contains($item->thumbnail, 'uploads/')
+                                        ? asset($item->thumbnail)
+                                        : asset('uploads/news/' . $item->thumbnail);
+                                @endphp
+
+                                <img src="{{ $image }}" class="news-image">
+
 
                             @else
 
