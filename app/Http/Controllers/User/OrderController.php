@@ -18,7 +18,7 @@ class OrderController extends Controller
     {
         $orders = Order::where('user_id', Auth::id())
                        ->orderBy('ordered_at', 'desc')
-                       ->get();
+                       ->paginate(3); 
 
         return view('User.orders.index', compact('orders'));
     }

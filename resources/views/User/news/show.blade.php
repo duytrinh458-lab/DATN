@@ -41,11 +41,33 @@
 
             {{-- ẢNH THUMBNAIL --}}
             @if(!empty($news->thumbnail))
-                <div class="article-hero-image">
-                    <img src="{{ asset('storage/news/' . $news->thumbnail) }}" alt="{{ $news->title }}">
-                    <div class="image-scanner-line"></div>
-                </div>
-            @endif
+
+    @php
+        if (str_contains($news->thumbnail, 'uploads/news/')) {
+            $image = asset($news->thumbnail);
+        } else {
+            $image = asset('storage/news/' . $news->thumbnail);
+        }
+    @endphp
+
+            <div class="article-hero-image">
+                <img src="{{ $image }}"
+                    alt="{{ $news->title }}"
+                    onerror="this.src='{{ asset('images/default-news.jpg') }}'">
+
+                <div class="image-scanner-line"></div>
+            </div>
+
+        @else
+
+            <div class="article-hero-image">
+                <img src="{{ asset('images/default-news.jpg') }}"
+                    alt="Default News">
+
+                <div class="image-scanner-line"></div>
+            </div>
+
+        @endif
 
             {{-- NỘI DUNG --}}
             <div class="article-content vg-rich-text">

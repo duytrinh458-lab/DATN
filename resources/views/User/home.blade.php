@@ -139,7 +139,7 @@
 
                     <div class="news-image">
                         @if($news->thumbnail)
-    <img src="{{ asset('storage/news/' . $news->thumbnail) }}"
+    <img src="{{ asset($news->thumbnail) }}"
          alt="{{ $news->title }}"
          onerror="this.onerror=null; this.src='{{ asset('images/default-news.jpg') }}';">
 

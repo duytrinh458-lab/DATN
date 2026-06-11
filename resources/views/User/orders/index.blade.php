@@ -169,6 +169,13 @@
         @endif
 
     </div>
+
+    @if(method_exists($orders, 'links') && $orders->lastPage() > 1)
+    <div class="pagination-matrix">
+        {{ $orders->onEachSide(1)->links('vendor.pagination.bootstrap-4') }}
+    </div>
+@endif
+
 </div>
 
 {{-- MODAL --}}

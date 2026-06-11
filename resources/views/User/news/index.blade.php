@@ -51,14 +51,17 @@
                     <a href="{{ route('user.news.show', $item->id) }}" class="news-link">
 
                         <div class="news-image">
-    @php
-        $thumbnail = $item->thumbnail;
+        @php
+            $thumbnail = $item->thumbnail;
 
-        // fallback nếu DB chỉ lưu "news01.jpg"
-        $path = file_exists(storage_path('app/public/' . $thumbnail))
-            ? asset('storage/' . $thumbnail)
-            : asset('storage/news/' . $thumbnail);
-    @endphp
+            if (str_contains($thumbnail, 'uploads/news/')) {
+                // Bài mới
+                $path = asset($thumbnail);
+            } else {
+                // Bài cũ
+                $path = asset('storage/news/' . $thumbnail);
+            }
+        @endphp
 
     @if(!empty($thumbnail))
         <img src="{{ $path }}"

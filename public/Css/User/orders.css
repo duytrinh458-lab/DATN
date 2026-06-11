@@ -1,3 +1,10 @@
+:root{
+    --core-cyan:#00eaff;
+    --glow-blue:#00eaff;
+    --border:rgba(0,234,255,.2);
+    --text-nav:#d9faff;
+}
+
 /* BACKGROUND & LAYOUT */
 .orders-viewport {
     padding: 20px 5% 80px;
@@ -505,12 +512,260 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .order-card { flex-direction: column; }
-    .order-image { width: auto; margin: 0; height: 200px; border-radius: 16px 16px 0 0; border: none; border-bottom: 2px solid rgba(0,234,255,0.3); }
-    .order-actions { width: auto; flex-direction: row; border-left: none; border-top: 1px solid rgba(255,255,255,0.05); border-radius: 0 0 16px 16px; }
-    .btn-view, .btn-cancel-order { flex: 1; }
-    .order-info-grid { grid-template-columns: 1fr; }
+
+/* =========================================================
+   PAGINATION THEME
+========================================================= */
+.pagination-matrix {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-matrix .pagination {
+    display: flex;
+    gap: 5px;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination-matrix .page-item .page-link {
+    background: rgba(45, 56, 78, 0.7);
+    border: 1px solid var(--border);
+    color: var(--text-nav);
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.pagination-matrix .page-item.active .page-link {
+    background: var(--core-cyan);
+    color: #276424;
+    border-color: var(--core-cyan);
+    box-shadow: 0 0 15px var(--glow-blue);
+}
+
+.pagination-matrix .page-item:not(.active) .page-link:hover {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--core-cyan);
+    border-color: var(--core-cyan);
+}
+
+/* =========================================================
+   LARGE DESKTOP
+   1600px+
+========================================================= */
+@media (min-width: 1600px){
+
+    .orders-container{
+        max-width:1500px;
+    }
+
+    .order-image{
+        width:220px;
+        height:180px;
+    }
+}
+
+
+/* =========================================================
+   DESKTOP
+   1200px → 1599px
+========================================================= */
+@media (max-width: 1599px){
+
+    .orders-container{
+        max-width:1300px;
+    }
+}
+
+
+/* =========================================================
+   LAPTOP
+   992px → 1199px
+========================================================= */
+@media (max-width: 1199px){
+
+    .order-image{
+        width:180px;
+        height:150px;
+    }
+
+    .order-title{
+        font-size:1.15rem;
+    }
+}
+
+
+/* =========================================================
+   TABLET LANDSCAPE
+   768px → 991px
+========================================================= */
+@media (max-width: 991px){
+
+    .orders-container{
+        padding:0 20px;
+    }
+
+    .order-card{
+        gap:18px;
+    }
+
+    .order-image{
+        width:160px;
+        height:130px;
+    }
+
+    .order-main{
+        padding:18px;
+    }
+}
+
+
+/* =========================================================
+   TABLET PORTRAIT
+   576px → 767px
+========================================================= */
+@media (max-width: 767px){
+
+    .order-card{
+        flex-direction:column;
+    }
+
+    .order-image{
+        width:100%;
+        height:220px;
+    }
+
+    .order-main{
+        padding:20px;
+    }
+
+    .order-meta{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:10px;
+    }
+
+    .order-actions{
+        width:100%;
+        margin-top:15px;
+        justify-content:flex-end;
+        flex-wrap:wrap;
+    }
+
+    .btn-view,
+    .btn-cancel-order{
+        white-space:nowrap;
+    }
+
+    .vg-modal-box{
+        width:min(450px,90vw);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   375px → 575px
+========================================================= */
+@media (max-width: 575px){
+
+    .orders-title{
+        font-size:1.9rem;
+    }
+
+    .orders-subtitle{
+        font-size:.85rem;
+    }
+
+    .order-image{
+        height:190px;
+    }
+
+    .order-title{
+        font-size:1rem;
+    }
+
+    .order-price{
+        font-size:1.1rem;
+    }
+
+    .order-main{
+        padding:16px;
+    }
+
+    .order-actions{
+        flex-direction:column;
+        align-items:stretch;
+        gap:10px;
+    }
+
+    .btn-view,
+    .btn-cancel-order{
+        width:100%;
+        justify-content:center;
+    }
+
+    .pagination-matrix .pagination{
+        flex-wrap:wrap;
+    }
+
+    .pagination-matrix .page-link{
+        min-width:38px;
+        height:38px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   320px → 374px
+========================================================= */
+@media (max-width: 374px){
+
+    .orders-title{
+        font-size:1.6rem;
+    }
+
+    .orders-subtitle{
+        font-size:.75rem;
+        letter-spacing:1px;
+    }
+
+    .order-image{
+        height:160px;
+    }
+
+    .order-main{
+        padding:14px;
+    }
+
+    .order-title{
+        font-size:.95rem;
+    }
+
+    .order-price{
+        font-size:1rem;
+    }
+
+    .pagination-matrix .page-link{
+        min-width:34px;
+        height:34px;
+        font-size:.85rem;
+    }
+
+    .vg-modal-box{
+        width:94vw;
+        padding:20px 14px;
+    }
+
+    .modal-actions{
+        flex-direction:column;
+    }
+
+    .modal-actions button{
+        width:100%;
+    }
 }
 
