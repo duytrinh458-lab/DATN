@@ -44,6 +44,16 @@
     </div>
 
 
+    {{-- SUCCESS ALERT --}}
+    @if(session('success'))
+
+        <div class="alert-success">
+            {{ session('success') }}
+        </div>
+
+    @endif
+
+
     {{-- ERROR ALERT --}}
     @if ($errors->any())
 

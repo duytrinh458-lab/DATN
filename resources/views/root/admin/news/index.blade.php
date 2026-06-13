@@ -32,6 +32,13 @@
     </div>
 
 
+    {{-- ALERT SUCCESS --}}
+    @if(session('success'))
+        <div class="alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
 
     {{-- CARD --}}
     <div class="news-card">

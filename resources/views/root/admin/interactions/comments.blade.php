@@ -12,6 +12,12 @@
 
     <h2>Danh sách bình luận</h2>
 
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="comments-table-wrapper">
 
         <table class="comments-table">
@@ -41,10 +47,12 @@
                         <div class="comment-user">
                             
                             <div class="comment-avatar">
-                                @if(!empty($c->avatar) && file_exists(public_path($c->avatar)))
+                                @if($c->avatar)
                                     <img src="{{ asset($c->avatar) }}" alt="avatar">
                                 @else
-                                    <img src="{{ asset('uploads/avatars/avatar-default.jpg') }}" alt="avatar">
+                                    <div class="avatar-fallback">
+                                        {{ strtoupper(substr($c->full_name, 0, 1)) }}
+                                    </div>
                                 @endif
                             </div>
 

@@ -177,6 +177,7 @@ class AdminController extends Controller
             ->select(
                 'wallet_transactions.*',
                 'users.full_name as user_name',
+                'users.avatar as user_avatar',
                 'users.email'
             )
 
@@ -233,6 +234,13 @@ class AdminController extends Controller
 
         $oldStatus = $transaction->status;
 
+        // ⭐ CHẶN SỬA NẾU ĐÃ THÀNH CÔNG
+        if ($oldStatus == 'success') {
+            return back()->with(
+                'error',
+                'Giao dịch đã thành công, không thể thay đổi.'
+        );
+    }
 
         if ($oldStatus == $newStatus) {
 

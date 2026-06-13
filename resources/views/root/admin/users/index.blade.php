@@ -35,6 +35,18 @@
 
     </div>
 
+    {{-- THÔNG BÁO --}}
+    @if(session('success'))
+
+        <div class="success-alert">
+
+            <i class="fas fa-check-circle"></i>
+
+            <span>{{ session('success') }}</span>
+
+        </div>
+
+    @endif
 
     {{-- BẢNG NGƯỜI DÙNG --}}
     <div class="table-container shadow-premium">

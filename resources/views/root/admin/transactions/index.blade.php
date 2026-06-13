@@ -1,9 +1,9 @@
-@extends('admin.layouts.admin')
+@extends('Admin.layouts.admin')
 
 @section('title', 'Quản Lý Dòng Tiền V-Pay')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/admin/transactions.css') }}">
+<link rel="stylesheet" href="{{ asset('Css/admin/transactions.css') }}">
 @endpush
 
 @section('content')
@@ -11,6 +11,12 @@
     <h1>Quản Lý Giao Dịch V-Pay</h1>
 
     <div class="tx-card">
+        @if(session('success'))
+            <div class="alert-custom alert-success">✔️ {{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert-custom alert-error">⚠️ {{ session('error') }}</div>
+        @endif
 
         <table class="table-tech">
             <thead>
@@ -28,23 +34,8 @@
                 <tr>
                     <td style="font-weight: 600; color: #6b7280;">#{{ $tx->id }}</td>
                     <td>
-                        <div class="user-info-cell" style="display: flex; align-items: center; gap: 10px;">
-                            <div class="avatar-wrapper">
-                                @if(!empty($tx->user_avatar) && file_exists(public_path($tx->user_avatar)))
-                                    <img src="{{ asset($tx->user_avatar) }}"
-                                         alt="{{ $tx->user_name }}"
-                                         class="user-avatar">
-                                @else
-                                    <img src="{{ asset('uploads/avatars/avatar-default.jpg') }}"
-                                         alt="{{ $tx->user_name }}"
-                                         class="user-avatar">
-                                @endif
-                            </div>
-                            <div>
-                                <div style="font-weight: bold;">{{ $tx->user_name }}</div>
-                                <div style="font-size: 12px; color: #6b7280;">{{ $tx->email }}</div>
-                            </div>
-                        </div>
+                        <div style="font-weight: bold;">{{ $tx->user_name }}</div>
+                        <div style="font-size: 12px; color: #6b7280;">{{ $tx->email }}</div>
                     </td>
                     <td>
                         @if($tx->type == 'deposit') <span class="badge-type type-deposit">Nạp Tiền</span>

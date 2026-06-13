@@ -42,7 +42,7 @@
     </div>
 
     {{-- FILTER PANEL --}}
-    <div class="filter-panel open" id="filterPanel">
+    <div class="filter-panel" id="filterPanel">
 
         <div class="filter-grid">
 

@@ -70,9 +70,9 @@
     font-weight: bold;
 }
 
-.type-deposit { background: #dcfce7; color: #16a34a; }
+.type-deposit { background: #dcfce7; color: #36a826; }
 .type-withdraw { background: #fee2e2; color: #dc2626; }
-.type-payment { background: #f3f4f6; color: #4b5563; }
+.type-payment { background: #fef9c3; color: #000000; }
 
 .alert-custom {
     padding: 15px; 
@@ -227,6 +227,29 @@
 .pagination-wrapper .page-item:first-child,
 .pagination-wrapper .page-item:last-child {
     display: none;
+}
+
+/* AVATAR KHÁCH HÀNG TRONG GIAO DỊCH */
+.tx-card .user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tx-card .avatar-wrapper {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid #000000;
+}
+
+.tx-card .avatar-wrapper .user-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 /* mobile */

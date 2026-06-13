@@ -661,6 +661,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </script>
 
-    @include('admin.layouts.partials.toast')
 </body>
 </html>

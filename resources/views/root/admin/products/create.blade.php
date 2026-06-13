@@ -30,6 +30,12 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div style="background: #fef2f2; border-left: 5px solid #dc2626; color: #991b1b; padding: 15px; margin-bottom: 20px;">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="product-form">
             @csrf
 

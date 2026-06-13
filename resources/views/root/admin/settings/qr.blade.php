@@ -64,6 +64,12 @@
     <h1>Quản lý Mã QR Nạp Tiền (V-Pay)</h1>
 
     <div class="qr-card">
+        @if(session('success'))
+            <div class="alert-success">
+                ✔️ {{ session('success') }}
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-md-5 text-center">
                 <h4 style="font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 15px;">Mã QR Đang Sử Dụng</h4>
