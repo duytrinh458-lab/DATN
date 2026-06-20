@@ -299,3 +299,43 @@
     .fleet-item { flex-direction: column; text-align: center; gap: 10px; }
 }
 
+.btn-vg-reorder {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(0, 242, 254, 0.05);
+    border: 1px solid rgba(0, 242, 254, 0.4);
+    color: #00f2fe;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+}
+
+.btn-vg-reorder .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.btn-vg-reorder:hover {
+    background: rgba(0, 242, 254, 0.2);
+    border-color: #00f2fe;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+    text-shadow: 0 0 5px #00f2fe;
+}
+
+/* Hiệu ứng hover nhẹ khi trỏ vào tên/ảnh sản phẩm */
+.fleet-img-box:hover img {
+    transform: scale(1.03);
+    border-color: #00f2fe;
+    transition: all 0.2s ease;
+}
+
+.fleet-name:hover {
+    color: #00f2fe !important;
+    transition: color 0.2s ease;
+}

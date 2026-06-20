@@ -407,7 +407,7 @@
 <div class="form-group full-width">
 
     <label for="images">
-        Ảnh sản phẩm <span class="required">*</span>
+        Sản phẩm <span class="required">*</span>
     </label>
 
     <div class="file-upload">

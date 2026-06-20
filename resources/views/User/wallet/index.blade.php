@@ -57,7 +57,9 @@
                         @csrf
                         <div class="input-group">
                             <label>SỐ TIỀN MUỐN NẠP (VNĐ)</label>
-                            <input type="number" name="amount" id="dep-amount" class="tech-input" placeholder="Tối thiểu 10.000đ" required>
+                            <input type="text" id="dep-amount" class="tech-input" placeholder="Tối thiểu 10.000đ" required>
+
+                            <input type="hidden" name="amount" id="dep-amount-hidden">
                         </div>
                         
                         <div id="js-alert-box" class="alert-box-container"></div>
@@ -145,18 +147,45 @@
 </div>
 
 <script>
+    // 1. Hàm chuyển đổi qua lại giữa tab Nạp và Rút
     function openTab(tabName) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(tabName + '-tab').classList.add('active');
-        event.target.classList.add('active');
+        if (event && event.target) {
+            event.target.classList.add('active');
+        }
     }
 
+    // 2. ĐOẠN ĐÃ ĐƯỢC ĐƯA RA NGOÀI: Tự động thêm dấu chấm khi gõ số tiền nạp
+    document.getElementById('dep-amount').addEventListener('input', function (e) {
+        // Chỉ giữ lại ký tự số
+        let value = this.value.replace(/\D/g, '');
+
+        // Tự động chặn không cho gõ vượt quá 100.000.000đ
+        if (parseInt(value) > 100000000) {
+            value = "100000000";
+        }
+
+        // Lưu giá trị số nguyên chất vào ô ẩn để gửi lên Controller
+        document.getElementById('dep-amount-hidden').value = value;
+
+        // Định dạng hiển thị thêm dấu chấm phân cách (10.000, 100.000.000...)
+        if (value) {
+            this.value = parseInt(value).toLocaleString('vi-VN');
+        } else {
+            this.value = '';
+        }
+    });
+
+    // 3. Hàm kiểm tra điều kiện và hiển thị mã QR
     function showQR() {
-        let amt = document.getElementById('dep-amount').value;
+        // Lấy số từ ô ẩn (ô này chứa số thuần túy không có dấu chấm)
+        let amt = document.getElementById('dep-amount-hidden').value;
         let alertBox = document.getElementById('js-alert-box');
         
-        if(amt && amt >= 10000) {
+        // Kiểm tra điều kiện từ 10 nghìn đến 100 triệu
+        if (amt && parseInt(amt) >= 10000 && parseInt(amt) <= 100000000) {
             document.getElementById('qr-box').classList.remove('hide');
             document.getElementById('btn-confirm-dep').classList.remove('hide');
             document.getElementById('btn-gen-qr').classList.add('hide');
@@ -164,7 +193,7 @@
         } else {
             alertBox.innerHTML = `
                 <div class="alert-custom alert-error-tech">
-                    ⚠️ Vui lòng nhập số tiền hợp lệ (Tối thiểu 10.000đ).
+                    ⚠️ Vui lòng nhập số tiền hợp lệ (Từ 10.000đ đến 100.000.000đ).
                 </div>
             `;
         }

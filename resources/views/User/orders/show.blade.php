@@ -33,7 +33,7 @@
             {{-- CỘT 1: TỌA ĐỘ --}}
             <div class="vg-card hud-card">
                 <div class="card-title">
-                    <span class="material-symbols-outlined">location_on</span> TỌA ĐỘ GIAO NHẬN
+                    <span class="material-symbols-outlined">location_on</span> ĐỊA CHỈ GIAO NHẬN
                 </div>
                 <div class="card-content">
                     <div class="highlight-text">{{ $order->address->full_name }}</div>
@@ -48,7 +48,7 @@
             {{-- CỘT 2: TÀI CHÍNH --}}
             <div class="vg-card hud-card">
                 <div class="card-title">
-                    <span class="material-symbols-outlined">account_balance_wallet</span> QUYẾT TOÁN TÀI CHÍNH
+                    <span class="material-symbols-outlined">account_balance_wallet</span> CHI PHÍ GIAO DỊCH
                 </div>
                 <div class="card-content finance-content">
                     <div class="fin-row">
@@ -115,7 +115,7 @@
         <div class="vg-fleet-section">
             <h3 class="fleet-title">
                 <span class="material-symbols-outlined">flight_takeoff</span>
-                Ảnh sản phẩm ({{ $order->orderItems->count() }})
+                 Sản phẩm ({{ $order->orderItems->count() }})
             </h3>
             
             <div class="fleet-list">
@@ -128,24 +128,46 @@
                             ->value('image_url');
                         
                         $imageUrl = $imagePath ? asset($imagePath) : asset('images/default-uav.jpg');
+                        
+                        // ĐÃ SỬA: Thay 'products.show' bằng 'user.products.detail' theo đúng file routes/web.php
+                        $productRoute = isset($item->product_id) ? route('user.products.detail', $item->product_id) : '#';
                     @endphp
                     
-                    <div class="fleet-item">
-                        <div class="fleet-img-box">
-                            <img src="{{ $imageUrl }}" alt="{{ $item->product->name ?? 'UAV' }}">
+                    <div class="fleet-item" style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                        
+                        {{-- KHỐI THÔNG TIN SẢN PHẨM --}}
+                        <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                            {{-- Click vào ảnh để xem chi tiết --}}
+                            <a href="{{ $productRoute }}" class="fleet-img-box" style="text-decoration: none; display: block; shrink: 0;">
+                                <img src="{{ $imageUrl }}" alt="{{ $item->product->name ?? 'UAV' }}">
+                            </a>
+                            
+                            <div class="fleet-info">
+                                {{-- Click vào tên để xem chi tiết --}}
+                                <a href="{{ $productRoute }}" class="fleet-name" style="text-decoration: none; color: inherit; font-weight: bold;">
+                                    {{ $item->product->name ?? 'Unknown UAV' }}
+                                </a>
+                                <div class="fleet-qty">SỐ LƯỢNG: x{{ $item->quantity }}</div>
+                            </div>
                         </div>
-                        <div class="fleet-info">
-                            <div class="fleet-name">{{ $item->product->name ?? 'Unknown UAV' }}</div>
-                            <div class="fleet-qty">SỐ LƯỢNG: x{{ $item->quantity }}</div>
+
+                        {{-- KHỐI GIÁ CẢ & HÀNH ĐỘNG ĐẶT THÊM --}}
+                        <div class="fleet-action-zone" style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <div class="fleet-price" style="margin: 0;">
+                                {{ number_format($item->unit_price, 0, ',', '.') }}₫
+                            </div>
+                            
+                            @if(isset($item->product_id))
+                                <a href="{{ $productRoute }}" class="btn-vg-reorder">
+                                    <span class="material-symbols-outlined">add_shopping_cart</span> Chi Tiết
+                                </a>
+                            @endif
                         </div>
-                        <div class="fleet-price">
-                            {{ number_format($item->unit_price, 0, ',', '.') }}₫
-                        </div>
+
                     </div>
                 @endforeach
             </div>
         </div>
-
     </div>
 </div>
 @endsection

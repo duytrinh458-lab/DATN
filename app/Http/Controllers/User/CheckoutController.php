@@ -216,7 +216,7 @@ class CheckoutController extends Controller
 
             'address_id'     => 'required|exists:addresses,id',
 
-            'payment_method' => 'required|in:wallet'
+            'payment_method' => 'required|in:wallet,cash'
 
             ]);
 
@@ -354,18 +354,16 @@ class CheckoutController extends Controller
             */
             
 
-                Transaction::create([
-
-    'wallet_id'      => $wallet->id,
-
-    'type'           => 'payment',
-
-    'amount'         => $subtotal,
-
-    'reference_code' => $order->order_code,
-
-    'status'         => 'success'
-]);
+                // Bọc thêm điều kiện if ở đây: Chỉ lưu lịch sử ví nếu người dùng chọn thanh toán bằng ví
+                if ($request->payment_method === 'wallet') { 
+                    Transaction::create([
+                        'wallet_id'      => $wallet->id,
+                        'type'           => 'payment',
+                        'amount'         => $subtotal,
+                        'reference_code' => $order->order_code,
+                        'status'         => 'success'
+                    ]);
+                }
 
                 
 
@@ -463,7 +461,7 @@ class CheckoutController extends Controller
 
                 ->with(
                     'success',
-                    '✔ Khởi tạo lệnh điều động '
+                    '✔ Khởi tạo  '
                     . $order->order_code
                     . ' thành công!'
                 );
