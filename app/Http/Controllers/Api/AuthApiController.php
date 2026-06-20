@@ -34,7 +34,12 @@ class AuthApiController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $otp = rand(100000, 999999);
+        try {
+                $otp = random_int(100000, 999999);
+            } catch (\Exception $e) {
+                // Trường hợp hiếm hoi OS không cung cấp đủ nguồn entropy an toàn
+                $otp = mt_rand(100000, 999999); 
+            }
         DB::table('otp_verifications')->insert([
             'phone' => $request->phone,
             'otp_code' => $otp,

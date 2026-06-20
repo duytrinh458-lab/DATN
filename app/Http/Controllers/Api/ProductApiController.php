@@ -99,4 +99,25 @@ class ProductApiController extends Controller
             'data' => $product
         ]);
     }
+    // ==========================================
+    // THÊM MỚI: HÀM XÓA CHUẨN RESTFUL (DESTROY)
+    // ==========================================
+    public function destroy($id)
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Sản phẩm không tồn tại hoặc đã bị xóa trước đó.'
+            ], 404);
+        }
+
+        $product->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Xóa sản phẩm thành công.'
+        ]);
+    }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Transaction;
 use App\Models\Wallet;
+use App\Models\Product; // 💡 Thêm Model Product để quản lý kho
 
 class WalletController extends Controller
 {
@@ -58,9 +59,7 @@ class WalletController extends Controller
         );
 
         DB::beginTransaction();
-
         try {
-
             Transaction::create([
                 'wallet_id' => $wallet->id,
                 'type'      => 'deposit',
@@ -69,25 +68,15 @@ class WalletController extends Controller
             ]);
 
             DB::commit();
-
-            return back()->with(
-                'success',
-                'Yêu cầu nạp tiền đã được gửi. Vui lòng chờ hệ thống xác nhận.'
-            );
-
+            return back()->with('success', 'Yêu cầu nạp tiền đã được gửi. Vui lòng chờ hệ thống xác nhận.');
         } catch (\Exception $e) {
-
             DB::rollBack();
-
-            return back()->with(
-                'error',
-                'Không thể tạo yêu cầu nạp tiền.'
-            );
+            return back()->with('error', 'Không thể tạo yêu cầu nạp tiền.');
         }
     }
 
     /**
-     * RÚT TIỀN
+     * RÚT TIỀN (Chống lỗi âm ví bằng lockForUpdate)
      */
     public function withdraw(Request $request)
     {
@@ -103,28 +92,23 @@ class WalletController extends Controller
 
         $user = Auth::user();
 
-        $wallet = Wallet::where('user_id', $user->id)->first();
-
-        if (!$wallet) {
-            return back()->with(
-                'error',
-                'Không tìm thấy ví V-Pay.'
-            );
-        }
-
-        // Kiểm tra số dư
-        if ($wallet->balance < $request->amount) {
-            return back()->with(
-                'error',
-                'Số dư không đủ để thực hiện giao dịch.'
-            );
-        }
-
         DB::beginTransaction();
-
         try {
+            // Khóa dòng Ví để xếp hàng các request rút tiền trùng lặp
+            $wallet = Wallet::where('user_id', $user->id)
+                ->lockForUpdate()
+                ->first();
 
-            // Tạm khóa tiền
+            if (!$wallet) {
+                DB::rollBack();
+                return back()->with('error', 'Không tìm thấy ví V-Pay.');
+            }
+
+            if ($wallet->balance < $request->amount) {
+                DB::rollBack();
+                return back()->with('error', 'Số dư không đủ để thực hiện giao dịch.');
+            }
+
             $wallet->balance -= $request->amount;
             $wallet->save();
 
@@ -133,24 +117,83 @@ class WalletController extends Controller
                 'type'           => 'withdraw',
                 'amount'         => $request->amount,
                 'status'         => 'pending',
-                'reference_code' => $request->bank_info // 🛠️ SỬA CHỮ 'note' THÀNH 'reference_code' CHO KHỚP DATABASE
+                'reference_code' => $request->bank_info 
             ]);
 
             DB::commit();
-
-            return back()->with(
-                'success',
-                'Yêu cầu rút tiền đã được gửi.'
-            );
+            return back()->with('success', 'Yêu cầu rút tiền đã được gửi.');
 
         } catch (\Exception $e) {
-
             DB::rollBack();
+            return back()->with('error', 'Không thể xử lý yêu cầu rút tiền.');
+        }
+    }
 
-            return back()->with(
-                'error',
-                'Không thể xử lý yêu cầu rút tiền.'
-            );
+    /**
+     * THANH TOÁN ĐẶT HÀNG (Vá lỗi Race Condition: Khóa kép cả Ví và Kho sản phẩm)
+     */
+    public function purchase(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'required|integer|min:1'
+        ]);
+
+        $user = Auth::user();
+
+        // 💡 Bắt đầu Transaction để bọc toàn bộ chu kỳ mua hàng
+        DB::beginTransaction();
+        try {
+            // 🔒 KHÓA 1: Khóa tài khoản ví của User mua hàng
+            $wallet = Wallet::where('user_id', $user->id)
+                ->lockForUpdate()
+                ->first();
+
+            // 🔒 KHÓA 2: Khóa dòng thông tin của Sản phẩm đang được mua trong Kho
+            $product = Product::where('id', $request->product_id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$wallet || !$product) {
+                throw new \Exception('Thông tin ví hoặc sản phẩm không hợp lệ.');
+            }
+
+            // Tính tổng tiền cần thanh toán
+            $totalPrice = $product->price * $request->quantity;
+
+            // 🔍 Kiểm tra điều kiện khi các luồng khác đã bị chặn bên ngoài cửa
+            if ($wallet->balance < $totalPrice) {
+                throw new \Exception('Số dư ví không đủ để thanh toán đơn hàng.');
+            }
+
+            if ($product->quantity < $request->quantity) {
+                throw new \Exception('Sản phẩm trong kho đã hết hoặc không đủ số lượng.');
+            }
+
+            // 🛠️ Thực hiện trừ tiền và trừ kho thực tế một cách an toàn
+            $wallet->balance -= $totalPrice;
+            $wallet->save();
+
+            $product->quantity -= $request->quantity;
+            $product->save();
+
+            // Ghi nhận lịch sử giao dịch mua hàng thành công
+            Transaction::create([
+                'wallet_id'      => $wallet->id,
+                'type'           => 'payment',
+                'amount'         => $totalPrice,
+                'status'         => 'success',
+                'reference_code' => 'Mua ' . $request->quantity . ' x ' . $product->name
+            ]);
+
+            // Giải phóng khóa, hoàn tất giao dịch
+            DB::commit();
+            return back()->with('success', 'Đặt hàng và thanh toán thành công!');
+
+        } catch (\Exception $e) {
+            // Rollback toàn bộ dữ liệu kho và ví về trạng thái cũ nếu xảy ra lỗi
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
         }
     }
 }

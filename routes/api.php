@@ -81,7 +81,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::put('/cart/update/{id}', [CartApiController::class, 'update']);
 
-    Route::delete('/cart/remove/{id}', [CartApiController::class, 'destroy']);
+    // CHỈ SỬA ĐÒNG NÀY: Bỏ chữ /remove để đồng bộ chuẩn RESTful
+    Route::delete('/cart/{id}', [CartApiController::class, 'destroy']);
 
     Route::post('/cart/clear', [CartApiController::class, 'clear']);
 
@@ -130,9 +131,11 @@ Route::middleware(['auth:sanctum', 'check.admin'])->group(function () {
     // Products
     Route::post('/add_products', [ProductApiController::class, 'store']);
 
+    // Giữ nguyên theo đúng yêu cầu của bạn
     Route::put('/edit_products/{id}', [ProductApiController::class, 'update']);
 
-    Route::delete('/del_products/{id}', [ProductApiController::class, 'destroy']);
+    // CHỈ SỬA DÒNG NÀY: Đổi thành /admin/products/{id} để đồng bộ tuyệt đối với tuyến /admin/users/{id} bên trên
+    Route::delete('/admin/products/{id}', [ProductApiController::class, 'destroy']);
 
     // Orders
     Route::put('/admin_update_order_status/{id}', [OrderApiController::class, 'adminUpdateStatus']);

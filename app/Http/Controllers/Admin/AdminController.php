@@ -363,6 +363,7 @@ elseif ($transaction->type == 'payment') {
 
         $wallet = DB::table('wallets')
             ->where('id', $transaction->wallet_id)
+            ->lockForUpdate()
             ->first();
 
         if (

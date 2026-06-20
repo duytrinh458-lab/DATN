@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
@@ -46,8 +47,10 @@ class AuthController extends Controller
         ]);
 
         // 🛡️ VÁ LỖI SPAM (RATE LIMIT CẤP ĐỘ CODE): Chặn gửi liên tục dưới 60 giây
+        // CHỈ tính theo type='register' để không bị OTP của luồng khác (vd: forgot_password) chặn nhầm
         $lastOtp = DB::table('otp_verifications')
             ->where('phone', $request->phone)
+            ->where('type', 'register')
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -55,8 +58,20 @@ class AuthController extends Controller
             return back()->with('error', 'Hệ thống đang xử lý. Vui lòng đợi 60 giây trước khi yêu cầu gửi lại mã mới.');
         }
 
+        // 🛡️ VÁ LỖI MÃ GỐI ĐẦU: Vô hiệu hóa toàn bộ mã OTP đăng ký cũ của số điện thoại này
+        DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->where('type', 'register')
+            ->where('is_used', 0)
+            ->update(['is_used' => 1]);
+
         // 🛡️ VÁ LỖI BRUTE-FORCE: Dùng random_int() thay cho rand()
-        $otp = random_int(100000, 999999);
+        try {
+                $otp = random_int(100000, 999999);
+            } catch (\Exception $e) {
+                // Trường hợp hiếm hoi OS không cung cấp đủ nguồn entropy an toàn
+                $otp = mt_rand(100000, 999999); 
+            }
 
         DB::table('otp_verifications')->insert([
             'phone' => $request->phone,
@@ -91,6 +106,13 @@ class AuthController extends Controller
             );
         }
 
+        // 🛡️ CHỐNG BRUTE FORCE: Giới hạn tối đa 5 lần thử sai trong 15 phút cho mỗi SĐT
+        $key = 'verify-otp-register:' . $phone;
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->with('error', "Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau {$seconds} giây.");
+        }
+
         $request->validate([
             'otp_code' => 'required|digits:6',
             'full_name' => 'nullable|string|max:255',
@@ -120,11 +142,17 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
+            // 🛡️ Ghi nhận 1 lần thử sai và tính số lần còn lại
+            RateLimiter::hit($key, 900);
+            $attemptsLeft = RateLimiter::remaining($key, 5);
             return back()->with(
                 'error',
-                'Mã OTP không chính xác hoặc đã hết hạn.'
+                "Mã OTP không chính xác hoặc đã hết hạn. Bạn còn {$attemptsLeft} lần thử."
             );
         }
+
+        // Đống mã OTP hợp lệ -> Xóa lịch sử đếm lỗi RateLimiter
+        RateLimiter::clear($key);
 
         DB::beginTransaction();
 
@@ -235,7 +263,6 @@ class AuthController extends Controller
     }
 
     // ================= FORGOT PASSWORD =================
-    // ================= FORGOT PASSWORD =================
     public function sendOtpForgotPassword(Request $request)
     {
         $request->validate([
@@ -256,8 +283,10 @@ class AuthController extends Controller
         }
 
         // 🛡️ VÁ LỖI SPAM (RATE LIMIT CẤP ĐỘ CODE): Chặn gửi liên tục dưới 60 giây
+        // CHỈ tính theo type='forgot_password' để không bị OTP của luồng khác (vd: register) chặn nhầm
         $lastOtp = DB::table('otp_verifications')
             ->where('phone', $request->phone)
+            ->where('type', 'forgot_password')
             ->orderBy('created_at', 'desc')
             ->first();
 
@@ -265,8 +294,20 @@ class AuthController extends Controller
             return back()->with('error', 'Hệ thống đang xử lý. Vui lòng đợi 60 giây trước khi yêu cầu gửi lại mã mới.');
         }
 
+        // 🛡️ VÁ LỖI MÃ GỐI ĐẦU: Vô hiệu hóa toàn bộ mã OTP quên mật khẩu cũ của số điện thoại này
+        DB::table('otp_verifications')
+            ->where('phone', $request->phone)
+            ->where('type', 'forgot_password')
+            ->where('is_used', 0)
+            ->update(['is_used' => 1]);
+
         // 🛡️ VÁ LỖI BRUTE-FORCE: Dùng random_int() thay cho rand()
-        $otp = random_int(100000, 999999);
+        try {
+                $otp = random_int(100000, 999999);
+                } catch (\Exception $e) {
+                // Trường hợp hiếm hoi OS không cung cấp đủ nguồn entropy an toàn
+                $otp = mt_rand(100000, 999999); 
+            }
 
         DB::table('otp_verifications')->insert([
             'phone' => $request->phone,
@@ -292,6 +333,23 @@ class AuthController extends Controller
 
     public function verifyOtpForgotPassword(Request $request)
     {
+        // 🛡️ BẢO MẬT SESSION: Lấy SĐT an toàn từ session hệ thống để tránh giả mạo input từ client
+        $phone = session('forgot_phone');
+
+        if (!$phone) {
+            return redirect('/forgot')->with(
+                'error',
+                'Phiên làm việc đã hết hạn. Vui lòng thử lại.'
+            );
+        }
+
+        // 🛡️ CHỐNG BRUTE FORCE: Giới hạn tối đa 5 lần thử sai trong 15 phút cho mỗi SĐT
+        $key = 'verify-otp-forgot:' . $phone;
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->with('error', "Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau {$seconds} giây.");
+        }
+
         $request->validate([
             'phone' => 'required',
             'otp_code' => 'required|digits:6',
@@ -307,7 +365,7 @@ class AuthController extends Controller
         ]);
 
         $otp = DB::table('otp_verifications')
-            ->where('phone', $request->phone)
+            ->where('phone', $phone)
             ->where('otp_code', $request->otp_code)
             ->where('type', 'forgot_password')
             ->where('is_used', 0)
@@ -315,13 +373,19 @@ class AuthController extends Controller
             ->first();
 
         if (!$otp) {
+            // 🛡️ Ghi nhận 1 lần thử sai và tính số lần còn lại
+            RateLimiter::hit($key, 900);
+            $attemptsLeft = RateLimiter::remaining($key, 5);
             return back()->with(
                 'error',
-                'Mã OTP không chính xác hoặc đã hết hạn.'
+                "Mã OTP không chính xác hoặc đã hết hạn. Bạn còn {$attemptsLeft} lần thử."
             );
         }
 
-        $user = User::where('phone', $request->phone)->first();
+        // Đúng mã OTP -> Clear lịch sử đếm lỗi
+        RateLimiter::clear($key);
+
+        $user = User::where('phone', $phone)->first();
 
         if (!$user) {
             return back()->with(
@@ -337,6 +401,8 @@ class AuthController extends Controller
         DB::table('otp_verifications')
             ->where('id', $otp->id)
             ->update(['is_used' => 1]);
+
+        session()->forget('forgot_phone');
 
         return redirect('/login')->with(
             'success',
@@ -356,4 +422,3 @@ class AuthController extends Controller
         return redirect('/login');
     }
 }
-
