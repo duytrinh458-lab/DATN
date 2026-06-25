@@ -19,7 +19,7 @@
                 
                 <div class="select-all-bar">
                     <input type="checkbox" id="check-all" class="vg-checkbox" onchange="toggleAll(this)">
-                    <label for="check-all" style="cursor: pointer; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Chọn toàn</label>
+                    <label for="check-all" style="cursor: pointer; margin: 0; letter-spacing: 1px; text-transform: uppercase;">Chọn toàn bộ</label>
                 </div>
 
                 @foreach($cartItems as $item)
@@ -69,8 +69,8 @@
                 @endforeach
             @else
                 <div style="padding: 100px; text-align: center; background: var(--surface-container-low); border-radius: 40px;">
-                    <p style="color: var(--outline); text-transform: uppercase; letter-spacing: 2px;">Kho hàng của đặc vụ đang trống</p>
-                    <a href="{{ route('user.products') }}" style="color: var(--primary); text-decoration: underline; margin-top: 20px; display: inline-block;">Quay lại kho vũ khí</a>
+                    <p style="color: var(--outline); text-transform: uppercase; letter-spacing: 2px;">Kho hàng của bạn đang trống</p>
+                    <a href="{{ route('user.products') }}" style="color: var(--primary); text-decoration: underline; margin-top: 20px; display: inline-block;">Quay lại Sản phẩm</a>
                 </div>
             @endif
         </div>

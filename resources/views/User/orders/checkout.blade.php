@@ -35,7 +35,7 @@
                                 </div>
                             </div>
                             <div class="address-card-note">
-                                *Hệ thống tự động khóa mục tiêu tại Tọa độ mặc định. Cập nhật tại Cài đặt Hồ sơ.
+                                *Hệ thống tự động chọn địa chỉ giao hàng. Cập nhật tại Cài đặt Hồ sơ.
                             </div>
                         @else
                             <div class="address-warning">

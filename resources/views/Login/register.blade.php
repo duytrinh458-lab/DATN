@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký — UAV Store</title>
+    <title>Đăng ký — Vanguard</title>
 
     <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
@@ -18,7 +18,7 @@
 
         <div>
             <div class="brand-logo">
-                UAV<span>Store</span>
+                Vanguard
             </div>
 
             <div class="brand-tagline">
@@ -41,7 +41,7 @@
         </div>
 
         <div class="brand-footer">
-            © 2026 UAV Store. All rights reserved.
+            © 2026 Vanguard. All rights reserved.
         </div>
 
     </div>

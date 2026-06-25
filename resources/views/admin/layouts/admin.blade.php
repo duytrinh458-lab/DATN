@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>@yield('title', 'Admin — UAV Store')</title>
+    <title>@yield('title', 'Admin — Vanguard')</title>
 
     <link rel="stylesheet" href="{{ asset('css/Admin/admin-responsive.css') }}">
     <link rel="stylesheet"

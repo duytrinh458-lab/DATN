@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đổi mật khẩu — UAV Store</title>
+    <title>Đổi mật khẩu — Vanguard</title>
     <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
 <body>
@@ -13,7 +13,7 @@
     {{-- CỘT TRÁI --}}
     <div class="auth-brand">
         <div>
-            <div class="brand-logo">UAV<span>Store</span></div>
+            <div class="brand-logo">Vanguard</div>
             <div class="brand-tagline">Unmanned Aerial Vehicle Platform</div>
         </div>
 
@@ -25,7 +25,7 @@
             </p>
         </div>
 
-        <div class="brand-footer">© 2026 UAV Store. All rights reserved.</div>
+        <div class="brand-footer">© 2026 Vanguard. All rights reserved.</div>
     </div>
 
     {{-- CỘT PHẢI --}}
