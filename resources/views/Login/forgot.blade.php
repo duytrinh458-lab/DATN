@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quên mật khẩu — UAV Store</title>
+    <title>Quên mật khẩu — Vanguard</title>
 
     <link rel="stylesheet" href="{{ asset('Css/auth.css') }}">
 </head>
@@ -18,7 +18,7 @@
 
         <div>
             <div class="brand-logo">
-                UAV<span>Store</span>
+                Vanguard
             </div>
 
             <div class="brand-tagline">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>@yield('title', 'UAV Store')</title>
+    <title>@yield('title', 'Vanguard')</title>
 
 
     {{-- Preconnect để giảm latency --}}
@@ -35,7 +35,7 @@
     <nav class="navbar">
         <div class="logo-group">
             <a href="{{ url('/home') }}" class="logo">
-                UAVStore
+                Vanguard 
             </a>
             <div class="status-dot"></div>
         </div>
@@ -98,8 +98,8 @@
 <footer class="site-footer">
     <div class="footer-inner">
         <div class="footer-col">
-            <h4>UAV Store</h4>
-            <p>Hệ thống thương mại điện tử UAV hiện đại thế hệ mới.</p>
+            <h4>Vanguard</h4>
+            <p>Hệ thống thương mại điện tử Vanguard hiện đại thế hệ mới.</p>
         </div>
 
         <div class="footer-col">
@@ -118,7 +118,7 @@
     </div>
 
     <div class="footer-bottom">
-        <span>© 2026 UAV Store</span>
+        <span>© 2026 Vanguard</span>
         <span>Version 3.0</span>
     </div>
 </footer>

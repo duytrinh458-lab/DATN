@@ -27,7 +27,7 @@
                 <span class="material-symbols-outlined">arrow_outward</span>
             </a>
             <a href="#featured-products" class="btn-outline-tech">
-                XEM BỘ SƯU TẬP
+                SẢN PHẨM NỔI BẬT
             </a>
         </div>
     </div>
