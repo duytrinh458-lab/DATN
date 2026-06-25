@@ -34,15 +34,15 @@
 
     <div class="hero-panel">
         <div class="hero-card">
-            <div class="hero-card-label">SYSTEM STATUS</div>
-            <div class="hero-card-value online">ONLINE</div>
+            <div class="hero-card-label">Đơn Hàng Đã Bán</div>
+            <div class="hero-card-value online">{{ number_format($orderCount) }}+</div>
         </div>
         <div class="hero-card">
-            <div class="hero-card-label">UAV DATABASE</div>
+            <div class="hero-card-label">Số Lượng Sản Phẩm</div>
             <div class="hero-card-value">{{ number_format($productCount) }}+</div>
         </div>
         <div class="hero-card">
-            <div class="hero-card-label">NEWS UPDATE</div>
+            <div class="hero-card-label">TIN TỨC MỚI</div>
             <div class="hero-card-value">{{ number_format($newsCount) }}+</div>
         </div>
     </div>

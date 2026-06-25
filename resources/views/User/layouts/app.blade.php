@@ -35,7 +35,7 @@
     <nav class="navbar">
         <div class="logo-group">
             <a href="{{ url('/home') }}" class="logo">
-                UAVStore
+                Vanguard
             </a>
             <div class="status-dot"></div>
         </div>
