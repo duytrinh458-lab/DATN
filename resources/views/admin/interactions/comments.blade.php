@@ -138,8 +138,10 @@
 
         <!-- PAGINATION -->
         <div class="pagination-wrapper">
-            {{ $comments->onEachSide(1)->links() }}
-        </div>
+    @if(method_exists($comments, 'links'))
+        {{ $comments->onEachSide(0)->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+    @endif
+</div>
 
     </div>
 

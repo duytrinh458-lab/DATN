@@ -32,9 +32,17 @@ class OrderController extends Controller
                       ->where('user_id', Auth::id())
                       ->findOrFail($id);
 
+//                     dd([
+//     'address_id' => $order->address_id,
+//     'shipping_full_name' => $order->shipping_full_name,
+//     'shipping_phone' => $order->shipping_phone,
+//     'shipping_street' => $order->shipping_street,
+// ]);
+
         // 💡 KIỂM TRA TỒN TẠI YÊU CẦU HOÀN TRẢ
         $hasRefundRequest = DB::table('refunds')->where('order_id', $id)->exists();
 
+        // dd($order->address);
         // 💡 TRUYỀN THÊM BIẾN NÀY SANG VIEW
         return view('User.orders.show', compact('order', 'hasRefundRequest'));
     }

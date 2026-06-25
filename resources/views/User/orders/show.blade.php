@@ -36,12 +36,19 @@
                     <span class="material-symbols-outlined">location_on</span> ĐỊA CHỈ GIAO NHẬN
                 </div>
                 <div class="card-content">
-                    <div class="highlight-text">{{ $order->address->full_name }}</div>
-                    <div class="sub-text">SĐT: {{ $order->address->phone }}</div>
-                    <div class="sub-text mt-2">
-                        {{ $order->address->street }}<br>
-                        {{ $order->address->district }}, {{ $order->address->city }}, {{ $order->address->province }}
-                    </div>
+                    <div class="highlight-text">
+    {{ $order->shipping_full_name ?? 'Không có dữ liệu' }}
+</div>
+
+<div class="sub-text">
+    SĐT: {{ $order->shipping_phone ?? '---' }}
+</div>
+
+<div class="sub-text mt-2">
+    {{ $order->shipping_street ?? '---' }}<br>
+    {{ $order->shipping_district ?? '' }},
+    {{ $order->shipping_province ?? '' }}
+</div>
                 </div>
             </div>
 
