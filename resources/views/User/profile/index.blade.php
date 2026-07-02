@@ -65,9 +65,9 @@
                                     
                                     {{-- Nút xóa ảnh: Tự động dùng class 'hide' có sẵn của bạn để ẩn đi nếu đang là ảnh mặc định --}}
                                     <button type="button" id="btnDeleteAvatar" 
-                                            class="btn-vg-outline btn-sm {{ !$hasAvatar ? 'hide' : '' }}" 
+                                            class="btn-vg-outline danger btn-sm {{ !$hasAvatar ? 'hide' : '' }}" 
                                             onclick="removeAvatar()" 
-                                            style="border-color: var(--danger); color: var(--danger); background: transparent; cursor: pointer;">
+                                            style="cursor: pointer;">
                                         XÓA ẢNH HIỆN TẠI
                                     </button>
                                     
@@ -240,13 +240,6 @@
         </div>
     </div>
 </div>
-
-
-<div id="vg-toast" class="vg-toast">
-    <span class="material-symbols-outlined">check_circle</span>
-    <span id="vg-toast-text">Đã xóa ảnh đại diện, vui lòng đồng bộ lại dữ liệu</span>
-</div>
-
 @endsection
 
 @push('scripts')
@@ -373,7 +366,7 @@ async function editAddress(id) {
         
         const provinceCode = await loadProvinces(data.province);
         const districtCode = await loadDistricts(provinceCode, data.district);
-        await loadWards(districtCode, data.city);
+        await loadWards(districtCode, data.word ?? data.city);
 
         form.action = `{{ url('profile/address') }}/${id}`;
 
@@ -448,18 +441,6 @@ function removeAvatar() {
     
     // 4. Ẩn nút xóa đi ngay lập tức (không cho xóa nữa)
     document.getElementById('btnDeleteAvatar').classList.add('hide');
-
-    showToast("Đã xóa ảnh đại diện. Nhấn ĐỒNG BỘ DỮ LIỆU để lưu thay đổi.");
-}
-
-function showToast(message) {
-    const toast = document.getElementById('vg-toast');
-    const text = document.getElementById('vg-toast-text');
-    text.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 2500);
 }
 </script>
 @endpush

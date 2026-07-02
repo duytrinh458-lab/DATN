@@ -3,7 +3,7 @@
 ======================================== */
 
 .profile-viewport {
-    padding: 120px 20px 60px;
+    padding: 60px 20px 60px;
     background: radial-gradient(circle at top, #0b1220 0%, #05070d 100%);
     min-height: 100vh;
     color: #e2e8f0;
@@ -55,15 +55,17 @@
 
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-/* ================= LAYOUT ================= */
+/* ==========================================
+    LAYOUT - VANGUARD HUD FIXED STICKY
+========================================== */
 .profile-grid {
     display: grid;
     grid-template-columns: 1.25fr 0.95fr;
     gap: 30px;
-    align-items: stretch; /* Đổi thành stretch để 2 cột cao bằng nhau */
+    align-items: stretch; /* Ép các track của Grid luôn có chiều cao bằng nhau */
 }
 
-/* FIX CỘT */
+/* CỘT TRÁI: Chứa thông tin cá nhân & Danh sách địa chỉ (Cột này rất dài) */
 .left-profile-column {
     display: flex;
     flex-direction: column;
@@ -71,38 +73,34 @@
     align-self: start; 
 }
 
-/* FIX CARD BÊN PHẢI */
+/* CỘT PHẢI: Đóng vai trò là ĐƯỜNG RAY (Kéo dài từ trên xuống dưới theo cột trái) */
 .right-profile-column {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 100%; /* Ép chiều cao full để thẻ sticky có không gian trượt */
+    display: block !important;
+    align-self: stretch !important;    /* Ép cột phải luôn cao bằng cột trái để tạo không gian trượt */
+    height: auto !important;           /* Phá bỏ hoàn toàn fit-content cũ */
+    position: relative !important;
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
 
-/* CARD FORM (THẺ BÊN PHẢI) */
-/* CARD FORM (THẺ BÊN PHẢI) */
+/* THẺ CARD FORM: Đóng vai trò TOA TÀU TRƯỢT (Nằm trong cột phải) */
 .sticky-card {
-    position: -webkit-sticky; /* Hỗ trợ thêm cho Safari */
-    position: sticky;
-    top: 120px; /* GIỮ CÁI NÀY: Khi cuộn, nó sẽ cách mép trên màn hình 120px (bằng vai với khoảng trống padding) */
+    position: -webkit-sticky !important;
+    position: sticky !important;       /* Kích hoạt tính năng ghim trượt bám theo màn hình */
+    top: 100px !important;             /* Khoảng cách dừng cách mép trên màn hình khi cuộn chuột (Tùy chỉnh theo chiều cao Header của bạn) */
+    height: fit-content !important;    /* Giữ nguyên kích thước form của bạn, không bị kéo giãn */
+    z-index: 99;
     
-    /* XÓA BỎ top: 0 ! */
-    margin-top: 0 !important; 
-    
-    height: fit-content;
-    
-    /* LOOK PREMIUM */
+    /* Giữ nguyên thiết kế HUD nguyên bản của bạn */
     background: linear-gradient(145deg, rgba(20, 25, 35, 0.95), rgba(8, 12, 20, 0.98));
     border: 1px solid rgba(0, 255, 136, 0.18);
     box-shadow: 0 10px 30px rgba(0,0,0,0.55), 0 0 20px rgba(0,255,136,0.05);
     transition: 0.3s ease;
 }
 
-/* XÓA CLASS DƯ THỪA DƯỚI CÙNG NẾU CÓ */
+/* VÔ HIỆU HÓA HOÀN TOÀN THẰNG PHÁ HOẠI ALIGN-TOP ĐỐI VỚI CỘT PHẢI */
 .align-top {
-    margin-top: 0 !important;
+    align-self: stretch !important;    /* Không cho phép co ngắn cột phải nữa */
 }
 
 /* ================= CARD HUD ================= */
@@ -346,9 +344,7 @@ textarea.tech-input { resize: vertical; min-height: 80px; }
     .input-row { flex-direction: column; gap: 0; }
     .vg-header-panel { flex-direction: column; gap: 10px; text-align: center; }
 }
-.align-top{
-    align-self: start;
-}
+
 
 .vg-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;

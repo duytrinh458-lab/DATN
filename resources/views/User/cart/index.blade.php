@@ -224,7 +224,7 @@
     function proceedToCheckout() {
         const selected = document.querySelectorAll('.item-checkbox:checked');
         if(selected.length === 0) {
-            showFrontendToast('Vui lòng chọn ít nhất 1 thiết bị UAV để điều động!');
+            showFrontendToast('Vui lòng chọn ít nhất 1 thiết bị UAV để tiến hành thanh toán!');
             return;
         }
 
